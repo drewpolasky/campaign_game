@@ -1,0 +1,52 @@
+State Name, Issue 1, Issue 2, Issue 3, Issue 4, Issue 5
+Alabama,1,1,1,1,1
+Alaska,2,2,2,2,2
+Arizona,3,3,3,3,3
+Arkansas,4,4,4,4,4
+California,5,5,5,5,5
+Colorado,6,6,6,6,6
+Connecticut,7,7,7,7,7
+Delaware,8,8,8,8,8
+Florida,9,9,9,9,9
+Georgia,10,10,10,10,10
+Hawaii,9,9,9,9,9
+Idaho,8,8,8,8,8
+Illinois,7,7,7,7,7
+Indiana,6,6,6,6,6
+Iowa,5,5,5,5,5
+Kansas,4,4,4,4,4
+Kentucky,3,3,3,3,3
+Louisiana,2,2,2,2,2
+Maine,1,1,1,1,1
+Maryland,0,0,0,0,0
+Massachusetts,-1,-1,-1,-1,-1
+Michigan,-2,-2,-2,-2,-2
+Minnesota,-3,-3,-3,-3,-3
+Mississippi,-4,-4,-4,-4,-4
+Missouri,-5,-5,-5,-5,-5
+Montana,-6,-6,-6,-6,-6
+Nebraska,-7,-7,-7,-7,-7
+Nevada,-8,-8,-8,-8,-8
+New Hampshire,-9,-9,-9,-9,-9
+New Jersey,-10,-10,-10,-10,-10
+New Mexico,-9,-9,-9,-9,-9
+New York,-8,-8,-8,-8,-8
+North Carolina,-7,-7,-7,-7,-7
+North Dakota,-6,-6,-6,-6,-6
+Ohio,-5,-5,-5,-5,-5
+Oklahoma,-4,-4,-4,-4,-4
+Oregon,-3,-3,-3,-3,-3
+Pennsylvania,-2,-2,-2,-2,-2
+Puerto Rico,1,1,1,1,1
+Rhode Island,-1,-1,-1,-1,-1
+South Carolina,0,0,0,0,0
+South Dakota,1,1,1,1,1
+Tennessee,2,2,2,2,2
+Texas,3,3,3,3,3
+Utah,4,4,4,4,4
+Vermont,5,5,5,5,5
+Virginia,6,6,6,6,6
+Washington,7,7,7,7,7
+West Virginia,8,8,8,8,8
+Wisconsin,9,9,9,9,9
+Wyoming,10,10,10,10,10
