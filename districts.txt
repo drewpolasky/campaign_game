@@ -39,9 +39,9 @@ Louisiana, New Orleans ,3
 Maryland, Balitmore ,3
 Maryland, DC Suburbs and Annapolis ,2
 Maryland, Northern Maryland ,3
-Massachucets, Boston ,4
-Massachucets, Southeast Massachusetts ,3
-Massachucets, Western Massachusetts ,3
+Massachusetts, Boston ,4
+Massachusetts, Southeast Massachusetts ,3
+Massachusetts, Western Massachusetts ,3
 Michigan, Detroit ,5
 Michigan, Southwest Michigan ,4
 Michigan, Michigan's Rust Belt ,4
@@ -99,3 +99,4 @@ Wisconsin, Milwaukee ,3
 Wisconsin, Northern Wisconsin ,2
 Wisconsin, Central Wisconsin ,3
 Wyoming, 1st ,1
+Maine, 1st, 2

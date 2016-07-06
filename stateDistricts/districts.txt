@@ -1,0 +1,101 @@
+Alaska, 1st 
+Arizona, Phoenix 
+Arizona, Southern Arizona 
+Arizona, Northern Arizona 
+Arkansas, 1st 
+California, San Diego 
+California, Orange County and the Inland Empire 
+California, Los Angeles 
+California, Central Coast 
+California, Bay Area 
+California, Central Valley 
+California, Northern California and the Sierras 
+Colorado, Denver and the Northern Front Range 
+Colorado, The Rest of Colorado 
+Connecticut2, New York Suburbs 
+Connecticut2, North-East Connecticut 
+Florida2, The Panhandle 
+Florida2, Jacksonville and Daytona Beach 
+Florida2, Orlando and the mid-coast 
+Florida2, Tampa and St. Petersburg 
+Florida2, Miami and West Palm Beach 
+Florida2, Southwest Florida 
+Georgia, Atlanta 
+Georgia, Northern Georgia 
+Georgia, Southern Georgia 
+Hawaii, 1st 
+Idaho, 1st 
+Illinois, Chicago 
+Illinois, Chicago Suburbs 
+Illinois, Southern Illinois 
+Illinois, Northern Illinois 
+Iowa, 1st 
+Kansas, 1st 
+Kentucky, Louisville and Lexington 
+Kentucky, Southern Kentucky 
+Delaware, 1st 
+Louisiana, North and Western Louisiana 
+Louisiana, New Orleans 
+Maryland, Balitmore 
+Maryland, DC Suburbs and Annapolis 
+Maryland, Northern Maryland 
+Massachucets, Boston 
+Massachucets, Southeast Massachusetts 
+Massachucets, Western Massachusetts 
+Michigan, Detroit 
+Michigan, Southwest Michigan 
+Michigan, Michigan's Rust Belt 
+Michigan, Northern Michigan 
+Minnesota, Twin Cities 
+Minnesota, Southern Minnesota 
+Minnesota, Northern Minnesota 
+Mississippi, 1st 
+Missouri, Kansas City and Northern Missouri 
+Missouri, Southern Missouri 
+Missouri, St. Louis 
+montana, 1st 
+Nebraska, 1st 
+Nevada, 1st 
+New Hampshire, 1st 
+New Jersey, Newark 
+New Jersey, Cental New Jersey 
+New Jersey, Southern New Jersey 
+New Mexico, 1st 
+New York, New York 
+New York, Long Island 
+New York, Hudson Valley 
+New York, Upstate 
+New York, Buffalo and Rochester 
+North Carolina, Western North Carolina 
+North Carolina, Raleigh-Durham 
+North Carolina, Charlotte 
+North Carolina, The Coast 
+North Dakota, 1st 
+Ohio, Toledo and the Northwest 
+Ohio, Cleveland and the Northeast 
+Ohio, Columbus and the Southeast 
+Ohio, Cincinnati and Dayton 
+Pennsylvania, Central Pennsylvania 
+Pennsylvania, Philadelphia 
+Pennsylvania, Pittsburg 
+Pennsylvania, Northeast Pennsylvania 
+Rhode Island, 1st 
+South Carolina, Inland South Carolina 
+South Carolina, Coastal South Carolina 
+South Dakota, 1st 
+Texas, West Texas 
+Texas, South Texas 
+Texas, East Texas 
+Texas, Houston 
+Texas, Dallas-Fort Worth 
+Texas, San Antonio and Austin 
+Utah, 1st 
+Vermont, 1st 
+Virginia, DC Suburbs 
+Virginia, Virginia Coast 
+Virginia, Western Virginia 
+West Virginia, 1st 
+Wisconsin, Milwaukee 
+Wisconsin, Northern Wisconsin 
+Wisconsin, Central Wisconsin 
+Wyoming, 1st 

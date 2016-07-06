@@ -8,6 +8,7 @@ import os
 import random
 import time
 import math
+import sys
 
 #global variables fro tracking players and turns
 playerPositions = {}        #dictonary where values are lists of the players positions on issues
@@ -16,7 +17,7 @@ numPlayers = 2
 currentDate = 0
 playerResources = {} 
 statePositions = {}
-calendarOfContests = [('Iowa' , 2),('New Hampshire' , 5) ,('Nevada',7), ('South Carolina',7),('Minnesota',9),('Alabama' , 9), ('Arkansas', 9), ('Colorado', 9), ('Georgia', 9), ('Massachusetts', 9), ('North Dakota', 9), ('Oklahoma', 9), ('Tennessee', 9), ('Texas', 9), ('Vermont', 9), ('Virginia', 9), ('Kansas', 10), ('Kentucky', 10), ('Louisiana', 10), ('Maine', 10), ('Nebraska', 10), ('Hawaii', 10), ('Michigan', 10), ('Mississippi', 10), ('Wyoming', 11), ('Florida', 11), ('Illinois' , 11), ('Missouri', 11), ('North Carolina', 11), ('Ohio', 11), ('Arizona', 12), ('Idaho', 12), ('Utah', 12), ('Washington', 13), ('New York', 15), ('Connecticut', 15), ('Delaware', 15), ('Maryland', 15), ('Pennsylvania', 15), ('Rhode Island', 15), ('Indiana', 16), ('West Virginia', 16), ('Oregon', 17), ('California', 19), ('Montana', 19), ('New Mexico', 19), ('South Dakota', 19)]#, ('DC', 20)]
+calendarOfContests = [('Iowa' , 2),('New Hampshire' , 4) ,('Nevada',7), ('South Carolina',7),('Minnesota',9),('Alabama' , 9), ('Arkansas', 9), ('Colorado', 9), ('Georgia', 9), ('Massachusetts', 9), ('North Dakota', 9), ('Oklahoma', 9), ('Tennessee', 9), ('Texas', 9), ('Vermont', 9), ('Virginia', 9), ('Kansas', 10), ('Kentucky', 10), ('Louisiana', 10), ('Maine', 10), ('Nebraska', 10), ('Hawaii', 10), ('Michigan', 10), ('Mississippi', 10), ('Wyoming', 11), ('Florida', 11), ('Illinois' , 11), ('Missouri', 11), ('North Carolina', 11), ('Ohio', 11), ('Arizona', 12), ('Idaho', 12), ('Utah', 12), ('Washington', 13), ('New York', 15), ('Connecticut', 15), ('Delaware', 15), ('Maryland', 15), ('Pennsylvania', 15), ('Rhode Island', 15), ('Indiana', 16), ('West Virginia', 16), ('Oregon', 17), ('California', 19), ('Montana', 19), ('New Mexico', 19), ('South Dakota', 19)]#, ('DC', 20)]
 stateOpinions = {}
 playerColors = ['red', 'blue','purple', 'green', 'orange', 'brown', 'cyan', 'yellow']
 eventOfTheWeek = 0
@@ -30,7 +31,8 @@ stateSupport = {}
 def main():
     setUpStates()
     setUpGame()
-    #createNationalMap()
+    while True:
+        createNationalMap()
 
 def setUpGame():        #this will set up the basic parameters of the game, or have the option to load a previously saved game.  
     setUpWindow = Tk()
@@ -200,7 +202,7 @@ def createNationalMap():    #creates the main national map screen. This will be 
 
     k = 0
     j=0
-    while k <= 22 and j < 47:     #display the next 22 contests to fill the left bar
+    while k <= 22 and j < len(calendarOfContests):     #display the next 22 contests to fill the left bar
         nextContest = calendarOfContests[j]
         name = nextContest[0]
         date = nextContest[1]
@@ -259,7 +261,7 @@ def createNationalMap():    #creates the main national map screen. This will be 
 
     center(window)
     natMap.bind('<Button-1>', zoomToState)
-
+    window.protocol("WM_DELETE_WINDOW", exitGame)
     window.mainloop()
         
 def center(toplevel):           #copied from an answer by user Wayne Werner on stackoverflow
@@ -502,7 +504,7 @@ def endTurn(window, fundraising):
         campaigningThisTurn = {}
         adsThisTurn = {}
     if currentDate <= 21:
-        createNationalMap()
+        return
     else:
         winner = 0
         mostDelegates = 0
@@ -629,6 +631,9 @@ def saveGame():
 
 def loadGame():
     pass
+
+def exitGame():
+    sys.exit()
 
 def returnColor(event):
     natMap = event.widget
