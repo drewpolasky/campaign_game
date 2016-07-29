@@ -37,7 +37,6 @@ Ohio,-5,-5,-5,-5,-5
 Oklahoma,-4,-4,-4,-4,-4
 Oregon,-3,-3,-3,-3,-3
 Pennsylvania,-2,-2,-2,-2,-2
-Puerto Rico,1,1,1,1,1
 Rhode Island,-1,-1,-1,-1,-1
 South Carolina,0,0,0,0,0
 South Dakota,1,1,1,1,1

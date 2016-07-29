@@ -2069,1099 +2069,1099 @@
 773,120,Maine 
 773,121,Maine 
 773,122,Maine 
-758,122,Vermont 
-759,122,Vermont 
-758,123,Vermont 
-759,121,Vermont 
-757,123,Vermont 
-760,121,Vermont 
-756,123,Vermont 
-761,121,Vermont 
-755,123,Vermont 
-756,124,Vermont 
-761,120,Vermont 
-754,123,Vermont 
-755,124,Vermont 
-762,120,Vermont 
-753,123,Vermont 
-754,124,Vermont 
-763,120,Vermont 
-752,123,Vermont 
-753,124,Vermont 
-764,120,Vermont 
-763,121,Vermont 
-752,124,Vermont 
-765,120,Vermont 
-764,121,Vermont 
-752,125,Vermont 
-765,119,Vermont 
-764,122,Vermont 
-766,119,Vermont 
-765,122,Vermont 
-767,119,Vermont 
-766,122,Vermont 
-767,118,Vermont 
-767,122,Vermont 
-766,123,Vermont 
-768,122,Vermont 
-767,123,Vermont 
-769,122,Vermont 
-768,123,Vermont 
-770,122,Vermont 
-769,123,Vermont 
-770,123,Vermont 
-770,124,Vermont 
-770,125,Vermont 
-771,125,Vermont 
-772,125,Vermont 
-772,126,Vermont 
-757,122,Vermont 
-760,122,Vermont 
-758,124,Vermont 
-757,124,Vermont 
-756,122,Vermont 
-761,122,Vermont 
-756,125,Vermont 
-754,122,Vermont 
-762,119,Vermont 
-754,125,Vermont 
-752,122,Vermont 
-764,119,Vermont 
-766,120,Vermont 
-752,126,Vermont 
-764,123,Vermont 
-765,123,Vermont 
-766,121,Vermont 
-767,121,Vermont 
-768,121,Vermont 
-769,121,Vermont 
-769,124,Vermont 
-769,125,Vermont 
-771,126,Vermont 
-760,123,Vermont 
-758,125,Vermont 
-756,121,Vermont 
-761,123,Vermont 
-754,121,Vermont 
-754,126,Vermont 
-764,118,Vermont 
-752,127,Vermont 
-764,124,Vermont 
-768,125,Vermont 
-760,124,Vermont 
-758,126,Vermont 
-756,120,Vermont 
-761,124,Vermont 
-754,120,Vermont 
-754,127,Vermont 
-764,117,Vermont 
-752,128,Vermont 
-764,125,Vermont 
-768,126,Vermont 
-757,126,Vermont 
-758,127,Vermont 
-757,120,Vermont 
-762,124,Vermont 
-753,120,Vermont 
-755,127,Vermont 
-763,117,Vermont 
-764,116,Vermont 
-752,129,Vermont 
-765,125,Vermont 
-767,126,Vermont 
-757,127,Vermont 
-758,128,Vermont 
-757,119,Vermont 
-752,120,Vermont 
-756,127,Vermont 
-762,117,Vermont 
-765,116,Vermont 
-753,129,Vermont 
-765,126,Vermont 
-767,127,Vermont 
-759,128,Vermont 
-758,119,Vermont 
-752,119,Vermont 
-761,117,Vermont 
-766,116,Vermont 
-754,129,Vermont 
-765,127,Vermont 
-767,128,Vermont 
-759,129,Vermont 
-758,118,Vermont 
-760,117,Vermont 
-761,118,Vermont 
-766,117,Vermont 
-754,130,Vermont 
-765,128,Vermont 
-768,128,Vermont 
-760,129,Vermont 
-759,118,Vermont 
-759,117,Vermont 
-760,118,Vermont 
-754,131,Vermont 
-765,129,Vermont 
-768,129,Vermont 
-760,130,Vermont 
-760,119,Vermont 
-755,131,Vermont 
-764,129,Vermont 
-765,130,Vermont 
-760,131,Vermont 
-755,132,Vermont 
-764,130,Vermont 
-765,131,Vermont 
-761,131,Vermont 
-756,132,Vermont 
-763,130,Vermont 
-766,131,Vermont 
-761,132,Vermont 
-756,133,Vermont 
-763,131,Vermont 
-762,132,Vermont 
-763,132,Vermont 
-758,121,Vermont 
-759,120,Vermont 
-762,121,Vermont 
-761,119,Vermont 
-753,122,Vermont 
-753,125,Vermont 
-765,121,Vermont 
-766,118,Vermont 
-767,117,Vermont 
-767,124,Vermont 
-771,124,Vermont 
-757,121,Vermont 
-757,125,Vermont 
-756,126,Vermont 
-752,121,Vermont 
-763,123,Vermont 
-769,126,Vermont 
-755,121,Vermont 
-753,121,Vermont 
-763,118,Vermont 
-763,124,Vermont 
-760,125,Vermont 
-755,120,Vermont 
-761,125,Vermont 
-754,128,Vermont 
-753,128,Vermont 
-764,126,Vermont 
-759,127,Vermont 
-762,125,Vermont 
-755,128,Vermont 
-764,115,Vermont 
-766,126,Vermont 
-758,129,Vermont 
-756,128,Vermont 
-765,115,Vermont 
-766,127,Vermont 
-759,119,Vermont 
-761,116,Vermont 
-755,129,Vermont 
-766,128,Vermont 
-759,130,Vermont 
-760,116,Vermont 
-764,128,Vermont 
-761,129,Vermont 
-753,131,Vermont 
-766,129,Vermont 
-756,131,Vermont 
-766,130,Vermont 
-760,132,Vermont 
-764,131,Vermont 
-757,132,Vermont 
-767,131,Vermont 
-764,132,Vermont 
-769,127,Vermont 
-755,119,Vermont 
-763,126,Vermont 
-762,126,Vermont 
-764,114,Vermont 
-758,130,Vermont 
-765,114,Vermont 
-760,115,Vermont 
-762,129,Vermont 
-753,132,Vermont 
-756,130,Vermont 
-759,132,Vermont 
-758,132,Vermont 
-755,118,Vermont 
-762,127,Vermont 
-764,113,Vermont 
-758,131,Vermont 
-765,113,Vermont 
-760,114,Vermont 
-752,132,Vermont 
-759,133,Vermont 
-754,118,Vermont 
-755,117,Vermont 
-763,113,Vermont 
-765,112,Vermont 
-761,114,Vermont 
-752,133,Vermont 
-754,117,Vermont 
-755,116,Vermont 
-763,112,Vermont 
-762,114,Vermont 
-753,117,Vermont 
-756,116,Vermont 
-762,112,Vermont 
-762,115,Vermont 
-753,116,Vermont 
-756,115,Vermont 
-762,111,Vermont 
-753,115,Vermont 
-756,114,Vermont 
-762,110,Vermont 
-754,115,Vermont 
-755,114,Vermont 
-756,113,Vermont 
-763,110,Vermont 
-754,114,Vermont 
-757,113,Vermont 
-764,110,Vermont 
-754,113,Vermont 
-757,112,Vermont 
-764,111,Vermont 
-754,112,Vermont 
-757,111,Vermont 
-755,112,Vermont 
-756,111,Vermont 
-757,110,Vermont 
-756,110,Vermont 
-757,109,Vermont 
-756,109,Vermont 
-757,108,Vermont 
-756,108,Vermont 
-757,107,Vermont 
-756,107,Vermont 
-757,106,Vermont 
-756,106,Vermont 
-757,105,Vermont 
-756,105,Vermont 
-757,104,Vermont 
-756,104,Vermont 
-757,103,Vermont 
-756,103,Vermont 
-757,102,Vermont 
-758,102,Vermont 
-759,102,Vermont 
-760,102,Vermont 
-759,103,Vermont 
-760,101,Vermont 
-759,104,Vermont 
-760,100,Vermont 
-759,105,Vermont 
-761,100,Vermont 
-760,105,Vermont 
-761,99,Vermont 
-760,106,Vermont 
-761,106,Vermont 
-762,106,Vermont 
-763,106,Vermont 
-762,107,Vermont 
-763,107,Vermont 
-764,107,Vermont 
-764,108,Vermont 
-759,123,Vermont 
-755,122,Vermont 
-763,119,Vermont 
-765,118,Vermont 
-766,124,Vermont 
-770,126,Vermont 
-762,122,Vermont 
-753,126,Vermont 
-759,125,Vermont 
-755,126,Vermont 
-767,125,Vermont 
-756,119,Vermont 
-765,117,Vermont 
-768,127,Vermont 
-753,119,Vermont 
-766,125,Vermont 
-757,118,Vermont 
-753,130,Vermont 
-752,118,Vermont 
-764,127,Vermont 
-758,117,Vermont 
-769,128,Vermont 
-754,132,Vermont 
-763,129,Vermont 
-755,133,Vermont 
-762,130,Vermont 
-751,121,Vermont 
-761,126,Vermont 
-763,115,Vermont 
-756,129,Vermont 
-763,128,Vermont 
-757,131,Vermont 
-760,133,Vermont 
-763,127,Vermont 
-757,130,Vermont 
-759,115,Vermont 
-753,133,Vermont 
-756,118,Vermont 
-764,112,Vermont 
-760,113,Vermont 
-756,117,Vermont 
-765,111,Vermont 
-754,116,Vermont 
-763,111,Vermont 
-757,116,Vermont 
-752,116,Vermont 
-761,111,Vermont 
-753,114,Vermont 
-761,110,Vermont 
-755,113,Vermont 
-763,109,Vermont 
-764,109,Vermont 
-758,112,Vermont 
-754,111,Vermont 
-755,111,Vermont 
-755,110,Vermont 
-755,109,Vermont 
-755,108,Vermont 
-755,107,Vermont 
-755,106,Vermont 
-755,105,Vermont 
-755,104,Vermont 
-756,102,Vermont 
-758,101,Vermont 
-761,102,Vermont 
-761,101,Vermont 
-759,100,Vermont 
-759,106,Vermont 
-761,98,Vermont 
-761,107,Vermont 
-763,105,Vermont 
-763,108,Vermont 
-758,116,Vermont 
-758,115,Vermont 
-759,113,Vermont 
-760,111,Vermont 
-760,110,Vermont 
-759,112,Vermont 
-754,110,Vermont 
-754,108,Vermont 
-754,106,Vermont 
-758,100,Vermont 
-761,103,Vermont 
-759,107,Vermont 
-761,108,Vermont 
-759,111,Vermont 
-760,109,Vermont 
-753,108,Vermont 
-757,100,Vermont 
-762,103,Vermont 
-759,108,Vermont 
-759,109,Vermont 
-753,109,Vermont 
-762,104,Vermont 
-760,120,Vermont 
-763,122,Vermont 
-768,124,Vermont 
-762,118,Vermont 
-762,123,Vermont 
-759,126,Vermont 
-763,125,Vermont 
-763,116,Vermont 
-762,116,Vermont 
-766,115,Vermont 
-755,130,Vermont 
-761,130,Vermont 
-762,131,Vermont 
-760,126,Vermont 
-757,129,Vermont 
-761,128,Vermont 
-770,127,Vermont 
-766,114,Vermont 
-758,133,Vermont 
-759,114,Vermont 
-762,113,Vermont 
-755,115,Vermont 
-761,112,Vermont 
-752,115,Vermont 
-762,109,Vermont 
-758,113,Vermont 
-753,112,Vermont 
-758,110,Vermont 
-758,108,Vermont 
-758,106,Vermont 
-758,104,Vermont 
-757,101,Vermont 
-760,103,Vermont 
-760,99,Vermont 
-760,107,Vermont 
-762,108,Vermont 
-754,133,Vermont 
-760,112,Vermont 
-761,109,Vermont 
-754,109,Vermont 
-754,105,Vermont 
-759,99,Vermont 
-758,114,Vermont 
-753,110,Vermont 
-758,99,Vermont 
-760,108,Vermont 
-757,99,Vermont 
-759,98,Vermont 
-757,98,Vermont 
-757,97,Vermont 
-758,97,Vermont 
-758,96,Vermont 
-758,95,Vermont 
-759,95,Vermont 
-760,95,Vermont 
-760,94,Vermont 
-755,125,Vermont 
-759,124,Vermont 
-753,127,Vermont 
-758,120,Vermont 
-760,128,Vermont 
-759,116,Vermont 
-757,133,Vermont 
-761,115,Vermont 
-763,114,Vermont 
-761,127,Vermont 
-761,113,Vermont 
-757,115,Vermont 
-756,112,Vermont 
-758,111,Vermont 
-758,107,Vermont 
-758,103,Vermont 
-760,104,Vermont 
-762,105,Vermont 
-753,134,Vermont 
-753,111,Vermont 
-762,102,Vermont 
-759,110,Vermont 
-761,104,Vermont 
-754,134,Vermont 
-759,97,Vermont 
-757,96,Vermont 
-757,95,Vermont 
-759,94,Vermont 
-760,97,Vermont 
-756,95,Vermont 
-759,93,Vermont 
-758,93,Vermont 
-757,93,Vermont 
-756,93,Vermont 
-756,92,Vermont 
-767,120,Vermont 
-754,119,Vermont 
-767,129,Vermont 
-760,127,Vermont 
-762,128,Vermont 
-752,117,Vermont 
-753,113,Vermont 
-758,105,Vermont 
-761,105,Vermont 
-752,114,Vermont 
-760,98,Vermont 
-753,107,Vermont 
-756,97,Vermont 
-758,94,Vermont 
-756,96,Vermont 
-756,94,Vermont 
-758,92,Vermont 
-756,91,Vermont 
-758,91,Vermont 
-756,90,Vermont 
-758,90,Vermont 
-756,89,Vermont 
-757,89,Vermont 
-757,88,Vermont 
-765,124,Vermont 
-759,131,Vermont 
-753,118,Vermont 
-758,109,Vermont 
-757,117,Vermont 
-753,106,Vermont 
-759,96,Vermont 
-757,94,Vermont 
-757,92,Vermont 
-757,91,Vermont 
-757,90,Vermont 
-756,88,Vermont 
-752,106,Vermont 
-757,128,Vermont 
-757,114,Vermont 
-754,107,Vermont 
-760,96,Vermont 
-752,107,Vermont 
-758,89,Vermont 
-756,87,Vermont 
-767,130,Vermont 
-758,98,Vermont 
-759,91,Vermont 
-759,101,Vermont 
-757,87,Vermont 
-759,92,Vermont 
-742,117,New Hampshire 
-743,117,New Hampshire 
-742,118,New Hampshire 
-743,116,New Hampshire 
-741,118,New Hampshire 
-744,116,New Hampshire 
-740,118,New Hampshire 
-745,116,New Hampshire 
-739,118,New Hampshire 
-740,119,New Hampshire 
-745,115,New Hampshire 
-738,118,New Hampshire 
-739,119,New Hampshire 
-746,115,New Hampshire 
-737,118,New Hampshire 
-738,119,New Hampshire 
-747,115,New Hampshire 
-737,117,New Hampshire 
-738,120,New Hampshire 
-747,114,New Hampshire 
-736,117,New Hampshire 
-737,120,New Hampshire 
-748,114,New Hampshire 
-736,116,New Hampshire 
-748,113,New Hampshire 
-749,113,New Hampshire 
-749,112,New Hampshire 
-741,117,New Hampshire 
-744,117,New Hampshire 
-742,119,New Hampshire 
-741,119,New Hampshire 
-740,117,New Hampshire 
-745,117,New Hampshire 
-740,120,New Hampshire 
-738,117,New Hampshire 
-746,114,New Hampshire 
-748,115,New Hampshire 
-737,116,New Hampshire 
-747,113,New Hampshire 
-736,115,New Hampshire 
-749,111,New Hampshire 
-744,118,New Hampshire 
-742,120,New Hampshire 
-740,116,New Hampshire 
-745,118,New Hampshire 
-738,116,New Hampshire 
-749,115,New Hampshire 
-737,115,New Hampshire 
-735,115,New Hampshire 
-748,111,New Hampshire 
-744,119,New Hampshire 
-742,121,New Hampshire 
-740,115,New Hampshire 
-745,119,New Hampshire 
-749,116,New Hampshire 
-735,114,New Hampshire 
-748,110,New Hampshire 
-741,121,New Hampshire 
-742,122,New Hampshire 
-741,115,New Hampshire 
-746,119,New Hampshire 
-735,113,New Hampshire 
-748,109,New Hampshire 
-743,122,New Hampshire 
-742,115,New Hampshire 
-747,119,New Hampshire 
-736,113,New Hampshire 
-747,109,New Hampshire 
-748,108,New Hampshire 
-743,123,New Hampshire 
-748,119,New Hampshire 
-747,120,New Hampshire 
-736,112,New Hampshire 
-747,108,New Hampshire 
-748,107,New Hampshire 
-743,124,New Hampshire 
-748,120,New Hampshire 
-737,112,New Hampshire 
-746,108,New Hampshire 
-749,107,New Hampshire 
-742,124,New Hampshire 
-743,125,New Hampshire 
-738,112,New Hampshire 
-745,108,New Hampshire 
-749,106,New Hampshire 
-742,125,New Hampshire 
-743,126,New Hampshire 
-738,111,New Hampshire 
-744,108,New Hampshire 
-745,109,New Hampshire 
-741,125,New Hampshire 
-744,126,New Hampshire 
-739,111,New Hampshire 
-743,108,New Hampshire 
-744,109,New Hampshire 
-740,125,New Hampshire 
-745,126,New Hampshire 
-740,111,New Hampshire 
-742,108,New Hampshire 
-743,109,New Hampshire 
-740,124,New Hampshire 
-746,126,New Hampshire 
-745,127,New Hampshire 
-740,110,New Hampshire 
-741,108,New Hampshire 
-742,109,New Hampshire 
-740,123,New Hampshire 
-746,125,New Hampshire 
-745,128,New Hampshire 
-740,109,New Hampshire 
-741,107,New Hampshire 
-742,110,New Hampshire 
-740,122,New Hampshire 
-746,124,New Hampshire 
-746,128,New Hampshire 
-739,109,New Hampshire 
-741,106,New Hampshire 
-739,122,New Hampshire 
-747,124,New Hampshire 
-747,128,New Hampshire 
-738,109,New Hampshire 
-740,106,New Hampshire 
-741,105,New Hampshire 
-748,124,New Hampshire 
-748,128,New Hampshire 
-747,129,New Hampshire 
-738,108,New Hampshire 
-740,105,New Hampshire 
-741,104,New Hampshire 
-748,123,New Hampshire 
-749,128,New Hampshire 
-748,129,New Hampshire 
-737,108,New Hampshire 
-739,105,New Hampshire 
-742,104,New Hampshire 
-748,122,New Hampshire 
-749,129,New Hampshire 
-736,108,New Hampshire 
-738,105,New Hampshire 
-743,104,New Hampshire 
-747,122,New Hampshire 
-735,108,New Hampshire 
-736,109,New Hampshire 
-738,104,New Hampshire 
-744,104,New Hampshire 
-743,105,New Hampshire 
-735,107,New Hampshire 
-736,110,New Hampshire 
-738,103,New Hampshire 
-744,103,New Hampshire 
-743,106,New Hampshire 
-737,110,New Hampshire 
-739,103,New Hampshire 
-745,103,New Hampshire 
-744,106,New Hampshire 
-739,102,New Hampshire 
-745,102,New Hampshire 
-740,102,New Hampshire 
-746,102,New Hampshire 
-741,102,New Hampshire 
-747,102,New Hampshire 
-742,102,New Hampshire 
-748,102,New Hampshire 
-747,103,New Hampshire 
-742,101,New Hampshire 
-748,101,New Hampshire 
-747,104,New Hampshire 
-742,100,New Hampshire 
-748,100,New Hampshire 
-748,104,New Hampshire 
-741,100,New Hampshire 
-742,99,New Hampshire 
-749,100,New Hampshire 
-749,104,New Hampshire 
-740,100,New Hampshire 
-743,99,New Hampshire 
-750,100,New Hampshire 
-750,104,New Hampshire 
-739,100,New Hampshire 
-744,99,New Hampshire 
-751,100,New Hampshire 
-750,101,New Hampshire 
-738,100,New Hampshire 
-745,99,New Hampshire 
-744,100,New Hampshire 
-751,99,New Hampshire 
-750,102,New Hampshire 
-738,99,New Hampshire 
-746,99,New Hampshire 
-745,100,New Hampshire 
-752,99,New Hampshire 
-751,102,New Hampshire 
-738,98,New Hampshire 
-746,98,New Hampshire 
-753,99,New Hampshire 
-752,102,New Hampshire 
-737,98,New Hampshire 
-738,97,New Hampshire 
-746,97,New Hampshire 
-753,98,New Hampshire 
-752,101,New Hampshire 
-737,97,New Hampshire 
-745,97,New Hampshire 
-746,96,New Hampshire 
-736,97,New Hampshire 
-745,96,New Hampshire 
-746,95,New Hampshire 
-744,96,New Hampshire 
-747,95,New Hampshire 
-748,95,New Hampshire 
-748,94,New Hampshire 
-749,94,New Hampshire 
-742,116,New Hampshire 
-743,115,New Hampshire 
-746,116,New Hampshire 
-745,114,New Hampshire 
-737,119,New Hampshire 
-738,121,New Hampshire 
-748,112,New Hampshire 
-743,119,New Hampshire 
-746,117,New Hampshire 
-746,113,New Hampshire 
-747,112,New Hampshire 
-749,110,New Hampshire 
-739,116,New Hampshire 
-738,115,New Hampshire 
-747,111,New Hampshire 
-743,121,New Hampshire 
-740,114,New Hampshire 
-747,110,New Hampshire 
-742,123,New Hampshire 
-746,120,New Hampshire 
-749,109,New Hampshire 
-742,114,New Hampshire 
-737,113,New Hampshire 
-749,108,New Hampshire 
-748,118,New Hampshire 
-736,111,New Hampshire 
-748,106,New Hampshire 
-748,121,New Hampshire 
-746,107,New Hampshire 
-744,125,New Hampshire 
-738,113,New Hampshire 
-749,105,New Hampshire 
-743,127,New Hampshire 
-744,107,New Hampshire 
-741,126,New Hampshire 
-739,110,New Hampshire 
-744,110,New Hampshire 
-745,125,New Hampshire 
-740,112,New Hampshire 
-743,110,New Hampshire 
-746,127,New Hampshire 
-740,108,New Hampshire 
-741,123,New Hampshire 
-744,128,New Hampshire 
-740,107,New Hampshire 
-745,124,New Hampshire 
-746,129,New Hampshire 
-742,106,New Hampshire 
-747,123,New Hampshire 
-737,109,New Hampshire 
-742,105,New Hampshire 
-748,125,New Hampshire 
-747,130,New Hampshire 
-740,104,New Hampshire 
-749,127,New Hampshire 
-737,107,New Hampshire 
-742,103,New Hampshire 
-736,107,New Hampshire 
-738,106,New Hampshire 
-746,122,New Hampshire 
-737,104,New Hampshire 
-744,105,New Hampshire 
-737,103,New Hampshire 
-744,102,New Hampshire 
-746,103,New Hampshire 
-739,101,New Hampshire 
-740,101,New Hampshire 
-741,101,New Hampshire 
-743,102,New Hampshire 
-748,103,New Hampshire 
-749,101,New Hampshire 
-747,105,New Hampshire 
-747,100,New Hampshire 
-748,105,New Hampshire 
-742,98,New Hampshire 
-749,103,New Hampshire 
-743,98,New Hampshire 
-750,103,New Hampshire 
-744,98,New Hampshire 
-751,101,New Hampshire 
-738,101,New Hampshire 
-744,101,New Hampshire 
-737,99,New Hampshire 
-746,100,New Hampshire 
-751,103,New Hampshire 
-747,98,New Hampshire 
-753,100,New Hampshire 
-739,97,New Hampshire 
-753,101,New Hampshire 
-747,96,New Hampshire 
-745,95,New Hampshire 
-749,95,New Hampshire 
-750,94,New Hampshire 
-744,114,New Hampshire 
-747,117,New Hampshire 
-750,110,New Hampshire 
-746,111,New Hampshire 
-739,114,New Hampshire 
-746,110,New Hampshire 
-742,113,New Hampshire 
-747,106,New Hampshire 
-739,113,New Hampshire 
-743,128,New Hampshire 
-744,111,New Hampshire 
-743,111,New Hampshire 
-739,107,New Hampshire 
-746,130,New Hampshire 
-748,126,New Hampshire 
-749,126,New Hampshire 
-736,106,New Hampshire 
-736,104,New Hampshire 
-736,103,New Hampshire 
-746,105,New Hampshire 
-742,97,New Hampshire 
-737,101,New Hampshire 
-748,98,New Hampshire 
-740,97,New Hampshire 
-749,96,New Hampshire 
-744,113,New Hampshire 
-741,113,New Hampshire 
-742,112,New Hampshire 
-743,129,New Hampshire 
-743,112,New Hampshire 
-746,131,New Hampshire 
-735,104,New Hampshire 
-736,102,New Hampshire 
-742,96,New Hampshire 
-749,98,New Hampshire 
-740,96,New Hampshire 
-750,96,New Hampshire 
-742,129,New Hampshire 
-745,131,New Hampshire 
-734,104,New Hampshire 
-735,102,New Hampshire 
-750,98,New Hampshire 
-750,97,New Hampshire 
-742,130,New Hampshire 
-745,132,New Hampshire 
-734,103,New Hampshire 
-734,102,New Hampshire 
-751,97,New Hampshire 
-742,131,New Hampshire 
-745,133,New Hampshire 
-733,102,New Hampshire 
-752,97,New Hampshire 
-743,131,New Hampshire 
-744,133,New Hampshire 
-745,134,New Hampshire 
-752,96,New Hampshire 
-743,133,New Hampshire 
-746,134,New Hampshire 
-752,95,New Hampshire 
-743,134,New Hampshire 
-746,135,New Hampshire 
-752,94,New Hampshire 
-743,135,New Hampshire 
-753,94,New Hampshire 
-742,135,New Hampshire 
-743,136,New Hampshire 
-742,136,New Hampshire 
-743,118,New Hampshire 
-739,117,New Hampshire 
-747,116,New Hampshire 
-741,116,New Hampshire 
-740,121,New Hampshire 
-736,114,New Hampshire 
-746,118,New Hampshire 
-744,120,New Hampshire 
-745,120,New Hampshire 
-741,114,New Hampshire 
-744,122,New Hampshire 
-746,109,New Hampshire 
-747,121,New Hampshire 
-744,124,New Hampshire 
-741,124,New Hampshire 
-745,107,New Hampshire 
-738,110,New Hampshire 
-744,127,New Hampshire 
-740,126,New Hampshire 
-742,107,New Hampshire 
-741,110,New Hampshire 
-747,125,New Hampshire 
-742,111,New Hampshire 
-739,108,New Hampshire 
-747,127,New Hampshire 
-749,124,New Hampshire 
-738,107,New Hampshire 
-748,130,New Hampshire 
-749,130,New Hampshire 
-743,103,New Hampshire 
-745,104,New Hampshire 
-738,102,New Hampshire 
-745,106,New Hampshire 
-746,101,New Hampshire 
-749,102,New Hampshire 
-746,104,New Hampshire 
-748,99,New Hampshire 
-749,99,New Hampshire 
-750,99,New Hampshire 
-752,100,New Hampshire 
-745,98,New Hampshire 
-747,99,New Hampshire 
-739,98,New Hampshire 
-736,98,New Hampshire 
-744,97,New Hampshire 
-743,96,New Hampshire 
-743,114,New Hampshire 
-746,112,New Hampshire 
-744,121,New Hampshire 
-746,121,New Hampshire 
-746,106,New Hampshire 
-741,127,New Hampshire 
-744,129,New Hampshire 
-749,125,New Hampshire 
-737,106,New Hampshire 
-745,105,New Hampshire 
-741,98,New Hampshire 
-736,99,New Hampshire 
-750,95,New Hampshire 
-745,111,New Hampshire 
-742,128,New Hampshire 
-745,130,New Hampshire 
-735,103,New Hampshire 
-736,101,New Hampshire 
-740,98,New Hampshire 
-743,130,New Hampshire 
-735,105,New Hampshire 
-751,96,New Hampshire 
-744,131,New Hampshire 
-734,105,New Hampshire 
-741,130,New Hampshire 
-733,103,New Hampshire 
-741,131,New Hampshire 
-746,133,New Hampshire 
-743,132,New Hampshire 
-745,135,New Hampshire 
-747,134,New Hampshire 
-742,134,New Hampshire 
-752,93,New Hampshire 
-753,93,New Hampshire 
-745,121,New Hampshire 
-749,131,New Hampshire 
-745,112,New Hampshire 
-744,130,New Hampshire 
-736,100,New Hampshire 
-747,133,New Hampshire 
-748,134,New Hampshire 
-749,132,New Hampshire 
-748,133,New Hampshire 
-749,134,New Hampshire 
-748,132,New Hampshire 
-749,135,New Hampshire 
-744,115,New Hampshire 
-749,114,New Hampshire 
-748,116,New Hampshire 
-737,114,New Hampshire 
-741,122,New Hampshire 
-747,118,New Hampshire 
-747,107,New Hampshire 
-739,112,New Hampshire 
-745,110,New Hampshire 
-741,111,New Hampshire 
-741,109,New Hampshire 
-746,123,New Hampshire 
-739,106,New Hampshire 
-741,103,New Hampshire 
-737,105,New Hampshire 
-735,106,New Hampshire 
-745,101,New Hampshire 
-743,101,New Hampshire 
-741,99,New Hampshire 
-739,99,New Hampshire 
-751,98,New Hampshire 
-754,99,New Hampshire 
-735,97,New Hampshire 
-745,113,New Hampshire 
-740,113,New Hampshire 
-742,127,New Hampshire 
-745,123,New Hampshire 
-745,122,New Hampshire 
-743,97,New Hampshire 
-751,94,New Hampshire 
-744,112,New Hampshire 
-741,97,New Hampshire 
-749,97,New Hampshire 
-741,96,New Hampshire 
-733,104,New Hampshire 
-744,132,New Hampshire 
-742,132,New Hampshire 
-744,134,New Hampshire 
-751,95,New Hampshire 
-744,135,New Hampshire 
-748,131,New Hampshire 
-741,128,New Hampshire 
-741,132,New Hampshire 
-751,93,New Hampshire 
-747,132,New Hampshire 
-749,133,New Hampshire 
-739,120,New Hampshire 
-743,120,New Hampshire 
-735,112,New Hampshire 
-737,111,New Hampshire 
-743,107,New Hampshire 
-745,129,New Hampshire 
-748,127,New Hampshire 
-735,109,New Hampshire 
-747,101,New Hampshire 
-740,99,New Hampshire 
-752,98,New Hampshire 
-748,96,New Hampshire 
-748,117,New Hampshire 
-747,131,New Hampshire 
-754,100,New Hampshire 
-736,105,New Hampshire 
-746,132,New Hampshire 
-735,101,New Hampshire 
-733,101,New Hampshire 
-747,135,New Hampshire 
-735,98,New Hampshire 
-745,136,New Hampshire 
-748,135,New Hampshire 
-734,98,New Hampshire 
-734,99,New Hampshire 
-734,100,New Hampshire 
-741,120,New Hampshire 
-744,123,New Hampshire 
-747,126,New Hampshire 
-739,104,New Hampshire 
-743,100,New Hampshire 
-747,97,New Hampshire 
-741,112,New Hampshire 
-743,113,New Hampshire 
-741,129,New Hampshire 
-742,133,New Hampshire 
-735,99,New Hampshire 
-733,100,New Hampshire 
-733,99,New Hampshire 
-739,115,New Hampshire 
-739,121,New Hampshire 
-737,100,New Hampshire 
-737,102,New Hampshire 
-734,101,New Hampshire 
-735,100,New Hampshire 
-732,99,New Hampshire 
-742,126,New Hampshire 
-738,114,New Hampshire 
-744,136,New Hampshire 
-732,98,New Hampshire 
-740,103,New Hampshire 
-733,98,New Hampshire 
-748,97,New Hampshire 
+758,122,New Hampshire 
+759,122,New Hampshire 
+758,123,New Hampshire 
+759,121,New Hampshire 
+757,123,New Hampshire 
+760,121,New Hampshire 
+756,123,New Hampshire 
+761,121,New Hampshire 
+755,123,New Hampshire 
+756,124,New Hampshire 
+761,120,New Hampshire 
+754,123,New Hampshire 
+755,124,New Hampshire 
+762,120,New Hampshire 
+753,123,New Hampshire 
+754,124,New Hampshire 
+763,120,New Hampshire 
+752,123,New Hampshire 
+753,124,New Hampshire 
+764,120,New Hampshire 
+763,121,New Hampshire 
+752,124,New Hampshire 
+765,120,New Hampshire 
+764,121,New Hampshire 
+752,125,New Hampshire 
+765,119,New Hampshire 
+764,122,New Hampshire 
+766,119,New Hampshire 
+765,122,New Hampshire 
+767,119,New Hampshire 
+766,122,New Hampshire 
+767,118,New Hampshire 
+767,122,New Hampshire 
+766,123,New Hampshire 
+768,122,New Hampshire 
+767,123,New Hampshire 
+769,122,New Hampshire 
+768,123,New Hampshire 
+770,122,New Hampshire 
+769,123,New Hampshire 
+770,123,New Hampshire 
+770,124,New Hampshire 
+770,125,New Hampshire 
+771,125,New Hampshire 
+772,125,New Hampshire 
+772,126,New Hampshire 
+757,122,New Hampshire 
+760,122,New Hampshire 
+758,124,New Hampshire 
+757,124,New Hampshire 
+756,122,New Hampshire 
+761,122,New Hampshire 
+756,125,New Hampshire 
+754,122,New Hampshire 
+762,119,New Hampshire 
+754,125,New Hampshire 
+752,122,New Hampshire 
+764,119,New Hampshire 
+766,120,New Hampshire 
+752,126,New Hampshire 
+764,123,New Hampshire 
+765,123,New Hampshire 
+766,121,New Hampshire 
+767,121,New Hampshire 
+768,121,New Hampshire 
+769,121,New Hampshire 
+769,124,New Hampshire 
+769,125,New Hampshire 
+771,126,New Hampshire 
+760,123,New Hampshire 
+758,125,New Hampshire 
+756,121,New Hampshire 
+761,123,New Hampshire 
+754,121,New Hampshire 
+754,126,New Hampshire 
+764,118,New Hampshire 
+752,127,New Hampshire 
+764,124,New Hampshire 
+768,125,New Hampshire 
+760,124,New Hampshire 
+758,126,New Hampshire 
+756,120,New Hampshire 
+761,124,New Hampshire 
+754,120,New Hampshire 
+754,127,New Hampshire 
+764,117,New Hampshire 
+752,128,New Hampshire 
+764,125,New Hampshire 
+768,126,New Hampshire 
+757,126,New Hampshire 
+758,127,New Hampshire 
+757,120,New Hampshire 
+762,124,New Hampshire 
+753,120,New Hampshire 
+755,127,New Hampshire 
+763,117,New Hampshire 
+764,116,New Hampshire 
+752,129,New Hampshire 
+765,125,New Hampshire 
+767,126,New Hampshire 
+757,127,New Hampshire 
+758,128,New Hampshire 
+757,119,New Hampshire 
+752,120,New Hampshire 
+756,127,New Hampshire 
+762,117,New Hampshire 
+765,116,New Hampshire 
+753,129,New Hampshire 
+765,126,New Hampshire 
+767,127,New Hampshire 
+759,128,New Hampshire 
+758,119,New Hampshire 
+752,119,New Hampshire 
+761,117,New Hampshire 
+766,116,New Hampshire 
+754,129,New Hampshire 
+765,127,New Hampshire 
+767,128,New Hampshire 
+759,129,New Hampshire 
+758,118,New Hampshire 
+760,117,New Hampshire 
+761,118,New Hampshire 
+766,117,New Hampshire 
+754,130,New Hampshire 
+765,128,New Hampshire 
+768,128,New Hampshire 
+760,129,New Hampshire 
+759,118,New Hampshire 
+759,117,New Hampshire 
+760,118,New Hampshire 
+754,131,New Hampshire 
+765,129,New Hampshire 
+768,129,New Hampshire 
+760,130,New Hampshire 
+760,119,New Hampshire 
+755,131,New Hampshire 
+764,129,New Hampshire 
+765,130,New Hampshire 
+760,131,New Hampshire 
+755,132,New Hampshire 
+764,130,New Hampshire 
+765,131,New Hampshire 
+761,131,New Hampshire 
+756,132,New Hampshire 
+763,130,New Hampshire 
+766,131,New Hampshire 
+761,132,New Hampshire 
+756,133,New Hampshire 
+763,131,New Hampshire 
+762,132,New Hampshire 
+763,132,New Hampshire 
+758,121,New Hampshire 
+759,120,New Hampshire 
+762,121,New Hampshire 
+761,119,New Hampshire 
+753,122,New Hampshire 
+753,125,New Hampshire 
+765,121,New Hampshire 
+766,118,New Hampshire 
+767,117,New Hampshire 
+767,124,New Hampshire 
+771,124,New Hampshire 
+757,121,New Hampshire 
+757,125,New Hampshire 
+756,126,New Hampshire 
+752,121,New Hampshire 
+763,123,New Hampshire 
+769,126,New Hampshire 
+755,121,New Hampshire 
+753,121,New Hampshire 
+763,118,New Hampshire 
+763,124,New Hampshire 
+760,125,New Hampshire 
+755,120,New Hampshire 
+761,125,New Hampshire 
+754,128,New Hampshire 
+753,128,New Hampshire 
+764,126,New Hampshire 
+759,127,New Hampshire 
+762,125,New Hampshire 
+755,128,New Hampshire 
+764,115,New Hampshire 
+766,126,New Hampshire 
+758,129,New Hampshire 
+756,128,New Hampshire 
+765,115,New Hampshire 
+766,127,New Hampshire 
+759,119,New Hampshire 
+761,116,New Hampshire 
+755,129,New Hampshire 
+766,128,New Hampshire 
+759,130,New Hampshire 
+760,116,New Hampshire 
+764,128,New Hampshire 
+761,129,New Hampshire 
+753,131,New Hampshire 
+766,129,New Hampshire 
+756,131,New Hampshire 
+766,130,New Hampshire 
+760,132,New Hampshire 
+764,131,New Hampshire 
+757,132,New Hampshire 
+767,131,New Hampshire 
+764,132,New Hampshire 
+769,127,New Hampshire 
+755,119,New Hampshire 
+763,126,New Hampshire 
+762,126,New Hampshire 
+764,114,New Hampshire 
+758,130,New Hampshire 
+765,114,New Hampshire 
+760,115,New Hampshire 
+762,129,New Hampshire 
+753,132,New Hampshire 
+756,130,New Hampshire 
+759,132,New Hampshire 
+758,132,New Hampshire 
+755,118,New Hampshire 
+762,127,New Hampshire 
+764,113,New Hampshire 
+758,131,New Hampshire 
+765,113,New Hampshire 
+760,114,New Hampshire 
+752,132,New Hampshire 
+759,133,New Hampshire 
+754,118,New Hampshire 
+755,117,New Hampshire 
+763,113,New Hampshire 
+765,112,New Hampshire 
+761,114,New Hampshire 
+752,133,New Hampshire 
+754,117,New Hampshire 
+755,116,New Hampshire 
+763,112,New Hampshire 
+762,114,New Hampshire 
+753,117,New Hampshire 
+756,116,New Hampshire 
+762,112,New Hampshire 
+762,115,New Hampshire 
+753,116,New Hampshire 
+756,115,New Hampshire 
+762,111,New Hampshire 
+753,115,New Hampshire 
+756,114,New Hampshire 
+762,110,New Hampshire 
+754,115,New Hampshire 
+755,114,New Hampshire 
+756,113,New Hampshire 
+763,110,New Hampshire 
+754,114,New Hampshire 
+757,113,New Hampshire 
+764,110,New Hampshire 
+754,113,New Hampshire 
+757,112,New Hampshire 
+764,111,New Hampshire 
+754,112,New Hampshire 
+757,111,New Hampshire 
+755,112,New Hampshire 
+756,111,New Hampshire 
+757,110,New Hampshire 
+756,110,New Hampshire 
+757,109,New Hampshire 
+756,109,New Hampshire 
+757,108,New Hampshire 
+756,108,New Hampshire 
+757,107,New Hampshire 
+756,107,New Hampshire 
+757,106,New Hampshire 
+756,106,New Hampshire 
+757,105,New Hampshire 
+756,105,New Hampshire 
+757,104,New Hampshire 
+756,104,New Hampshire 
+757,103,New Hampshire 
+756,103,New Hampshire 
+757,102,New Hampshire 
+758,102,New Hampshire 
+759,102,New Hampshire 
+760,102,New Hampshire 
+759,103,New Hampshire 
+760,101,New Hampshire 
+759,104,New Hampshire 
+760,100,New Hampshire 
+759,105,New Hampshire 
+761,100,New Hampshire 
+760,105,New Hampshire 
+761,99,New Hampshire 
+760,106,New Hampshire 
+761,106,New Hampshire 
+762,106,New Hampshire 
+763,106,New Hampshire 
+762,107,New Hampshire 
+763,107,New Hampshire 
+764,107,New Hampshire 
+764,108,New Hampshire 
+759,123,New Hampshire 
+755,122,New Hampshire 
+763,119,New Hampshire 
+765,118,New Hampshire 
+766,124,New Hampshire 
+770,126,New Hampshire 
+762,122,New Hampshire 
+753,126,New Hampshire 
+759,125,New Hampshire 
+755,126,New Hampshire 
+767,125,New Hampshire 
+756,119,New Hampshire 
+765,117,New Hampshire 
+768,127,New Hampshire 
+753,119,New Hampshire 
+766,125,New Hampshire 
+757,118,New Hampshire 
+753,130,New Hampshire 
+752,118,New Hampshire 
+764,127,New Hampshire 
+758,117,New Hampshire 
+769,128,New Hampshire 
+754,132,New Hampshire 
+763,129,New Hampshire 
+755,133,New Hampshire 
+762,130,New Hampshire 
+751,121,New Hampshire 
+761,126,New Hampshire 
+763,115,New Hampshire 
+756,129,New Hampshire 
+763,128,New Hampshire 
+757,131,New Hampshire 
+760,133,New Hampshire 
+763,127,New Hampshire 
+757,130,New Hampshire 
+759,115,New Hampshire 
+753,133,New Hampshire 
+756,118,New Hampshire 
+764,112,New Hampshire 
+760,113,New Hampshire 
+756,117,New Hampshire 
+765,111,New Hampshire 
+754,116,New Hampshire 
+763,111,New Hampshire 
+757,116,New Hampshire 
+752,116,New Hampshire 
+761,111,New Hampshire 
+753,114,New Hampshire 
+761,110,New Hampshire 
+755,113,New Hampshire 
+763,109,New Hampshire 
+764,109,New Hampshire 
+758,112,New Hampshire 
+754,111,New Hampshire 
+755,111,New Hampshire 
+755,110,New Hampshire 
+755,109,New Hampshire 
+755,108,New Hampshire 
+755,107,New Hampshire 
+755,106,New Hampshire 
+755,105,New Hampshire 
+755,104,New Hampshire 
+756,102,New Hampshire 
+758,101,New Hampshire 
+761,102,New Hampshire 
+761,101,New Hampshire 
+759,100,New Hampshire 
+759,106,New Hampshire 
+761,98,New Hampshire 
+761,107,New Hampshire 
+763,105,New Hampshire 
+763,108,New Hampshire 
+758,116,New Hampshire 
+758,115,New Hampshire 
+759,113,New Hampshire 
+760,111,New Hampshire 
+760,110,New Hampshire 
+759,112,New Hampshire 
+754,110,New Hampshire 
+754,108,New Hampshire 
+754,106,New Hampshire 
+758,100,New Hampshire 
+761,103,New Hampshire 
+759,107,New Hampshire 
+761,108,New Hampshire 
+759,111,New Hampshire 
+760,109,New Hampshire 
+753,108,New Hampshire 
+757,100,New Hampshire 
+762,103,New Hampshire 
+759,108,New Hampshire 
+759,109,New Hampshire 
+753,109,New Hampshire 
+762,104,New Hampshire 
+760,120,New Hampshire 
+763,122,New Hampshire 
+768,124,New Hampshire 
+762,118,New Hampshire 
+762,123,New Hampshire 
+759,126,New Hampshire 
+763,125,New Hampshire 
+763,116,New Hampshire 
+762,116,New Hampshire 
+766,115,New Hampshire 
+755,130,New Hampshire 
+761,130,New Hampshire 
+762,131,New Hampshire 
+760,126,New Hampshire 
+757,129,New Hampshire 
+761,128,New Hampshire 
+770,127,New Hampshire 
+766,114,New Hampshire 
+758,133,New Hampshire 
+759,114,New Hampshire 
+762,113,New Hampshire 
+755,115,New Hampshire 
+761,112,New Hampshire 
+752,115,New Hampshire 
+762,109,New Hampshire 
+758,113,New Hampshire 
+753,112,New Hampshire 
+758,110,New Hampshire 
+758,108,New Hampshire 
+758,106,New Hampshire 
+758,104,New Hampshire 
+757,101,New Hampshire 
+760,103,New Hampshire 
+760,99,New Hampshire 
+760,107,New Hampshire 
+762,108,New Hampshire 
+754,133,New Hampshire 
+760,112,New Hampshire 
+761,109,New Hampshire 
+754,109,New Hampshire 
+754,105,New Hampshire 
+759,99,New Hampshire 
+758,114,New Hampshire 
+753,110,New Hampshire 
+758,99,New Hampshire 
+760,108,New Hampshire 
+757,99,New Hampshire 
+759,98,New Hampshire 
+757,98,New Hampshire 
+757,97,New Hampshire 
+758,97,New Hampshire 
+758,96,New Hampshire 
+758,95,New Hampshire 
+759,95,New Hampshire 
+760,95,New Hampshire 
+760,94,New Hampshire 
+755,125,New Hampshire 
+759,124,New Hampshire 
+753,127,New Hampshire 
+758,120,New Hampshire 
+760,128,New Hampshire 
+759,116,New Hampshire 
+757,133,New Hampshire 
+761,115,New Hampshire 
+763,114,New Hampshire 
+761,127,New Hampshire 
+761,113,New Hampshire 
+757,115,New Hampshire 
+756,112,New Hampshire 
+758,111,New Hampshire 
+758,107,New Hampshire 
+758,103,New Hampshire 
+760,104,New Hampshire 
+762,105,New Hampshire 
+753,134,New Hampshire 
+753,111,New Hampshire 
+762,102,New Hampshire 
+759,110,New Hampshire 
+761,104,New Hampshire 
+754,134,New Hampshire 
+759,97,New Hampshire 
+757,96,New Hampshire 
+757,95,New Hampshire 
+759,94,New Hampshire 
+760,97,New Hampshire 
+756,95,New Hampshire 
+759,93,New Hampshire 
+758,93,New Hampshire 
+757,93,New Hampshire 
+756,93,New Hampshire 
+756,92,New Hampshire 
+767,120,New Hampshire 
+754,119,New Hampshire 
+767,129,New Hampshire 
+760,127,New Hampshire 
+762,128,New Hampshire 
+752,117,New Hampshire 
+753,113,New Hampshire 
+758,105,New Hampshire 
+761,105,New Hampshire 
+752,114,New Hampshire 
+760,98,New Hampshire 
+753,107,New Hampshire 
+756,97,New Hampshire 
+758,94,New Hampshire 
+756,96,New Hampshire 
+756,94,New Hampshire 
+758,92,New Hampshire 
+756,91,New Hampshire 
+758,91,New Hampshire 
+756,90,New Hampshire 
+758,90,New Hampshire 
+756,89,New Hampshire 
+757,89,New Hampshire 
+757,88,New Hampshire 
+765,124,New Hampshire 
+759,131,New Hampshire 
+753,118,New Hampshire 
+758,109,New Hampshire 
+757,117,New Hampshire 
+753,106,New Hampshire 
+759,96,New Hampshire 
+757,94,New Hampshire 
+757,92,New Hampshire 
+757,91,New Hampshire 
+757,90,New Hampshire 
+756,88,New Hampshire 
+752,106,New Hampshire 
+757,128,New Hampshire 
+757,114,New Hampshire 
+754,107,New Hampshire 
+760,96,New Hampshire 
+752,107,New Hampshire 
+758,89,New Hampshire 
+756,87,New Hampshire 
+767,130,New Hampshire 
+758,98,New Hampshire 
+759,91,New Hampshire 
+759,101,New Hampshire 
+757,87,New Hampshire 
+759,92,New Hampshire 
+742,117,Vermont 
+743,117,Vermont 
+742,118,Vermont 
+743,116,Vermont 
+741,118,Vermont 
+744,116,Vermont 
+740,118,Vermont 
+745,116,Vermont 
+739,118,Vermont 
+740,119,Vermont 
+745,115,Vermont 
+738,118,Vermont 
+739,119,Vermont 
+746,115,Vermont 
+737,118,Vermont 
+738,119,Vermont 
+747,115,Vermont 
+737,117,Vermont 
+738,120,Vermont 
+747,114,Vermont 
+736,117,Vermont 
+737,120,Vermont 
+748,114,Vermont 
+736,116,Vermont 
+748,113,Vermont 
+749,113,Vermont 
+749,112,Vermont 
+741,117,Vermont 
+744,117,Vermont 
+742,119,Vermont 
+741,119,Vermont 
+740,117,Vermont 
+745,117,Vermont 
+740,120,Vermont 
+738,117,Vermont 
+746,114,Vermont 
+748,115,Vermont 
+737,116,Vermont 
+747,113,Vermont 
+736,115,Vermont 
+749,111,Vermont 
+744,118,Vermont 
+742,120,Vermont 
+740,116,Vermont 
+745,118,Vermont 
+738,116,Vermont 
+749,115,Vermont 
+737,115,Vermont 
+735,115,Vermont 
+748,111,Vermont 
+744,119,Vermont 
+742,121,Vermont 
+740,115,Vermont 
+745,119,Vermont 
+749,116,Vermont 
+735,114,Vermont 
+748,110,Vermont 
+741,121,Vermont 
+742,122,Vermont 
+741,115,Vermont 
+746,119,Vermont 
+735,113,Vermont 
+748,109,Vermont 
+743,122,Vermont 
+742,115,Vermont 
+747,119,Vermont 
+736,113,Vermont 
+747,109,Vermont 
+748,108,Vermont 
+743,123,Vermont 
+748,119,Vermont 
+747,120,Vermont 
+736,112,Vermont 
+747,108,Vermont 
+748,107,Vermont 
+743,124,Vermont 
+748,120,Vermont 
+737,112,Vermont 
+746,108,Vermont 
+749,107,Vermont 
+742,124,Vermont 
+743,125,Vermont 
+738,112,Vermont 
+745,108,Vermont 
+749,106,Vermont 
+742,125,Vermont 
+743,126,Vermont 
+738,111,Vermont 
+744,108,Vermont 
+745,109,Vermont 
+741,125,Vermont 
+744,126,Vermont 
+739,111,Vermont 
+743,108,Vermont 
+744,109,Vermont 
+740,125,Vermont 
+745,126,Vermont 
+740,111,Vermont 
+742,108,Vermont 
+743,109,Vermont 
+740,124,Vermont 
+746,126,Vermont 
+745,127,Vermont 
+740,110,Vermont 
+741,108,Vermont 
+742,109,Vermont 
+740,123,Vermont 
+746,125,Vermont 
+745,128,Vermont 
+740,109,Vermont 
+741,107,Vermont 
+742,110,Vermont 
+740,122,Vermont 
+746,124,Vermont 
+746,128,Vermont 
+739,109,Vermont 
+741,106,Vermont 
+739,122,Vermont 
+747,124,Vermont 
+747,128,Vermont 
+738,109,Vermont 
+740,106,Vermont 
+741,105,Vermont 
+748,124,Vermont 
+748,128,Vermont 
+747,129,Vermont 
+738,108,Vermont 
+740,105,Vermont 
+741,104,Vermont 
+748,123,Vermont 
+749,128,Vermont 
+748,129,Vermont 
+737,108,Vermont 
+739,105,Vermont 
+742,104,Vermont 
+748,122,Vermont 
+749,129,Vermont 
+736,108,Vermont 
+738,105,Vermont 
+743,104,Vermont 
+747,122,Vermont 
+735,108,Vermont 
+736,109,Vermont 
+738,104,Vermont 
+744,104,Vermont 
+743,105,Vermont 
+735,107,Vermont 
+736,110,Vermont 
+738,103,Vermont 
+744,103,Vermont 
+743,106,Vermont 
+737,110,Vermont 
+739,103,Vermont 
+745,103,Vermont 
+744,106,Vermont 
+739,102,Vermont 
+745,102,Vermont 
+740,102,Vermont 
+746,102,Vermont 
+741,102,Vermont 
+747,102,Vermont 
+742,102,Vermont 
+748,102,Vermont 
+747,103,Vermont 
+742,101,Vermont 
+748,101,Vermont 
+747,104,Vermont 
+742,100,Vermont 
+748,100,Vermont 
+748,104,Vermont 
+741,100,Vermont 
+742,99,Vermont 
+749,100,Vermont 
+749,104,Vermont 
+740,100,Vermont 
+743,99,Vermont 
+750,100,Vermont 
+750,104,Vermont 
+739,100,Vermont 
+744,99,Vermont 
+751,100,Vermont 
+750,101,Vermont 
+738,100,Vermont 
+745,99,Vermont 
+744,100,Vermont 
+751,99,Vermont 
+750,102,Vermont 
+738,99,Vermont 
+746,99,Vermont 
+745,100,Vermont 
+752,99,Vermont 
+751,102,Vermont 
+738,98,Vermont 
+746,98,Vermont 
+753,99,Vermont 
+752,102,Vermont 
+737,98,Vermont 
+738,97,Vermont 
+746,97,Vermont 
+753,98,Vermont 
+752,101,Vermont 
+737,97,Vermont 
+745,97,Vermont 
+746,96,Vermont 
+736,97,Vermont 
+745,96,Vermont 
+746,95,Vermont 
+744,96,Vermont 
+747,95,Vermont 
+748,95,Vermont 
+748,94,Vermont 
+749,94,Vermont 
+742,116,Vermont 
+743,115,Vermont 
+746,116,Vermont 
+745,114,Vermont 
+737,119,Vermont 
+738,121,Vermont 
+748,112,Vermont 
+743,119,Vermont 
+746,117,Vermont 
+746,113,Vermont 
+747,112,Vermont 
+749,110,Vermont 
+739,116,Vermont 
+738,115,Vermont 
+747,111,Vermont 
+743,121,Vermont 
+740,114,Vermont 
+747,110,Vermont 
+742,123,Vermont 
+746,120,Vermont 
+749,109,Vermont 
+742,114,Vermont 
+737,113,Vermont 
+749,108,Vermont 
+748,118,Vermont 
+736,111,Vermont 
+748,106,Vermont 
+748,121,Vermont 
+746,107,Vermont 
+744,125,Vermont 
+738,113,Vermont 
+749,105,Vermont 
+743,127,Vermont 
+744,107,Vermont 
+741,126,Vermont 
+739,110,Vermont 
+744,110,Vermont 
+745,125,Vermont 
+740,112,Vermont 
+743,110,Vermont 
+746,127,Vermont 
+740,108,Vermont 
+741,123,Vermont 
+744,128,Vermont 
+740,107,Vermont 
+745,124,Vermont 
+746,129,Vermont 
+742,106,Vermont 
+747,123,Vermont 
+737,109,Vermont 
+742,105,Vermont 
+748,125,Vermont 
+747,130,Vermont 
+740,104,Vermont 
+749,127,Vermont 
+737,107,Vermont 
+742,103,Vermont 
+736,107,Vermont 
+738,106,Vermont 
+746,122,Vermont 
+737,104,Vermont 
+744,105,Vermont 
+737,103,Vermont 
+744,102,Vermont 
+746,103,Vermont 
+739,101,Vermont 
+740,101,Vermont 
+741,101,Vermont 
+743,102,Vermont 
+748,103,Vermont 
+749,101,Vermont 
+747,105,Vermont 
+747,100,Vermont 
+748,105,Vermont 
+742,98,Vermont 
+749,103,Vermont 
+743,98,Vermont 
+750,103,Vermont 
+744,98,Vermont 
+751,101,Vermont 
+738,101,Vermont 
+744,101,Vermont 
+737,99,Vermont 
+746,100,Vermont 
+751,103,Vermont 
+747,98,Vermont 
+753,100,Vermont 
+739,97,Vermont 
+753,101,Vermont 
+747,96,Vermont 
+745,95,Vermont 
+749,95,Vermont 
+750,94,Vermont 
+744,114,Vermont 
+747,117,Vermont 
+750,110,Vermont 
+746,111,Vermont 
+739,114,Vermont 
+746,110,Vermont 
+742,113,Vermont 
+747,106,Vermont 
+739,113,Vermont 
+743,128,Vermont 
+744,111,Vermont 
+743,111,Vermont 
+739,107,Vermont 
+746,130,Vermont 
+748,126,Vermont 
+749,126,Vermont 
+736,106,Vermont 
+736,104,Vermont 
+736,103,Vermont 
+746,105,Vermont 
+742,97,Vermont 
+737,101,Vermont 
+748,98,Vermont 
+740,97,Vermont 
+749,96,Vermont 
+744,113,Vermont 
+741,113,Vermont 
+742,112,Vermont 
+743,129,Vermont 
+743,112,Vermont 
+746,131,Vermont 
+735,104,Vermont 
+736,102,Vermont 
+742,96,Vermont 
+749,98,Vermont 
+740,96,Vermont 
+750,96,Vermont 
+742,129,Vermont 
+745,131,Vermont 
+734,104,Vermont 
+735,102,Vermont 
+750,98,Vermont 
+750,97,Vermont 
+742,130,Vermont 
+745,132,Vermont 
+734,103,Vermont 
+734,102,Vermont 
+751,97,Vermont 
+742,131,Vermont 
+745,133,Vermont 
+733,102,Vermont 
+752,97,Vermont 
+743,131,Vermont 
+744,133,Vermont 
+745,134,Vermont 
+752,96,Vermont 
+743,133,Vermont 
+746,134,Vermont 
+752,95,Vermont 
+743,134,Vermont 
+746,135,Vermont 
+752,94,Vermont 
+743,135,Vermont 
+753,94,Vermont 
+742,135,Vermont 
+743,136,Vermont 
+742,136,Vermont 
+743,118,Vermont 
+739,117,Vermont 
+747,116,Vermont 
+741,116,Vermont 
+740,121,Vermont 
+736,114,Vermont 
+746,118,Vermont 
+744,120,Vermont 
+745,120,Vermont 
+741,114,Vermont 
+744,122,Vermont 
+746,109,Vermont 
+747,121,Vermont 
+744,124,Vermont 
+741,124,Vermont 
+745,107,Vermont 
+738,110,Vermont 
+744,127,Vermont 
+740,126,Vermont 
+742,107,Vermont 
+741,110,Vermont 
+747,125,Vermont 
+742,111,Vermont 
+739,108,Vermont 
+747,127,Vermont 
+749,124,Vermont 
+738,107,Vermont 
+748,130,Vermont 
+749,130,Vermont 
+743,103,Vermont 
+745,104,Vermont 
+738,102,Vermont 
+745,106,Vermont 
+746,101,Vermont 
+749,102,Vermont 
+746,104,Vermont 
+748,99,Vermont 
+749,99,Vermont 
+750,99,Vermont 
+752,100,Vermont 
+745,98,Vermont 
+747,99,Vermont 
+739,98,Vermont 
+736,98,Vermont 
+744,97,Vermont 
+743,96,Vermont 
+743,114,Vermont 
+746,112,Vermont 
+744,121,Vermont 
+746,121,Vermont 
+746,106,Vermont 
+741,127,Vermont 
+744,129,Vermont 
+749,125,Vermont 
+737,106,Vermont 
+745,105,Vermont 
+741,98,Vermont 
+736,99,Vermont 
+750,95,Vermont 
+745,111,Vermont 
+742,128,Vermont 
+745,130,Vermont 
+735,103,Vermont 
+736,101,Vermont 
+740,98,Vermont 
+743,130,Vermont 
+735,105,Vermont 
+751,96,Vermont 
+744,131,Vermont 
+734,105,Vermont 
+741,130,Vermont 
+733,103,Vermont 
+741,131,Vermont 
+746,133,Vermont 
+743,132,Vermont 
+745,135,Vermont 
+747,134,Vermont 
+742,134,Vermont 
+752,93,Vermont 
+753,93,Vermont 
+745,121,Vermont 
+749,131,Vermont 
+745,112,Vermont 
+744,130,Vermont 
+736,100,Vermont 
+747,133,Vermont 
+748,134,Vermont 
+749,132,Vermont 
+748,133,Vermont 
+749,134,Vermont 
+748,132,Vermont 
+749,135,Vermont 
+744,115,Vermont 
+749,114,Vermont 
+748,116,Vermont 
+737,114,Vermont 
+741,122,Vermont 
+747,118,Vermont 
+747,107,Vermont 
+739,112,Vermont 
+745,110,Vermont 
+741,111,Vermont 
+741,109,Vermont 
+746,123,Vermont 
+739,106,Vermont 
+741,103,Vermont 
+737,105,Vermont 
+735,106,Vermont 
+745,101,Vermont 
+743,101,Vermont 
+741,99,Vermont 
+739,99,Vermont 
+751,98,Vermont 
+754,99,Vermont 
+735,97,Vermont 
+745,113,Vermont 
+740,113,Vermont 
+742,127,Vermont 
+745,123,Vermont 
+745,122,Vermont 
+743,97,Vermont 
+751,94,Vermont 
+744,112,Vermont 
+741,97,Vermont 
+749,97,Vermont 
+741,96,Vermont 
+733,104,Vermont 
+744,132,Vermont 
+742,132,Vermont 
+744,134,Vermont 
+751,95,Vermont 
+744,135,Vermont 
+748,131,Vermont 
+741,128,Vermont 
+741,132,Vermont 
+751,93,Vermont 
+747,132,Vermont 
+749,133,Vermont 
+739,120,Vermont 
+743,120,Vermont 
+735,112,Vermont 
+737,111,Vermont 
+743,107,Vermont 
+745,129,Vermont 
+748,127,Vermont 
+735,109,Vermont 
+747,101,Vermont 
+740,99,Vermont 
+752,98,Vermont 
+748,96,Vermont 
+748,117,Vermont 
+747,131,Vermont 
+754,100,Vermont 
+736,105,Vermont 
+746,132,Vermont 
+735,101,Vermont 
+733,101,Vermont 
+747,135,Vermont 
+735,98,Vermont 
+745,136,Vermont 
+748,135,Vermont 
+734,98,Vermont 
+734,99,Vermont 
+734,100,Vermont 
+741,120,Vermont 
+744,123,Vermont 
+747,126,Vermont 
+739,104,Vermont 
+743,100,Vermont 
+747,97,Vermont 
+741,112,Vermont 
+743,113,Vermont 
+741,129,Vermont 
+742,133,Vermont 
+735,99,Vermont 
+733,100,Vermont 
+733,99,Vermont 
+739,115,Vermont 
+739,121,Vermont 
+737,100,Vermont 
+737,102,Vermont 
+734,101,Vermont 
+735,100,Vermont 
+732,99,Vermont 
+742,126,Vermont 
+738,114,Vermont 
+744,136,Vermont 
+732,98,Vermont 
+740,103,Vermont 
+733,98,Vermont 
+748,97,Vermont 
 724,130,New York 
 725,130,New York 
 724,131,New York 
@@ -205735,3 +205735,5877 @@
 42,423,Hawaii 
 42,422,Hawaii 
 38,420,Hawaii 
+207,238,Utah 
+208,238,Utah 
+207,239,Utah 
+208,237,Utah 
+206,239,Utah 
+209,237,Utah 
+205,239,Utah 
+210,237,Utah 
+204,239,Utah 
+205,240,Utah 
+210,236,Utah 
+203,239,Utah 
+204,240,Utah 
+211,236,Utah 
+202,239,Utah 
+203,240,Utah 
+212,236,Utah 
+201,239,Utah 
+202,240,Utah 
+213,236,Utah 
+212,237,Utah 
+201,238,Utah 
+202,241,Utah 
+213,235,Utah 
+212,238,Utah 
+201,237,Utah 
+202,242,Utah 
+213,234,Utah 
+213,238,Utah 
+200,237,Utah 
+201,236,Utah 
+203,242,Utah 
+212,234,Utah 
+213,233,Utah 
+213,239,Utah 
+200,236,Utah 
+201,235,Utah 
+203,243,Utah 
+212,233,Utah 
+213,232,Utah 
+213,240,Utah 
+200,235,Utah 
+201,234,Utah 
+203,244,Utah 
+212,232,Utah 
+213,231,Utah 
+214,240,Utah 
+199,235,Utah 
+202,234,Utah 
+202,244,Utah 
+203,245,Utah 
+212,231,Utah 
+213,230,Utah 
+214,241,Utah 
+199,234,Utah 
+202,233,Utah 
+202,245,Utah 
+203,246,Utah 
+212,230,Utah 
+213,229,Utah 
+214,242,Utah 
+199,233,Utah 
+202,232,Utah 
+202,246,Utah 
+203,247,Utah 
+212,229,Utah 
+213,228,Utah 
+215,242,Utah 
+198,233,Utah 
+199,232,Utah 
+203,232,Utah 
+201,246,Utah 
+204,247,Utah 
+211,229,Utah 
+214,228,Utah 
+216,242,Utah 
+197,233,Utah 
+200,232,Utah 
+204,232,Utah 
+200,246,Utah 
+205,247,Utah 
+210,229,Utah 
+215,228,Utah 
+217,242,Utah 
+216,243,Utah 
+197,232,Utah 
+200,231,Utah 
+204,231,Utah 
+199,246,Utah 
+200,247,Utah 
+205,246,Utah 
+209,229,Utah 
+210,230,Utah 
+215,227,Utah 
+218,242,Utah 
+217,243,Utah 
+196,232,Utah 
+201,231,Utah 
+205,231,Utah 
+198,246,Utah 
+199,247,Utah 
+206,246,Utah 
+208,229,Utah 
+209,230,Utah 
+216,227,Utah 
+219,242,Utah 
+218,243,Utah 
+195,232,Utah 
+201,230,Utah 
+205,230,Utah 
+198,245,Utah 
+199,248,Utah 
+206,245,Utah 
+208,228,Utah 
+209,231,Utah 
+216,226,Utah 
+219,241,Utah 
+218,244,Utah 
+195,231,Utah 
+202,230,Utah 
+206,230,Utah 
+197,245,Utah 
+198,248,Utah 
+207,245,Utah 
+207,228,Utah 
+208,231,Utah 
+217,226,Utah 
+220,241,Utah 
+219,244,Utah 
+194,231,Utah 
+203,230,Utah 
+207,230,Utah 
+196,245,Utah 
+197,248,Utah 
+208,245,Utah 
+206,228,Utah 
+207,231,Utah 
+218,226,Utah 
+221,241,Utah 
+220,244,Utah 
+193,231,Utah 
+203,229,Utah 
+196,244,Utah 
+196,248,Utah 
+197,249,Utah 
+208,244,Utah 
+205,228,Utah 
+207,232,Utah 
+218,225,Utah 
+222,241,Utah 
+221,242,Utah 
+220,243,Utah 
+192,231,Utah 
+193,232,Utah 
+203,228,Utah 
+196,243,Utah 
+196,247,Utah 
+197,250,Utah 
+208,243,Utah 
+205,227,Utah 
+207,233,Utah 
+218,224,Utah 
+222,240,Utah 
+221,243,Utah 
+192,230,Utah 
+193,233,Utah 
+203,227,Utah 
+197,243,Utah 
+195,247,Utah 
+198,250,Utah 
+207,243,Utah 
+208,242,Utah 
+205,226,Utah 
+208,233,Utah 
+217,224,Utah 
+218,223,Utah 
+222,239,Utah 
+191,230,Utah 
+192,233,Utah 
+193,234,Utah 
+203,226,Utah 
+197,242,Utah 
+195,246,Utah 
+198,251,Utah 
+207,242,Utah 
+208,241,Utah 
+206,226,Utah 
+209,233,Utah 
+216,224,Utah 
+219,223,Utah 
+221,239,Utah 
+222,238,Utah 
+191,229,Utah 
+192,234,Utah 
+193,235,Utah 
+203,225,Utah 
+197,241,Utah 
+199,251,Utah 
+206,242,Utah 
+209,241,Utah 
+207,226,Utah 
+210,233,Utah 
+215,224,Utah 
+220,223,Utah 
+220,239,Utah 
+223,238,Utah 
+190,229,Utah 
+191,234,Utah 
+194,235,Utah 
+202,225,Utah 
+203,224,Utah 
+198,241,Utah 
+200,251,Utah 
+205,242,Utah 
+210,241,Utah 
+208,226,Utah 
+210,232,Utah 
+214,224,Utah 
+215,225,Utah 
+220,222,Utah 
+219,239,Utah 
+224,238,Utah 
+189,229,Utah 
+190,234,Utah 
+195,235,Utah 
+201,225,Utah 
+204,224,Utah 
+199,241,Utah 
+201,251,Utah 
+200,252,Utah 
+211,241,Utah 
+210,242,Utah 
+208,225,Utah 
+214,223,Utah 
+221,222,Utah 
+218,239,Utah 
+225,238,Utah 
+224,239,Utah 
+189,228,Utah 
+189,234,Utah 
+190,235,Utah 
+195,234,Utah 
+200,225,Utah 
+201,226,Utah 
+204,223,Utah 
+199,240,Utah 
+202,251,Utah 
+201,252,Utah 
+212,241,Utah 
+211,242,Utah 
+209,225,Utah 
+213,223,Utah 
+222,222,Utah 
+217,239,Utah 
+218,240,Utah 
+225,237,Utah 
+224,240,Utah 
+189,227,Utah 
+189,233,Utah 
+190,236,Utah 
+199,225,Utah 
+200,226,Utah 
+205,223,Utah 
+200,240,Utah 
+203,251,Utah 
+202,252,Utah 
+212,242,Utah 
+210,225,Utah 
+212,223,Utah 
+223,222,Utah 
+222,223,Utah 
+217,238,Utah 
+226,237,Utah 
+225,240,Utah 
+188,227,Utah 
+189,226,Utah 
+189,232,Utah 
+191,236,Utah 
+198,225,Utah 
+199,226,Utah 
+206,223,Utah 
+204,251,Utah 
+203,252,Utah 
+212,243,Utah 
+210,224,Utah 
+211,223,Utah 
+212,224,Utah 
+223,221,Utah 
+222,224,Utah 
+217,237,Utah 
+226,236,Utah 
+225,241,Utah 
+188,226,Utah 
+189,225,Utah 
+190,232,Utah 
+192,236,Utah 
+197,225,Utah 
+198,226,Utah 
+207,223,Utah 
+206,224,Utah 
+204,250,Utah 
+203,253,Utah 
+212,244,Utah 
+210,223,Utah 
+212,225,Utah 
+223,220,Utah 
+223,224,Utah 
+216,237,Utah 
+217,236,Utah 
+226,235,Utah 
+225,242,Utah 
+188,225,Utah 
+189,224,Utah 
+190,231,Utah 
+196,225,Utah 
+197,226,Utah 
+208,223,Utah 
+207,224,Utah 
+204,249,Utah 
+203,254,Utah 
+213,244,Utah 
+209,223,Utah 
+213,225,Utah 
+222,220,Utah 
+223,219,Utah 
+223,225,Utah 
+216,236,Utah 
+217,235,Utah 
+227,235,Utah 
+224,242,Utah 
+225,243,Utah 
+188,224,Utah 
+189,223,Utah 
+196,224,Utah 
+197,227,Utah 
+203,249,Utah 
+202,254,Utah 
+203,255,Utah 
+213,245,Utah 
+213,226,Utah 
+222,219,Utah 
+223,218,Utah 
+223,226,Utah 
+216,235,Utah 
+217,234,Utah 
+227,234,Utah 
+224,243,Utah 
+225,244,Utah 
+188,223,Utah 
+189,222,Utah 
+196,223,Utah 
+197,228,Utah 
+201,254,Utah 
+204,255,Utah 
+214,245,Utah 
+214,226,Utah 
+222,218,Utah 
+223,217,Utah 
+224,226,Utah 
+215,235,Utah 
+218,234,Utah 
+228,234,Utah 
+223,243,Utah 
+226,244,Utah 
+187,223,Utah 
+190,222,Utah 
+195,223,Utah 
+196,222,Utah 
+198,228,Utah 
+200,254,Utah 
+205,255,Utah 
+215,245,Utah 
+221,218,Utah 
+224,217,Utah 
+225,226,Utah 
+215,234,Utah 
+218,233,Utah 
+228,233,Utah 
+227,244,Utah 
+186,223,Utah 
+191,222,Utah 
+194,223,Utah 
+197,222,Utah 
+199,228,Utah 
+199,254,Utah 
+206,255,Utah 
+205,256,Utah 
+215,244,Utah 
+220,218,Utah 
+225,217,Utah 
+226,226,Utah 
+225,227,Utah 
+219,233,Utah 
+229,233,Utah 
+228,244,Utah 
+227,245,Utah 
+186,222,Utah 
+192,222,Utah 
+191,223,Utah 
+194,222,Utah 
+198,222,Utah 
+200,228,Utah 
+198,254,Utah 
+199,255,Utah 
+206,254,Utah 
+205,257,Utah 
+220,217,Utah 
+226,217,Utah 
+225,218,Utah 
+226,225,Utah 
+225,228,Utah 
+219,232,Utah 
+229,232,Utah 
+228,243,Utah 
+227,246,Utah 
+186,221,Utah 
+192,221,Utah 
+191,224,Utah 
+199,222,Utah 
+198,223,Utah 
+200,229,Utah 
+198,253,Utah 
+199,256,Utah 
+206,253,Utah 
+206,257,Utah 
+219,217,Utah 
+227,217,Utah 
+226,218,Utah 
+227,225,Utah 
+224,228,Utah 
+225,229,Utah 
+219,231,Utah 
+229,231,Utah 
+228,242,Utah 
+228,246,Utah 
+185,221,Utah 
+186,220,Utah 
+192,220,Utah 
+191,225,Utah 
+199,221,Utah 
+197,253,Utah 
+200,256,Utah 
+205,253,Utah 
+206,252,Utah 
+206,258,Utah 
+219,216,Utah 
+227,216,Utah 
+226,219,Utah 
+227,224,Utah 
+224,229,Utah 
+225,230,Utah 
+220,231,Utah 
+228,231,Utah 
+229,230,Utah 
+229,242,Utah 
+229,246,Utah 
+184,221,Utah 
+187,220,Utah 
+191,220,Utah 
+192,219,Utah 
+191,226,Utah 
+199,220,Utah 
+197,252,Utah 
+200,257,Utah 
+207,252,Utah 
+207,258,Utah 
+218,216,Utah 
+228,216,Utah 
+227,219,Utah 
+228,224,Utah 
+223,229,Utah 
+226,230,Utah 
+221,231,Utah 
+227,231,Utah 
+230,230,Utah 
+230,242,Utah 
+230,246,Utah 
+229,247,Utah 
+184,220,Utah 
+188,220,Utah 
+190,220,Utah 
+193,219,Utah 
+192,226,Utah 
+198,220,Utah 
+199,219,Utah 
+201,257,Utah 
+208,252,Utah 
+208,258,Utah 
+217,216,Utah 
+229,216,Utah 
+228,219,Utah 
+229,224,Utah 
+222,229,Utah 
+227,230,Utah 
+222,231,Utah 
+221,232,Utah 
+231,230,Utah 
+231,242,Utah 
+230,243,Utah 
+230,245,Utah 
+229,248,Utah 
+184,219,Utah 
+188,219,Utah 
+190,219,Utah 
+193,218,Utah 
+192,227,Utah 
+198,219,Utah 
+199,218,Utah 
+201,258,Utah 
+208,251,Utah 
+209,258,Utah 
+208,259,Utah 
+217,215,Utah 
+230,216,Utah 
+229,217,Utah 
+228,218,Utah 
+230,224,Utah 
+229,225,Utah 
+222,228,Utah 
+227,229,Utah 
+222,232,Utah 
+232,230,Utah 
+231,231,Utah 
+231,241,Utah 
+230,244,Utah 
+228,248,Utah 
+229,249,Utah 
+185,219,Utah 
+189,219,Utah 
+190,218,Utah 
+193,217,Utah 
+192,228,Utah 
+198,218,Utah 
+199,217,Utah 
+201,259,Utah 
+208,250,Utah 
+209,257,Utah 
+208,260,Utah 
+217,214,Utah 
+230,215,Utah 
+229,218,Utah 
+230,223,Utah 
+229,226,Utah 
+222,227,Utah 
+227,228,Utah 
+222,233,Utah 
+232,229,Utah 
+231,232,Utah 
+231,240,Utah 
+227,248,Utah 
+230,249,Utah 
+185,218,Utah 
+191,218,Utah 
+192,217,Utah 
+193,216,Utah 
+197,218,Utah 
+200,217,Utah 
+200,259,Utah 
+201,260,Utah 
+209,250,Utah 
+210,257,Utah 
+207,260,Utah 
+208,261,Utah 
+218,214,Utah 
+231,215,Utah 
+230,218,Utah 
+230,222,Utah 
+230,226,Utah 
+221,227,Utah 
+227,227,Utah 
+222,234,Utah 
+232,228,Utah 
+231,233,Utah 
+232,240,Utah 
+226,248,Utah 
+231,249,Utah 
+186,218,Utah 
+191,217,Utah 
+194,216,Utah 
+196,218,Utah 
+201,217,Utah 
+199,259,Utah 
+202,260,Utah 
+210,250,Utah 
+211,257,Utah 
+206,260,Utah 
+209,261,Utah 
+219,214,Utah 
+232,215,Utah 
+231,218,Utah 
+229,222,Utah 
+230,221,Utah 
+230,227,Utah 
+221,226,Utah 
+221,234,Utah 
+222,235,Utah 
+233,228,Utah 
+232,233,Utah 
+233,240,Utah 
+225,248,Utah 
+226,249,Utah 
+231,248,Utah 
+187,218,Utah 
+191,216,Utah 
+194,215,Utah 
+196,217,Utah 
+202,217,Utah 
+201,218,Utah 
+199,258,Utah 
+203,260,Utah 
+211,250,Utah 
+210,251,Utah 
+211,256,Utah 
+205,260,Utah 
+210,261,Utah 
+220,214,Utah 
+233,215,Utah 
+232,216,Utah 
+231,217,Utah 
+228,222,Utah 
+231,221,Utah 
+231,227,Utah 
+220,226,Utah 
+220,234,Utah 
+223,235,Utah 
+234,228,Utah 
+233,233,Utah 
+234,240,Utah 
+233,241,Utah 
+225,247,Utah 
+226,250,Utah 
+231,247,Utah 
+190,216,Utah 
+195,215,Utah 
+195,217,Utah 
+203,217,Utah 
+202,218,Utah 
+198,258,Utah 
+203,259,Utah 
+212,250,Utah 
+211,251,Utah 
+212,256,Utah 
+205,259,Utah 
+211,261,Utah 
+210,262,Utah 
+220,213,Utah 
+234,215,Utah 
+233,216,Utah 
+227,222,Utah 
+232,221,Utah 
+220,225,Utah 
+224,235,Utah 
+235,228,Utah 
+234,229,Utah 
+233,232,Utah 
+235,240,Utah 
+234,241,Utah 
+224,247,Utah 
+225,250,Utah 
+226,251,Utah 
+189,216,Utah 
+196,215,Utah 
+204,217,Utah 
+203,218,Utah 
+197,258,Utah 
+204,259,Utah 
+213,250,Utah 
+212,251,Utah 
+213,256,Utah 
+212,261,Utah 
+211,262,Utah 
+221,213,Utah 
+235,215,Utah 
+234,216,Utah 
+226,222,Utah 
+233,221,Utah 
+232,222,Utah 
+224,236,Utah 
+235,227,Utah 
+234,230,Utah 
+233,231,Utah 
+235,239,Utah 
+234,242,Utah 
+224,246,Utah 
+225,251,Utah 
+226,252,Utah 
+189,215,Utah 
+197,215,Utah 
+205,217,Utah 
+204,218,Utah 
+196,258,Utah 
+197,259,Utah 
+214,250,Utah 
+213,251,Utah 
+214,256,Utah 
+213,257,Utah 
+212,260,Utah 
+211,263,Utah 
+221,212,Utah 
+235,214,Utah 
+234,217,Utah 
+226,221,Utah 
+234,221,Utah 
+233,222,Utah 
+236,227,Utah 
+235,230,Utah 
+236,239,Utah 
+235,242,Utah 
+223,246,Utah 
+224,251,Utah 
+227,252,Utah 
+188,215,Utah 
+198,215,Utah 
+197,216,Utah 
+205,216,Utah 
+204,219,Utah 
+196,257,Utah 
+197,260,Utah 
+214,249,Utah 
+213,252,Utah 
+214,255,Utah 
+213,258,Utah 
+212,259,Utah 
+211,264,Utah 
+221,211,Utah 
+235,213,Utah 
+234,218,Utah 
+235,221,Utah 
+234,222,Utah 
+237,227,Utah 
+236,230,Utah 
+237,239,Utah 
+236,242,Utah 
+222,246,Utah 
+223,251,Utah 
+228,252,Utah 
+187,215,Utah 
+199,215,Utah 
+198,216,Utah 
+205,215,Utah 
+204,220,Utah 
+196,256,Utah 
+198,260,Utah 
+215,249,Utah 
+214,252,Utah 
+215,255,Utah 
+212,258,Utah 
+213,259,Utah 
+210,264,Utah 
+220,211,Utah 
+221,210,Utah 
+236,213,Utah 
+233,218,Utah 
+234,219,Utah 
+235,220,Utah 
+234,223,Utah 
+237,226,Utah 
+237,230,Utah 
+236,231,Utah 
+237,238,Utah 
+237,242,Utah 
+236,243,Utah 
+222,245,Utah 
+222,251,Utah 
+223,252,Utah 
+228,251,Utah 
+186,215,Utah 
+187,216,Utah 
+199,214,Utah 
+206,215,Utah 
+203,220,Utah 
+204,221,Utah 
+197,256,Utah 
+198,261,Utah 
+215,248,Utah 
+214,253,Utah 
+215,254,Utah 
+209,264,Utah 
+220,210,Utah 
+221,209,Utah 
+236,212,Utah 
+235,219,Utah 
+235,223,Utah 
+238,226,Utah 
+238,230,Utah 
+237,231,Utah 
+238,238,Utah 
+238,242,Utah 
+237,243,Utah 
+221,245,Utah 
+221,251,Utah 
+222,252,Utah 
+229,251,Utah 
+185,215,Utah 
+186,216,Utah 
+199,213,Utah 
+206,214,Utah 
+203,221,Utah 
+197,255,Utah 
+198,262,Utah 
+215,247,Utah 
+216,254,Utah 
+209,263,Utah 
+220,209,Utah 
+221,208,Utah 
+236,211,Utah 
+236,223,Utah 
+239,226,Utah 
+239,230,Utah 
+238,231,Utah 
+239,238,Utah 
+239,242,Utah 
+238,243,Utah 
+220,251,Utah 
+221,252,Utah 
+230,251,Utah 
+185,214,Utah 
+198,213,Utah 
+199,212,Utah 
+206,213,Utah 
+203,222,Utah 
+199,262,Utah 
+216,247,Utah 
+216,253,Utah 
+219,209,Utah 
+222,208,Utah 
+235,211,Utah 
+236,210,Utah 
+236,222,Utah 
+240,226,Utah 
+239,227,Utah 
+239,229,Utah 
+238,232,Utah 
+239,237,Utah 
+240,242,Utah 
+239,243,Utah 
+219,251,Utah 
+220,252,Utah 
+231,251,Utah 
+184,214,Utah 
+197,213,Utah 
+200,212,Utah 
+205,213,Utah 
+206,212,Utah 
+200,262,Utah 
+216,246,Utah 
+216,252,Utah 
+219,208,Utah 
+222,207,Utah 
+235,210,Utah 
+236,209,Utah 
+241,226,Utah 
+240,227,Utah 
+240,229,Utah 
+238,233,Utah 
+239,236,Utah 
+240,241,Utah 
+239,244,Utah 
+219,250,Utah 
+220,253,Utah 
+231,252,Utah 
+184,213,Utah 
+197,212,Utah 
+200,211,Utah 
+205,212,Utah 
+206,211,Utah 
+200,261,Utah 
+217,252,Utah 
+218,208,Utah 
+223,207,Utah 
+234,210,Utah 
+237,209,Utah 
+242,226,Utah 
+241,227,Utah 
+241,229,Utah 
+239,233,Utah 
+238,236,Utah 
+239,235,Utah 
+240,240,Utah 
+239,245,Utah 
+219,249,Utah 
+220,254,Utah 
+231,253,Utah 
+184,212,Utah 
+197,211,Utah 
+200,210,Utah 
+205,211,Utah 
+206,210,Utah 
+217,251,Utah 
+218,207,Utah 
+223,206,Utah 
+234,209,Utah 
+237,208,Utah 
+242,225,Utah 
+241,228,Utah 
+241,230,Utah 
+239,234,Utah 
+238,235,Utah 
+239,240,Utah 
+240,239,Utah 
+240,245,Utah 
+218,249,Utah 
+219,248,Utah 
+221,254,Utah 
+230,253,Utah 
+231,254,Utah 
+185,212,Utah 
+196,211,Utah 
+197,210,Utah 
+201,210,Utah 
+204,211,Utah 
+207,210,Utah 
+217,250,Utah 
+218,206,Utah 
+223,205,Utah 
+234,208,Utah 
+237,207,Utah 
+242,224,Utah 
+242,230,Utah 
+240,234,Utah 
+238,240,Utah 
+241,245,Utah 
+217,249,Utah 
+220,248,Utah 
+222,254,Utah 
+229,253,Utah 
+232,254,Utah 
+186,212,Utah 
+195,211,Utah 
+198,210,Utah 
+202,210,Utah 
+203,211,Utah 
+208,210,Utah 
+216,250,Utah 
+219,206,Utah 
+222,205,Utah 
+223,204,Utah 
+235,208,Utah 
+236,207,Utah 
+237,206,Utah 
+243,224,Utah 
+243,230,Utah 
+241,234,Utah 
+241,244,Utah 
+217,248,Utah 
+220,247,Utah 
+222,255,Utah 
+233,254,Utah 
+187,212,Utah 
+186,213,Utah 
+195,210,Utah 
+198,209,Utah 
+202,209,Utah 
+203,212,Utah 
+208,209,Utah 
+220,206,Utah 
+221,205,Utah 
+224,204,Utah 
+235,207,Utah 
+238,206,Utah 
+244,224,Utah 
+244,230,Utah 
+243,231,Utah 
+241,233,Utah 
+242,244,Utah 
+221,247,Utah 
+223,255,Utah 
+234,254,Utah 
+233,255,Utah 
+187,211,Utah 
+194,210,Utah 
+199,209,Utah 
+203,209,Utah 
+202,212,Utah 
+209,209,Utah 
+221,206,Utah 
+220,207,Utah 
+225,204,Utah 
+235,206,Utah 
+238,205,Utah 
+244,223,Utah 
+244,229,Utah 
+243,232,Utah 
+241,232,Utah 
+224,255,Utah 
+235,254,Utah 
+234,255,Utah 
+188,211,Utah 
+193,210,Utah 
+199,208,Utah 
+203,208,Utah 
+210,209,Utah 
+226,204,Utah 
+225,205,Utah 
+235,205,Utah 
+238,204,Utah 
+244,222,Utah 
+242,232,Utah 
+243,233,Utah 
+225,255,Utah 
+224,256,Utah 
+235,253,Utah 
+234,256,Utah 
+188,210,Utah 
+193,209,Utah 
+200,208,Utah 
+204,208,Utah 
+211,209,Utah 
+210,210,Utah 
+226,203,Utah 
+225,206,Utah 
+236,205,Utah 
+237,204,Utah 
+238,203,Utah 
+245,222,Utah 
+243,234,Utah 
+225,254,Utah 
+224,257,Utah 
+235,252,Utah 
+234,257,Utah 
+188,209,Utah 
+193,208,Utah 
+200,207,Utah 
+204,207,Utah 
+211,208,Utah 
+210,211,Utah 
+226,202,Utah 
+225,207,Utah 
+237,203,Utah 
+238,202,Utah 
+243,235,Utah 
+225,253,Utah 
+225,257,Utah 
+234,252,Utah 
+235,251,Utah 
+235,257,Utah 
+187,209,Utah 
+188,208,Utah 
+194,208,Utah 
+201,207,Utah 
+205,207,Utah 
+212,208,Utah 
+209,211,Utah 
+210,212,Utah 
+227,202,Utah 
+226,207,Utah 
+236,203,Utah 
+239,202,Utah 
+242,235,Utah 
+224,253,Utah 
+225,258,Utah 
+234,251,Utah 
+235,250,Utah 
+235,258,Utah 
+187,208,Utah 
+188,207,Utah 
+194,207,Utah 
+201,206,Utah 
+205,206,Utah 
+212,207,Utah 
+211,212,Utah 
+228,202,Utah 
+227,207,Utah 
+235,203,Utah 
+240,202,Utah 
+242,236,Utah 
+225,259,Utah 
+234,250,Utah 
+235,249,Utah 
+235,259,Utah 
+187,207,Utah 
+188,206,Utah 
+194,206,Utah 
+201,205,Utah 
+205,205,Utah 
+212,206,Utah 
+211,213,Utah 
+228,201,Utah 
+228,207,Utah 
+227,208,Utah 
+235,202,Utah 
+240,201,Utah 
+241,236,Utah 
+224,259,Utah 
+225,260,Utah 
+234,249,Utah 
+235,248,Utah 
+236,259,Utah 
+186,207,Utah 
+189,206,Utah 
+193,206,Utah 
+194,205,Utah 
+202,205,Utah 
+204,205,Utah 
+205,204,Utah 
+213,206,Utah 
+212,213,Utah 
+229,201,Utah 
+229,207,Utah 
+228,208,Utah 
+234,202,Utah 
+241,201,Utah 
+241,237,Utah 
+224,260,Utah 
+225,261,Utah 
+234,248,Utah 
+235,247,Utah 
+236,260,Utah 
+186,206,Utah 
+189,205,Utah 
+193,205,Utah 
+194,204,Utah 
+202,204,Utah 
+206,204,Utah 
+214,206,Utah 
+213,213,Utah 
+230,201,Utah 
+230,207,Utah 
+229,208,Utah 
+233,202,Utah 
+242,201,Utah 
+241,238,Utah 
+224,261,Utah 
+225,262,Utah 
+234,247,Utah 
+235,246,Utah 
+236,261,Utah 
+186,205,Utah 
+189,204,Utah 
+193,204,Utah 
+194,203,Utah 
+202,203,Utah 
+206,203,Utah 
+214,205,Utah 
+214,213,Utah 
+213,214,Utah 
+230,200,Utah 
+231,207,Utah 
+230,208,Utah 
+232,202,Utah 
+233,203,Utah 
+242,200,Utah 
+242,238,Utah 
+224,262,Utah 
+225,263,Utah 
+234,246,Utah 
+235,245,Utah 
+237,261,Utah 
+185,205,Utah 
+186,204,Utah 
+190,204,Utah 
+192,204,Utah 
+195,203,Utah 
+201,203,Utah 
+202,202,Utah 
+206,202,Utah 
+214,204,Utah 
+214,212,Utah 
+213,215,Utah 
+230,199,Utah 
+231,206,Utah 
+230,209,Utah 
+232,201,Utah 
+233,204,Utah 
+242,199,Utah 
+242,239,Utah 
+224,263,Utah 
+225,264,Utah 
+234,245,Utah 
+235,244,Utah 
+237,262,Utah 
+185,204,Utah 
+186,203,Utah 
+190,203,Utah 
+196,203,Utah 
+200,203,Utah 
+203,202,Utah 
+205,202,Utah 
+206,201,Utah 
+215,204,Utah 
+215,212,Utah 
+212,215,Utah 
+213,216,Utah 
+231,199,Utah 
+232,206,Utah 
+231,209,Utah 
+232,200,Utah 
+234,204,Utah 
+241,199,Utah 
+242,198,Utah 
+242,240,Utah 
+224,264,Utah 
+225,265,Utah 
+234,244,Utah 
+237,263,Utah 
+185,203,Utah 
+186,202,Utah 
+190,202,Utah 
+196,202,Utah 
+199,203,Utah 
+200,204,Utah 
+203,201,Utah 
+207,201,Utah 
+216,204,Utah 
+216,212,Utah 
+211,215,Utah 
+214,216,Utah 
+232,199,Utah 
+233,206,Utah 
+232,209,Utah 
+233,200,Utah 
+241,198,Utah 
+242,197,Utah 
+242,241,Utah 
+224,265,Utah 
+225,266,Utah 
+236,263,Utah 
+237,264,Utah 
+185,202,Utah 
+186,201,Utah 
+191,202,Utah 
+197,202,Utah 
+198,203,Utah 
+199,204,Utah 
+203,200,Utah 
+207,200,Utah 
+216,203,Utah 
+217,212,Utah 
+216,213,Utah 
+211,216,Utah 
+214,217,Utah 
+232,198,Utah 
+232,208,Utah 
+234,200,Utah 
+241,197,Utah 
+242,196,Utah 
+223,265,Utah 
+226,266,Utah 
+236,264,Utah 
+237,265,Utah 
+185,201,Utah 
+186,200,Utah 
+191,201,Utah 
+197,201,Utah 
+199,205,Utah 
+204,200,Utah 
+208,200,Utah 
+217,203,Utah 
+218,212,Utah 
+210,216,Utah 
+215,217,Utah 
+233,198,Utah 
+235,200,Utah 
+240,197,Utah 
+243,196,Utah 
+223,266,Utah 
+226,267,Utah 
+236,265,Utah 
+237,266,Utah 
+185,200,Utah 
+186,199,Utah 
+191,200,Utah 
+197,200,Utah 
+199,206,Utah 
+204,199,Utah 
+208,199,Utah 
+217,202,Utah 
+218,211,Utah 
+210,217,Utah 
+215,218,Utah 
+233,197,Utah 
+235,199,Utah 
+240,196,Utah 
+222,266,Utah 
+235,265,Utah 
+238,266,Utah 
+184,200,Utah 
+187,199,Utah 
+190,200,Utah 
+191,199,Utah 
+198,200,Utah 
+198,206,Utah 
+204,198,Utah 
+208,198,Utah 
+217,201,Utah 
+209,217,Utah 
+216,218,Utah 
+234,197,Utah 
+236,199,Utah 
+239,196,Utah 
+234,265,Utah 
+239,266,Utah 
+183,200,Utah 
+188,199,Utah 
+189,200,Utah 
+192,199,Utah 
+199,200,Utah 
+197,206,Utah 
+203,198,Utah 
+204,197,Utah 
+209,198,Utah 
+216,201,Utah 
+217,200,Utah 
+209,218,Utah 
+216,219,Utah 
+234,196,Utah 
+236,198,Utah 
+239,195,Utah 
+234,264,Utah 
+239,265,Utah 
+182,200,Utah 
+183,201,Utah 
+188,198,Utah 
+189,201,Utah 
+192,198,Utah 
+199,199,Utah 
+196,206,Utah 
+197,207,Utah 
+203,197,Utah 
+204,196,Utah 
+209,197,Utah 
+216,200,Utah 
+217,199,Utah 
+209,219,Utah 
+216,220,Utah 
+234,195,Utah 
+236,197,Utah 
+233,264,Utah 
+239,264,Utah 
+182,199,Utah 
+183,202,Utah 
+188,197,Utah 
+193,198,Utah 
+200,199,Utah 
+196,205,Utah 
+197,208,Utah 
+203,196,Utah 
+204,195,Utah 
+209,196,Utah 
+216,199,Utah 
+217,198,Utah 
+210,219,Utah 
+215,220,Utah 
+216,221,Utah 
+235,195,Utah 
+236,196,Utah 
+233,263,Utah 
+181,199,Utah 
+182,202,Utah 
+187,197,Utah 
+188,196,Utah 
+193,197,Utah 
+200,198,Utah 
+202,196,Utah 
+205,195,Utah 
+208,196,Utah 
+209,195,Utah 
+216,198,Utah 
+217,197,Utah 
+210,220,Utah 
+215,221,Utah 
+216,222,Utah 
+237,196,Utah 
+233,262,Utah 
+181,198,Utah 
+182,203,Utah 
+187,196,Utah 
+188,195,Utah 
+193,196,Utah 
+200,197,Utah 
+202,195,Utah 
+205,194,Utah 
+208,195,Utah 
+209,194,Utah 
+216,197,Utah 
+217,196,Utah 
+210,221,Utah 
+215,222,Utah 
+237,195,Utah 
+234,262,Utah 
+180,198,Utah 
+181,203,Utah 
+186,196,Utah 
+189,195,Utah 
+192,196,Utah 
+193,195,Utah 
+201,197,Utah 
+201,195,Utah 
+206,194,Utah 
+207,195,Utah 
+210,194,Utah 
+215,197,Utah 
+218,196,Utah 
+209,221,Utah 
+235,262,Utah 
+180,197,Utah 
+181,204,Utah 
+186,195,Utah 
+189,194,Utah 
+192,195,Utah 
+193,194,Utah 
+201,194,Utah 
+206,193,Utah 
+210,193,Utah 
+215,196,Utah 
+218,195,Utah 
+180,196,Utah 
+181,205,Utah 
+186,194,Utah 
+189,193,Utah 
+192,194,Utah 
+193,193,Utah 
+201,193,Utah 
+206,192,Utah 
+210,192,Utah 
+215,195,Utah 
+218,194,Utah 
+180,205,Utah 
+181,206,Utah 
+187,194,Utah 
+188,193,Utah 
+189,192,Utah 
+192,193,Utah 
+193,192,Utah 
+202,193,Utah 
+205,192,Utah 
+206,191,Utah 
+211,192,Utah 
+214,195,Utah 
+215,194,Utah 
+219,194,Utah 
+179,205,Utah 
+182,206,Utah 
+187,193,Utah 
+190,192,Utah 
+191,193,Utah 
+194,192,Utah 
+203,193,Utah 
+204,192,Utah 
+207,191,Utah 
+212,192,Utah 
+213,195,Utah 
+216,194,Utah 
+220,194,Utah 
+179,204,Utah 
+183,206,Utah 
+187,192,Utah 
+190,191,Utah 
+194,191,Utah 
+203,192,Utah 
+204,191,Utah 
+207,190,Utah 
+212,191,Utah 
+212,195,Utah 
+213,196,Utah 
+221,194,Utah 
+220,195,Utah 
+184,206,Utah 
+183,207,Utah 
+187,191,Utah 
+190,190,Utah 
+194,190,Utah 
+204,190,Utah 
+207,189,Utah 
+212,190,Utah 
+212,194,Utah 
+213,197,Utah 
+221,193,Utah 
+220,196,Utah 
+183,208,Utah 
+188,191,Utah 
+189,190,Utah 
+190,189,Utah 
+195,190,Utah 
+203,190,Utah 
+204,189,Utah 
+208,189,Utah 
+211,190,Utah 
+212,189,Utah 
+213,198,Utah 
+221,192,Utah 
+220,197,Utah 
+184,208,Utah 
+188,190,Utah 
+191,189,Utah 
+196,190,Utah 
+202,190,Utah 
+205,189,Utah 
+209,189,Utah 
+210,190,Utah 
+213,189,Utah 
+212,198,Utah 
+213,199,Utah 
+221,191,Utah 
+221,197,Utah 
+185,208,Utah 
+188,189,Utah 
+191,188,Utah 
+196,189,Utah 
+201,190,Utah 
+202,191,Utah 
+210,189,Utah 
+209,190,Utah 
+213,188,Utah 
+212,199,Utah 
+213,200,Utah 
+221,190,Utah 
+221,198,Utah 
+187,189,Utah 
+192,188,Utah 
+197,189,Utah 
+200,190,Utah 
+201,191,Utah 
+209,191,Utah 
+213,187,Utah 
+212,200,Utah 
+213,201,Utah 
+221,189,Utah 
+221,199,Utah 
+187,188,Utah 
+192,187,Utah 
+197,188,Utah 
+200,189,Utah 
+212,187,Utah 
+213,186,Utah 
+212,201,Utah 
+213,202,Utah 
+221,188,Utah 
+222,199,Utah 
+186,188,Utah 
+193,187,Utah 
+198,188,Utah 
+199,189,Utah 
+211,187,Utah 
+214,186,Utah 
+211,201,Utah 
+214,202,Utah 
+220,188,Utah 
+221,187,Utah 
+222,200,Utah 
+186,187,Utah 
+193,186,Utah 
+198,187,Utah 
+211,186,Utah 
+215,186,Utah 
+210,201,Utah 
+215,202,Utah 
+220,187,Utah 
+221,186,Utah 
+222,201,Utah 
+186,186,Utah 
+193,185,Utah 
+198,186,Utah 
+211,185,Utah 
+215,185,Utah 
+209,201,Utah 
+210,202,Utah 
+220,186,Utah 
+221,185,Utah 
+223,201,Utah 
+185,186,Utah 
+186,185,Utah 
+194,185,Utah 
+197,186,Utah 
+198,185,Utah 
+212,185,Utah 
+216,185,Utah 
+209,202,Utah 
+219,186,Utah 
+222,185,Utah 
+224,201,Utah 
+184,186,Utah 
+187,185,Utah 
+195,185,Utah 
+196,186,Utah 
+199,185,Utah 
+212,184,Utah 
+216,184,Utah 
+209,203,Utah 
+219,185,Utah 
+225,201,Utah 
+224,202,Utah 
+184,185,Utah 
+188,185,Utah 
+196,185,Utah 
+195,186,Utah 
+200,185,Utah 
+213,184,Utah 
+217,184,Utah 
+208,203,Utah 
+218,185,Utah 
+225,200,Utah 
+184,184,Utah 
+188,184,Utah 
+196,184,Utah 
+201,185,Utah 
+200,186,Utah 
+213,183,Utah 
+217,183,Utah 
+226,200,Utah 
+183,184,Utah 
+184,183,Utah 
+188,183,Utah 
+196,183,Utah 
+201,184,Utah 
+200,187,Utah 
+213,182,Utah 
+217,182,Utah 
+226,199,Utah 
+185,183,Utah 
+187,183,Utah 
+188,182,Utah 
+197,183,Utah 
+202,184,Utah 
+201,187,Utah 
+214,182,Utah 
+216,182,Utah 
+217,181,Utah 
+226,198,Utah 
+185,182,Utah 
+189,182,Utah 
+198,183,Utah 
+203,184,Utah 
+202,187,Utah 
+215,182,Utah 
+216,181,Utah 
+217,180,Utah 
+227,198,Utah 
+186,182,Utah 
+190,182,Utah 
+199,183,Utah 
+204,184,Utah 
+203,185,Utah 
+202,186,Utah 
+215,181,Utah 
+216,180,Utah 
+217,179,Utah 
+227,197,Utah 
+191,182,Utah 
+190,183,Utah 
+199,182,Utah 
+204,183,Utah 
+203,186,Utah 
+216,179,Utah 
+217,178,Utah 
+227,196,Utah 
+191,181,Utah 
+190,184,Utah 
+199,181,Utah 
+204,182,Utah 
+215,179,Utah 
+218,178,Utah 
+226,196,Utah 
+227,195,Utah 
+191,180,Utah 
+190,185,Utah 
+200,181,Utah 
+203,182,Utah 
+204,181,Utah 
+215,178,Utah 
+218,177,Utah 
+226,195,Utah 
+227,194,Utah 
+192,180,Utah 
+191,185,Utah 
+201,181,Utah 
+202,182,Utah 
+205,181,Utah 
+214,178,Utah 
+219,177,Utah 
+225,195,Utah 
+228,194,Utah 
+192,179,Utah 
+202,181,Utah 
+201,182,Utah 
+205,180,Utah 
+214,177,Utah 
+219,176,Utah 
+225,194,Utah 
+193,179,Utah 
+202,180,Utah 
+205,179,Utah 
+214,176,Utah 
+219,175,Utah 
+225,193,Utah 
+193,178,Utah 
+202,179,Utah 
+206,179,Utah 
+213,176,Utah 
+214,175,Utah 
+220,175,Utah 
+224,193,Utah 
+193,177,Utah 
+203,179,Utah 
+207,179,Utah 
+212,176,Utah 
+215,175,Utah 
+221,175,Utah 
+223,193,Utah 
+194,177,Utah 
+203,178,Utah 
+207,178,Utah 
+211,176,Utah 
+212,177,Utah 
+215,174,Utah 
+221,174,Utah 
+223,194,Utah 
+194,176,Utah 
+203,177,Utah 
+207,177,Utah 
+211,175,Utah 
+212,178,Utah 
+215,173,Utah 
+221,173,Utah 
+195,176,Utah 
+202,177,Utah 
+203,176,Utah 
+208,177,Utah 
+210,175,Utah 
+211,178,Utah 
+214,173,Utah 
+215,172,Utah 
+196,176,Utah 
+201,177,Utah 
+204,176,Utah 
+209,177,Utah 
+209,175,Utah 
+210,178,Utah 
+213,173,Utah 
+197,176,Utah 
+196,177,Utah 
+201,176,Utah 
+205,176,Utah 
+210,177,Utah 
+209,178,Utah 
+209,174,Utah 
+212,173,Utah 
+213,174,Utah 
+197,175,Utah 
+196,178,Utah 
+201,175,Utah 
+205,175,Utah 
+209,179,Utah 
+209,173,Utah 
+212,172,Utah 
+198,175,Utah 
+195,178,Utah 
+196,179,Utah 
+202,175,Utah 
+206,175,Utah 
+209,180,Utah 
+210,173,Utah 
+211,172,Utah 
+198,174,Utah 
+197,179,Utah 
+202,174,Utah 
+206,174,Utah 
+210,180,Utah 
+210,172,Utah 
+198,173,Utah 
+197,180,Utah 
+202,173,Utah 
+206,173,Utah 
+210,181,Utah 
+199,173,Utah 
+198,180,Utah 
+201,173,Utah 
+202,172,Utah 
+207,173,Utah 
+211,181,Utah 
+200,173,Utah 
+201,172,Utah 
+202,171,Utah 
+212,181,Utah 
+200,172,Utah 
+201,171,Utah 
+202,170,Utah 
+200,171,Utah 
+199,171,Utah 
+198,171,Utah 
+197,171,Utah 
+196,171,Utah 
+197,172,Utah 
+196,170,Utah 
+195,170,Utah 
+194,170,Utah 
+193,170,Utah 
+194,171,Utah 
+193,169,Utah 
+194,172,Utah 
+193,172,Utah 
+194,173,Utah 
+193,173,Utah 
+194,174,Utah 
+193,174,Utah 
+192,174,Utah 
+191,174,Utah 
+190,174,Utah 
+191,175,Utah 
+190,173,Utah 
+191,176,Utah 
+190,172,Utah 
+192,176,Utah 
+189,172,Utah 
+190,171,Utah 
+189,171,Utah 
+190,170,Utah 
+189,170,Utah 
+190,169,Utah 
+189,169,Utah 
+190,168,Utah 
+189,168,Utah 
+188,168,Utah 
+206,238,Utah 
+209,238,Utah 
+207,240,Utah 
+206,240,Utah 
+205,238,Utah 
+210,238,Utah 
+205,241,Utah 
+203,238,Utah 
+211,235,Utah 
+203,241,Utah 
+200,239,Utah 
+214,236,Utah 
+200,238,Utah 
+214,235,Utah 
+212,239,Utah 
+201,242,Utah 
+214,234,Utah 
+199,237,Utah 
+204,242,Utah 
+214,233,Utah 
+199,236,Utah 
+204,243,Utah 
+214,232,Utah 
+213,241,Utah 
+201,233,Utah 
+211,232,Utah 
+215,240,Utah 
+203,234,Utah 
+204,245,Utah 
+214,230,Utah 
+198,234,Utah 
+201,245,Utah 
+211,230,Utah 
+213,242,Utah 
+200,233,Utah 
+202,231,Utah 
+203,248,Utah 
+213,227,Utah 
+198,232,Utah 
+203,231,Utah 
+204,248,Utah 
+214,227,Utah 
+196,233,Utah 
+205,232,Utah 
+200,245,Utah 
+205,248,Utah 
+216,228,Utah 
+217,241,Utah 
+197,231,Utah 
+204,230,Utah 
+200,248,Utah 
+209,228,Utah 
+215,226,Utah 
+217,244,Utah 
+206,231,Utah 
+198,247,Utah 
+207,229,Utah 
+217,227,Utah 
+219,243,Utah 
+195,233,Utah 
+205,229,Utah 
+199,249,Utah 
+208,227,Utah 
+216,225,Utah 
+218,245,Utah 
+202,229,Utah 
+197,244,Utah 
+207,244,Utah 
+208,232,Utah 
+220,240,Utah 
+194,230,Utah 
+196,246,Utah 
+209,245,Utah 
+206,227,Utah 
+218,227,Utah 
+221,244,Utah 
+193,230,Utah 
+195,244,Utah 
+196,249,Utah 
+204,228,Utah 
+219,225,Utah 
+222,242,Utah 
+192,232,Utah 
+195,243,Utah 
+196,250,Utah 
+209,243,Utah 
+206,233,Utah 
+219,224,Utah 
+222,243,Utah 
+194,233,Utah 
+198,243,Utah 
+199,250,Utah 
+209,242,Utah 
+205,225,Utah 
+217,223,Utah 
+223,239,Utah 
+191,233,Utah 
+202,226,Utah 
+194,246,Utah 
+207,241,Utah 
+206,225,Utah 
+216,223,Utah 
+221,238,Utah 
+191,228,Utah 
+193,236,Utah 
+196,241,Utah 
+199,252,Utah 
+209,240,Utah 
+210,234,Utah 
+221,223,Utah 
+220,238,Utah 
+190,228,Utah 
+194,236,Utah 
+203,223,Utah 
+200,250,Utah 
+210,240,Utah 
+213,224,Utah 
+220,221,Utah 
+224,237,Utah 
+189,230,Utah 
+196,235,Utah 
+201,224,Utah 
+200,241,Utah 
+201,250,Utah 
+211,240,Utah 
+208,224,Utah 
+221,221,Utah 
+226,238,Utah 
+188,228,Utah 
+189,235,Utah 
+200,224,Utah 
+204,222,Utah 
+202,250,Utah 
+211,243,Utah 
+213,222,Utah 
+216,239,Utah 
+225,236,Utah 
+190,227,Utah 
+189,236,Utah 
+199,224,Utah 
+205,222,Utah 
+202,253,Utah 
+210,226,Utah 
+224,222,Utah 
+216,238,Utah 
+226,240,Utah 
+190,226,Utah 
+189,231,Utah 
+198,224,Utah 
+206,222,Utah 
+204,252,Utah 
+211,224,Utah 
+224,221,Utah 
+222,225,Utah 
+227,236,Utah 
+187,226,Utah 
+191,232,Utah 
+197,224,Utah 
+207,222,Utah 
+204,253,Utah 
+212,245,Utah 
+212,226,Utah 
+224,224,Utah 
+218,236,Utah 
+226,234,Utah 
+187,225,Utah 
+195,225,Utah 
+208,222,Utah 
+204,254,Utah 
+209,222,Utah 
+224,219,Utah 
+215,236,Utah 
+228,235,Utah 
+226,243,Utah 
+190,223,Utah 
+196,227,Utah 
+202,255,Utah 
+213,246,Utah 
+224,218,Utah 
+223,227,Utah 
+217,233,Utah 
+224,244,Utah 
+188,222,Utah 
+197,223,Utah 
+197,229,Utah 
+204,256,Utah 
+222,217,Utah 
+224,227,Utah 
+229,234,Utah 
+226,245,Utah 
+190,221,Utah 
+196,221,Utah 
+200,255,Utah 
+216,245,Utah 
+221,217,Utah 
+225,225,Utah 
+218,232,Utah 
+227,243,Utah 
+186,224,Utah 
+193,223,Utah 
+197,221,Utah 
+199,253,Utah 
+206,256,Utah 
+220,219,Utah 
+227,226,Utah 
+220,233,Utah 
+229,244,Utah 
+185,222,Utah 
+192,223,Utah 
+198,221,Utah 
+197,254,Utah 
+207,254,Utah 
+205,258,Utah 
+226,216,Utah 
+226,224,Utah 
+220,232,Utah 
+229,243,Utah 
+227,247,Utah 
+193,221,Utah 
+200,222,Utah 
+198,256,Utah 
+207,253,Utah 
+218,217,Utah 
+227,218,Utah 
+223,228,Utah 
+218,231,Utah 
+230,231,Utah 
+228,241,Utah 
+185,220,Utah 
+193,220,Utah 
+200,221,Utah 
+201,256,Utah 
+206,251,Utah 
+219,215,Utah 
+226,220,Utah 
+224,230,Utah 
+220,230,Utah 
+229,229,Utah 
+229,245,Utah 
+184,222,Utah 
+191,219,Utah 
+191,227,Utah 
+196,252,Utah 
+207,251,Utah 
+218,215,Utah 
+227,220,Utah 
+223,230,Utah 
+221,230,Utah 
+230,229,Utah 
+231,246,Utah 
+183,220,Utah 
+188,221,Utah 
+193,226,Utah 
+200,219,Utah 
+209,252,Utah 
+208,257,Utah 
+217,217,Utah 
+229,219,Utah 
+229,223,Utah 
+222,230,Utah 
+221,233,Utah 
+232,242,Utah 
+231,245,Utah 
+183,219,Utah 
+188,218,Utah 
+193,227,Utah 
+200,218,Utah 
+209,251,Utah 
+209,259,Utah 
+231,216,Utah 
+231,224,Utah 
+221,228,Utah 
+223,232,Utah 
+232,231,Utah 
+231,244,Utah 
+229,250,Utah 
+190,217,Utah 
+193,228,Utah 
+199,216,Utah 
+207,250,Utah 
+209,256,Utah 
+216,214,Utah 
+230,214,Utah 
+228,226,Utah 
+228,228,Utah 
+233,229,Utah 
+230,240,Utah 
+227,249,Utah 
+185,217,Utah 
+193,215,Utah 
+200,216,Utah 
+201,261,Utah 
+210,256,Utah 
+208,262,Utah 
+231,214,Utah 
+231,222,Utah 
+220,227,Utah 
+223,234,Utah 
+232,227,Utah 
+232,239,Utah 
+232,249,Utah 
+186,217,Utah 
+195,218,Utah 
+201,216,Utah 
+199,260,Utah 
+210,249,Utah 
+211,258,Utah 
+209,262,Utah 
+232,214,Utah 
+231,219,Utah 
+230,220,Utah 
+221,225,Utah 
+222,236,Utah 
+232,234,Utah 
+224,248,Utah 
+232,248,Utah 
+191,215,Utah 
+196,216,Utah 
+201,219,Utah 
+203,261,Utah 
+210,252,Utah 
+205,261,Utah 
+221,214,Utah 
+233,214,Utah 
+228,221,Utah 
+220,235,Utah 
+234,227,Utah 
+233,234,Utah 
+233,242,Utah 
+227,250,Utah 
+190,215,Utah 
+203,216,Utah 
+198,257,Utah 
+212,249,Utah 
+212,255,Utah 
+210,263,Utah 
+234,214,Utah 
+227,221,Utah 
+224,234,Utah 
+235,229,Utah 
+236,240,Utah 
+223,247,Utah 
+227,251,Utah 
+189,217,Utah 
+204,216,Utah 
+197,257,Utah 
+213,249,Utah 
+213,255,Utah 
+212,262,Utah 
+236,215,Utah 
+225,222,Utah 
+233,220,Utah 
+235,226,Utah 
+235,238,Utah 
+224,245,Utah 
+226,253,Utah 
+197,214,Utah 
+205,218,Utah 
+196,259,Utah 
+214,251,Utah 
+214,257,Utah 
+212,263,Utah 
+236,214,Utah 
+225,221,Utah 
+233,223,Utah 
+235,231,Utah 
+235,243,Utah 
+224,252,Utah 
+188,214,Utah 
+206,216,Utah 
+195,257,Utah 
+197,261,Utah 
+213,253,Utah 
+214,258,Utah 
+212,264,Utah 
+234,213,Utah 
+235,218,Utah 
+235,222,Utah 
+237,228,Utah 
+238,239,Utah 
+236,241,Utah 
+222,247,Utah 
+229,252,Utah 
+187,214,Utah 
+204,215,Utah 
+205,220,Utah 
+196,255,Utah 
+215,252,Utah 
+214,259,Utah 
+222,210,Utah 
+233,219,Utah 
+234,224,Utah 
+237,229,Utah 
+237,237,Utah 
+236,244,Utah 
+222,250,Utah 
+228,250,Utah 
+200,214,Utah 
+202,220,Utah 
+199,261,Utah 
+215,253,Utah 
+219,210,Utah 
+237,212,Utah 
+235,224,Utah 
+238,229,Utah 
+238,237,Utah 
+237,244,Utah 
+222,253,Utah 
+185,216,Utah 
+207,214,Utah 
+197,262,Utah 
+217,254,Utah 
+220,208,Utah 
+237,211,Utah 
+236,224,Utah 
+240,230,Utah 
+240,238,Utah 
+239,241,Utah 
+220,250,Utah 
+230,252,Utah 
+198,212,Utah 
+207,213,Utah 
+217,247,Utah 
+218,209,Utah 
+234,211,Utah 
+237,222,Utah 
+239,228,Utah 
+240,237,Utah 
+240,243,Utah 
+219,252,Utah 
+183,214,Utah 
+201,212,Utah 
+207,212,Utah 
+217,246,Utah 
+219,207,Utah 
+235,209,Utah 
+241,225,Utah 
+237,233,Utah 
+240,236,Utah 
+240,244,Utah 
+219,253,Utah 
+183,213,Utah 
+201,211,Utah 
+207,211,Utah 
+217,208,Utah 
+233,210,Utah 
+243,226,Utah 
+242,229,Utah 
+237,236,Utah 
+241,240,Utah 
+239,246,Utah 
+219,254,Utah 
+232,253,Utah 
+184,211,Utah 
+199,210,Utah 
+205,210,Utah 
+217,207,Utah 
+233,209,Utah 
+243,225,Utah 
+241,231,Utah 
+241,239,Utah 
+218,248,Utah 
+221,255,Utah 
+231,255,Utah 
+196,210,Utah 
+201,209,Utah 
+207,209,Utah 
+218,205,Utah 
+233,208,Utah 
+238,207,Utah 
+242,223,Utah 
+242,245,Utah 
+221,248,Utah 
+229,254,Utah 
+186,211,Utah 
+195,212,Utah 
+202,211,Utah 
+208,211,Utah 
+222,204,Utah 
+236,206,Utah 
+243,223,Utah 
+242,234,Utah 
+241,243,Utah 
+222,256,Utah 
+188,212,Utah 
+195,209,Utah 
+202,208,Utah 
+208,208,Utah 
+221,204,Utah 
+239,206,Utah 
+244,225,Utah 
+242,233,Utah 
+223,256,Utah 
+233,256,Utah 
+194,209,Utah 
+202,213,Utah 
+225,203,Utah 
+239,205,Utah 
+244,228,Utah 
+240,232,Utah 
+236,254,Utah 
+189,211,Utah 
+193,211,Utah 
+203,207,Utah 
+227,204,Utah 
+234,205,Utah 
+239,204,Utah 
+244,221,Utah 
+225,256,Utah 
+235,256,Utah 
+192,209,Utah 
+205,208,Utah 
+211,210,Utah 
+226,206,Utah 
+239,203,Utah 
+226,254,Utah 
+224,258,Utah 
+233,257,Utah 
+189,209,Utah 
+193,207,Utah 
+204,206,Utah 
+211,211,Utah 
+226,201,Utah 
+237,202,Utah 
+243,236,Utah 
+233,252,Utah 
+236,257,Utah 
+189,208,Utah 
+202,207,Utah 
+213,208,Utah 
+210,213,Utah 
+226,208,Utah 
+239,201,Utah 
+233,251,Utah 
+236,258,Utah 
+189,207,Utah 
+202,206,Utah 
+213,207,Utah 
+229,202,Utah 
+227,206,Utah 
+241,202,Utah 
+242,237,Utah 
+233,250,Utah 
+234,259,Utah 
+187,206,Utah 
+195,206,Utah 
+201,204,Utah 
+211,206,Utah 
+211,214,Utah 
+228,206,Utah 
+235,201,Utah 
+223,259,Utah 
+233,249,Utah 
+237,259,Utah 
+190,206,Utah 
+195,205,Utah 
+204,204,Utah 
+213,205,Utah 
+229,200,Utah 
+228,209,Utah 
+241,200,Utah 
+226,261,Utah 
+236,247,Utah 
+185,206,Utah 
+192,205,Utah 
+203,204,Utah 
+215,206,Utah 
+213,212,Utah 
+230,202,Utah 
+229,209,Utah 
+243,201,Utah 
+223,261,Utah 
+233,247,Utah 
+235,261,Utah 
+187,205,Utah 
+189,203,Utah 
+194,202,Utah 
+207,203,Utah 
+215,213,Utah 
+231,200,Utah 
+231,208,Utah 
+232,203,Utah 
+243,238,Utah 
+226,263,Utah 
+236,245,Utah 
+184,205,Utah 
+191,204,Utah 
+195,202,Utah 
+202,201,Utah 
+213,204,Utah 
+214,211,Utah 
+229,199,Utah 
+231,205,Utah 
+232,204,Utah 
+243,199,Utah 
+223,263,Utah 
+233,245,Utah 
+184,204,Utah 
+191,203,Utah 
+196,204,Utah 
+204,202,Utah 
+206,200,Utah 
+215,211,Utah 
+213,217,Utah 
+232,205,Utah 
+240,199,Utah 
+243,240,Utah 
+226,265,Utah 
+238,263,Utah 
+187,202,Utah 
+190,201,Utah 
+199,202,Utah 
+208,201,Utah 
+216,205,Utah 
+210,215,Utah 
+233,199,Utah 
+232,210,Utah 
+243,197,Utah 
+224,266,Utah 
+238,264,Utah 
+187,201,Utah 
+198,202,Utah 
+202,200,Utah 
+207,199,Utah 
+217,211,Utah 
+214,218,Utah 
+234,199,Utah 
+222,265,Utah 
+235,264,Utah 
+184,201,Utah 
+192,201,Utah 
+198,205,Utah 
+209,200,Utah 
+219,212,Utah 
+216,217,Utah 
+236,200,Utah 
+244,196,Utah 
+236,266,Utah 
+185,199,Utah 
+192,200,Utah 
+197,199,Utah 
+209,199,Utah 
+218,210,Utah 
+215,219,Utah 
+235,198,Utah 
+235,266,Utah 
+184,199,Utah 
+190,199,Utah 
+198,199,Utah 
+205,198,Utah 
+208,197,Utah 
+208,217,Utah 
+235,197,Utah 
+238,196,Utah 
+234,266,Utah 
+183,199,Utah 
+188,200,Utah 
+200,200,Utah 
+197,205,Utah 
+205,197,Utah 
+215,201,Utah 
+208,218,Utah 
+235,196,Utah 
+238,195,Utah 
+181,200,Utah 
+189,198,Utah 
+192,197,Utah 
+196,207,Utah 
+205,196,Utah 
+215,200,Utah 
+208,219,Utah 
+217,220,Utah 
+237,197,Utah 
+239,263,Utah 
+183,203,Utah 
+194,198,Utah 
+196,208,Utah 
+204,194,Utah 
+215,199,Utah 
+211,219,Utah 
+217,221,Utah 
+232,263,Utah 
+181,202,Utah 
+189,196,Utah 
+201,198,Utah 
+206,195,Utah 
+210,195,Utah 
+218,197,Utah 
+214,221,Utah 
+232,262,Utah 
+181,197,Utah 
+187,195,Utah 
+194,196,Utah 
+200,196,Utah 
+205,193,Utah 
+209,193,Utah 
+217,195,Utah 
+234,261,Utah 
+185,196,Utah 
+191,196,Utah 
+200,195,Utah 
+211,194,Utah 
+219,196,Utah 
+180,204,Utah 
+190,194,Utah 
+194,194,Utah 
+207,193,Utah 
+214,196,Utah 
+181,196,Utah 
+185,194,Utah 
+190,193,Utah 
+194,193,Utah 
+201,192,Utah 
+209,192,Utah 
+216,195,Utah 
+218,193,Utah 
+181,207,Utah 
+189,191,Utah 
+193,191,Utah 
+205,191,Utah 
+211,191,Utah 
+215,193,Utah 
+179,206,Utah 
+191,192,Utah 
+204,193,Utah 
+208,191,Utah 
+212,193,Utah 
+216,193,Utah 
+179,203,Utah 
+186,192,Utah 
+195,191,Utah 
+208,190,Utah 
+211,195,Utah 
+222,194,Utah 
+184,207,Utah 
+187,190,Utah 
+193,190,Utah 
+205,190,Utah 
+207,188,Utah 
+212,197,Utah 
+221,196,Utah 
+183,209,Utah 
+190,188,Utah 
+203,189,Utah 
+208,188,Utah 
+212,188,Utah 
+220,192,Utah 
+220,198,Utah 
+192,189,Utah 
+196,191,Utah 
+205,188,Utah 
+214,189,Utah 
+214,199,Utah 
+222,197,Utah 
+188,188,Utah 
+196,188,Utah 
+210,188,Utah 
+211,199,Utah 
+220,190,Utah 
+186,189,Utah 
+198,189,Utah 
+200,191,Utah 
+211,200,Utah 
+220,189,Utah 
+221,200,Utah 
+192,186,Utah 
+200,188,Utah 
+213,185,Utah 
+213,203,Utah 
+223,199,Utah 
+194,187,Utah 
+210,187,Utah 
+214,185,Utah 
+219,188,Utah 
+223,200,Utah 
+194,186,Utah 
+210,186,Utah 
+215,187,Utah 
+219,187,Utah 
+221,201,Utah 
+187,186,Utah 
+193,184,Utah 
+210,185,Utah 
+215,184,Utah 
+220,185,Utah 
+223,202,Utah 
+186,184,Utah 
+197,185,Utah 
+217,185,Utah 
+218,186,Utah 
+224,200,Utah 
+184,187,Utah 
+195,184,Utah 
+199,184,Utah 
+216,183,Utah 
+219,184,Utah 
+189,185,Utah 
+195,187,Utah 
+214,184,Utah 
+208,204,Utah 
+185,184,Utah 
+197,184,Utah 
+201,186,Utah 
+218,183,Utah 
+183,183,Utah 
+189,183,Utah 
+196,182,Utah 
+212,182,Utah 
+218,182,Utah 
+186,183,Utah 
+188,181,Utah 
+202,183,Utah 
+214,181,Utah 
+225,198,Utah 
+185,181,Utah 
+198,182,Utah 
+203,187,Utah 
+215,183,Utah 
+228,198,Utah 
+190,181,Utah 
+205,184,Utah 
+215,180,Utah 
+228,197,Utah 
+191,183,Utah 
+205,183,Utah 
+216,178,Utah 
+228,196,Utah 
+191,184,Utah 
+199,180,Utah 
+214,179,Utah 
+225,196,Utah 
+190,180,Utah 
+190,186,Utah 
+203,181,Utah 
+215,177,Utah 
+226,194,Utah 
+191,186,Utah 
+206,181,Utah 
+220,177,Utah 
+229,194,Utah 
+206,180,Utah 
+220,176,Utah 
+194,179,Utah 
+204,179,Utah 
+215,176,Utah 
+219,174,Utah 
+201,179,Utah 
+206,178,Utah 
+214,174,Utah 
+192,177,Utah 
+208,179,Utah 
+212,175,Utah 
+222,175,Utah 
+195,177,Utah 
+208,178,Utah 
+211,177,Utah 
+222,174,Utah 
+194,175,Utah 
+206,177,Utah 
+211,174,Utah 
+216,173,Utah 
+195,175,Utah 
+203,175,Utah 
+210,174,Utah 
+214,172,Utah 
+200,177,Utah 
+204,175,Utah 
+208,175,Utah 
+213,172,Utah 
+197,177,Utah 
+206,176,Utah 
+208,174,Utah 
+212,174,Utah 
+197,178,Utah 
+201,174,Utah 
+208,173,Utah 
+199,175,Utah 
+196,180,Utah 
+208,180,Utah 
+199,174,Utah 
+203,174,Utah 
+211,180,Utah 
+198,172,Utah 
+203,173,Utah 
+206,172,Utah 
+199,172,Utah 
+207,172,Utah 
+200,174,Utah 
+212,180,Utah 
+200,170,Utah 
+198,170,Utah 
+195,171,Utah 
+196,169,Utah 
+194,169,Utah 
+193,171,Utah 
+195,172,Utah 
+195,173,Utah 
+195,174,Utah 
+192,175,Utah 
+189,174,Utah 
+189,173,Utah 
+191,177,Utah 
+188,172,Utah 
+188,171,Utah 
+188,170,Utah 
+188,169,Utah 
+187,168,Utah 
+209,239,Utah 
+210,239,Utah 
+214,237,Utah 
+211,239,Utah 
+201,243,Utah 
+198,236,Utah 
+216,240,Utah 
+204,234,Utah 
+215,230,Utah 
+212,227,Utah 
+205,233,Utah 
+206,248,Utah 
+216,229,Utah 
+201,248,Utah 
+209,227,Utah 
+218,246,Utah 
+210,245,Utah 
+219,227,Utah 
+193,229,Utah 
+195,249,Utah 
+195,242,Utah 
+196,251,Utah 
+199,243,Utah 
+194,245,Utah 
+193,237,Utah 
+196,240,Utah 
+194,237,Utah 
+219,221,Utah 
+188,230,Utah 
+196,236,Utah 
+201,249,Utah 
+226,239,Utah 
+188,235,Utah 
+213,221,Utah 
+189,237,Utah 
+210,227,Utah 
+215,238,Utah 
+188,231,Utah 
+228,236,Utah 
+207,221,Utah 
+212,246,Utah 
+219,236,Utah 
+226,233,Utah 
+194,225,Utah 
+229,235,Utah 
+202,256,Utah 
+216,233,Utah 
+196,229,Utah 
+230,234,Utah 
+196,220,Utah 
+185,224,Utah 
+207,256,Utah 
+196,254,Utah 
+226,215,Utah 
+218,218,Utah 
+218,230,Utah 
+228,240,Utah 
+201,221,Utah 
+225,220,Utah 
+220,229,Utah 
+183,222,Utah 
+195,252,Utah 
+182,220,Utah 
+193,225,Utah 
+208,256,Utah 
+232,243,Utah 
+182,219,Utah 
+188,217,Utah 
+210,259,Utah 
+231,225,Utah 
+224,232,Utah 
+194,228,Utah 
+209,255,Utah 
+229,214,Utah 
+229,240,Utah 
+184,217,Utah 
+193,214,Utah 
+207,262,Utah 
+232,226,Utah 
+232,250,Utah 
+201,215,Utah 
+232,213,Utah 
+221,236,Utah 
+223,248,Utah 
+191,214,Utah 
+204,261,Utah 
+210,253,Utah 
+222,214,Utah 
+233,213,Utah 
+220,236,Utah 
+234,234,Utah 
+233,243,Utah 
+203,215,Utah 
+212,254,Utah 
+213,248,Utah 
+213,262,Utah 
+236,216,Utah 
+235,225,Utah 
+235,237,Utah 
+195,259,Utah 
+215,257,Utah 
+237,214,Utah 
+235,232,Utah 
+207,216,Utah 
+196,261,Utah 
+215,258,Utah 
+234,212,Utah 
+238,228,Utah 
+204,214,Utah 
+195,255,Utah 
+214,260,Utah 
+234,225,Utah 
+222,249,Utah 
+238,212,Utah 
+184,216,Utah 
+196,262,Utah 
+217,255,Utah 
+237,224,Utah 
+240,231,Utah 
+218,247,Utah 
+233,211,Utah 
+237,221,Utah 
+183,215,Utah 
+208,212,Utah 
+237,234,Utah 
+182,213,Utah 
+244,226,Utah 
+236,236,Utah 
+239,247,Utah 
+183,211,Utah 
+205,209,Utah 
+221,256,Utah 
+231,256,Utah 
+207,208,Utah 
+218,204,Utah 
+241,223,Utah 
+242,246,Utah 
+228,254,Utah 
+186,210,Utah 
+195,213,Utah 
+222,257,Utah 
+208,207,Utah 
+221,203,Utah 
+245,225,Utah 
+202,214,Utah 
+243,228,Utah 
+237,254,Utah 
+190,211,Utah 
+193,212,Utah 
+228,204,Utah 
+240,204,Utah 
+244,220,Utah 
+236,256,Utah 
+206,208,Utah 
+227,254,Utah 
+232,257,Utah 
+190,209,Utah 
+212,211,Utah 
+243,237,Utah 
+190,208,Utah 
+213,209,Utah 
+210,214,Utah 
+239,200,Utah 
+190,207,Utah 
+241,203,Utah 
+234,260,Utah 
+211,205,Utah 
+236,201,Utah 
+238,259,Utah 
+204,203,Utah 
+227,261,Utah 
+191,205,Utah 
+215,207,Utah 
+230,203,Utah 
+244,201,Utah 
+222,261,Utah 
+193,202,Utah 
+231,203,Utah 
+195,201,Utah 
+212,204,Utah 
+228,199,Utah 
+230,205,Utah 
+244,199,Utah 
+183,204,Utah 
+206,199,Utah 
+212,217,Utah 
+239,199,Utah 
+188,202,Utah 
+232,211,Utah 
+201,200,Utah 
+217,210,Utah 
+221,265,Utah 
+193,201,Utah 
+245,196,Utah 
+185,198,Utah 
+196,199,Utah 
+210,199,Utah 
+184,198,Utah 
+198,198,Utah 
+207,197,Utah 
+208,216,Utah 
+233,266,Utah 
+183,198,Utah 
+206,197,Utah 
+180,200,Utah 
+191,197,Utah 
+207,219,Utah 
+218,220,Utah 
+195,198,Utah 
+212,219,Utah 
+218,221,Utah 
+180,202,Utah 
+231,262,Utah 
+182,197,Utah 
+199,196,Utah 
+184,196,Utah 
+199,195,Utah 
+182,196,Utah 
+184,194,Utah 
+195,193,Utah 
+208,192,Utah 
+218,192,Utah 
+181,208,Utah 
+214,193,Utah 
+179,207,Utah 
+216,192,Utah 
+185,192,Utah 
+222,195,Utah 
+192,190,Utah 
+206,188,Utah 
+211,197,Utah 
+182,209,Utah 
+189,188,Utah 
+203,188,Utah 
+219,192,Utah 
+197,191,Utah 
+205,187,Utah 
+214,190,Utah 
+188,187,Utah 
+219,190,Utah 
+198,190,Utah 
+219,189,Utah 
+212,203,Utah 
+223,198,Utah 
+209,187,Utah 
+209,186,Utah 
+215,188,Utah 
+220,201,Utah 
+192,184,Utah 
+209,185,Utah 
+220,184,Utah 
+183,187,Utah 
+219,183,Utah 
+208,205,Utah 
+195,182,Utah 
+219,182,Utah 
+188,180,Utah 
+224,198,Utah 
+184,181,Utah 
+204,187,Utah 
+205,185,Utah 
+192,183,Utah 
+216,177,Utah 
+199,179,Utah 
+224,196,Utah 
+190,179,Utah 
+206,182,Utah 
+220,178,Utah 
+229,195,Utah 
+216,176,Utah 
+219,173,Utah 
+223,175,Utah 
+223,174,Utah 
+199,177,Utah 
+204,174,Utah 
+198,178,Utah 
+199,176,Utah 
+208,181,Utah 
+205,172,Utah 
+207,171,Utah 
+197,169,Utah 
+196,173,Utah 
+188,174,Utah 
+188,173,Utah 
+191,178,Utah 
+187,171,Utah 
+187,169,Utah 
+200,243,Utah 
+205,234,Utah 
+216,230,Utah 
+211,227,Utah 
+206,249,Utah 
+219,246,Utah 
+210,246,Utah 
+194,249,Utah 
+195,251,Utah 
+193,245,Utah 
+195,240,Utah 
+195,237,Utah 
+219,220,Utah 
+196,237,Utah 
+187,235,Utah 
+213,220,Utah 
+189,238,Utah 
+229,236,Utah 
+207,220,Utah 
+212,247,Utah 
+225,233,Utah 
+230,235,Utah 
+195,229,Utah 
+195,220,Utah 
+185,225,Utah 
+225,215,Utah 
+218,219,Utah 
+218,229,Utah 
+219,229,Utah 
+183,223,Utah 
+195,253,Utah 
+182,221,Utah 
+181,219,Utah 
+232,225,Utah 
+195,228,Utah 
+228,214,Utah 
+229,239,Utah 
+192,214,Utah 
+206,262,Utah 
+233,226,Utah 
+232,212,Utah 
+191,213,Utah 
+211,253,Utah 
+223,214,Utah 
+233,212,Utah 
+234,235,Utah 
+211,254,Utah 
+237,216,Utah 
+234,237,Utah 
+194,259,Utah 
+216,257,Utah 
+235,233,Utah 
+216,258,Utah 
+215,260,Utah 
+233,225,Utah 
+238,213,Utah 
+195,262,Utah 
+217,256,Utah 
+238,221,Utah 
+182,215,Utah 
+181,213,Utah 
+236,235,Utah 
+240,247,Utah 
+182,211,Utah 
+221,257,Utah 
+231,257,Utah 
+219,204,Utah 
+241,222,Utah 
+228,255,Utah 
+194,213,Utah 
+209,207,Utah 
+220,203,Utah 
+237,253,Utah 
+191,211,Utah 
+190,212,Utah 
+229,204,Utah 
+243,220,Utah 
+244,219,Utah 
+227,255,Utah 
+191,208,Utah 
+213,210,Utah 
+238,200,Utah 
+242,203,Utah 
+210,205,Utah 
+239,259,Utah 
+238,260,Utah 
+227,260,Utah 
+215,208,Utah 
+245,201,Utah 
+244,202,Utah 
+222,260,Utah 
+195,200,Utah 
+245,199,Utah 
+212,218,Utah 
+239,198,Utah 
+216,210,Utah 
+221,264,Utah 
+245,197,Utah 
+196,198,Utah 
+198,197,Utah 
+232,266,Utah 
+183,197,Utah 
+190,197,Utah 
+195,197,Utah 
+212,220,Utah 
+231,261,Utah 
+183,196,Utah 
+198,195,Utah 
+182,195,Utah 
+184,193,Utah 
+217,192,Utah 
+180,208,Utah 
+214,192,Utah 
+179,208,Utah 
+184,192,Utah 
+206,187,Utah 
+189,187,Utah 
+198,191,Utah 
+205,186,Utah 
+214,191,Utah 
+218,189,Utah 
+208,186,Utah 
+219,201,Utah 
+208,185,Utah 
+220,183,Utah 
+183,188,Utah 
+209,205,Utah 
+195,181,Utah 
+219,181,Utah 
+188,179,Utah 
+183,181,Utah 
+206,185,Utah 
+223,196,Utah 
+190,178,Utah 
+221,178,Utah 
+230,195,Utah 
+218,173,Utah 
+223,176,Utah 
+208,182,Utah 
+205,171,Utah 
+188,175,Utah 
+186,171,Utah 
+205,235,Utah 
+210,247,Utah 
+194,248,Utah 
+194,251,Utah 
+193,244,Utah 
+195,239,Utah 
+197,237,Utah 
+186,235,Utah 
+187,236,Utah 
+190,238,Utah 
+230,236,Utah 
+211,247,Utah 
+184,225,Utah 
+224,215,Utah 
+182,223,Utah 
+194,253,Utah 
+180,219,Utah 
+227,214,Utah 
+229,238,Utah 
+206,263,Utah 
+190,213,Utah 
+224,214,Utah 
+223,215,Utah 
+234,236,Utah 
+237,217,Utah 
+193,259,Utah 
+194,260,Utah 
+216,256,Utah 
+216,259,Utah 
+215,261,Utah 
+218,256,Utah 
+238,220,Utah 
+182,216,Utah 
+181,212,Utah 
+241,247,Utah 
+181,211,Utah 
+221,258,Utah 
+231,258,Utah 
+240,222,Utah 
+228,256,Utah 
+209,206,Utah 
+237,252,Utah 
+242,220,Utah 
+245,219,Utah 
+227,256,Utah 
+242,204,Utah 
+240,259,Utah 
+239,260,Utah 
+227,259,Utah 
+246,201,Utah 
+245,202,Utah 
+221,260,Utah 
+246,199,Utah 
+238,198,Utah 
+220,264,Utah 
+246,197,Utah 
+197,197,Utah 
+232,265,Utah 
+230,261,Utah 
+183,195,Utah 
+198,194,Utah 
+183,193,Utah 
+180,209,Utah 
+179,209,Utah 
+184,191,Utah 
+198,192,Utah 
+217,189,Utah 
+219,200,Utah 
+207,185,Utah 
+221,183,Utah 
+183,189,Utah 
+220,181,Utah 
+187,179,Utah 
+183,180,Utah 
+222,178,Utah 
+231,195,Utah 
+223,177,Utah 
+208,183,Utah 
+187,175,Utah 
+185,171,Utah 
+186,172,Utah 
+205,236,Utah 
+193,248,Utah 
+192,244,Utah 
+194,239,Utah 
+185,235,Utah 
+186,236,Utah 
+191,238,Utah 
+231,236,Utah 
+211,248,Utah 
+184,226,Utah 
+182,224,Utah 
+194,254,Utah 
+180,218,Utah 
+227,213,Utah 
+230,238,Utah 
+189,213,Utah 
+233,236,Utah 
+237,218,Utah 
+193,258,Utah 
+194,261,Utah 
+216,261,Utah 
+219,256,Utah 
+239,220,Utah 
+181,216,Utah 
+180,212,Utah 
+180,211,Utah 
+220,258,Utah 
+230,258,Utah 
+239,222,Utah 
+229,256,Utah 
+238,252,Utah 
+241,220,Utah 
+242,221,Utah 
+227,257,Utah 
+242,205,Utah 
+240,260,Utah 
+228,259,Utah 
+247,201,Utah 
+246,202,Utah 
+220,260,Utah 
+246,198,Utah 
+220,263,Utah 
+197,196,Utah 
+229,261,Utah 
+197,194,Utah 
+182,193,Utah 
+178,209,Utah 
+183,191,Utah 
+199,192,Utah 
+217,188,Utah 
+219,199,Utah 
+222,183,Utah 
+182,189,Utah 
+183,190,Utah 
+220,180,Utah 
+187,178,Utah 
+222,177,Utah 
+232,195,Utah 
+231,196,Utah 
+209,183,Utah 
+187,176,Utah 
+185,172,Utah 
+204,236,Utah 
+192,248,Utah 
+191,244,Utah 
+193,239,Utah 
+185,234,Utah 
+186,237,Utah 
+191,239,Utah 
+231,237,Utah 
+184,227,Utah 
+182,225,Utah 
+179,218,Utah 
+226,213,Utah 
+231,238,Utah 
+237,219,Utah 
+193,257,Utah 
+217,261,Utah 
+219,257,Utah 
+239,219,Utah 
+181,217,Utah 
+179,211,Utah 
+220,259,Utah 
+230,259,Utah 
+229,257,Utah 
+238,251,Utah 
+241,205,Utah 
+242,206,Utah 
+229,259,Utah 
+248,201,Utah 
+247,202,Utah 
+219,260,Utah 
+247,198,Utah 
+220,262,Utah 
+229,260,Utah 
+196,194,Utah 
+181,193,Utah 
+178,210,Utah 
+199,193,Utah 
+222,182,Utah 
+221,180,Utah 
+187,177,Utah 
+231,197,Utah 
+186,176,Utah 
+203,236,Utah 
+191,248,Utah 
+192,249,Utah 
+191,243,Utah 
+192,239,Utah 
+184,234,Utah 
+185,237,Utah 
+191,240,Utah 
+183,227,Utah 
+184,228,Utah 
+182,226,Utah 
+179,217,Utah 
+226,212,Utah 
+193,256,Utah 
+217,260,Utah 
+240,219,Utah 
+178,211,Utah 
+239,251,Utah 
+241,206,Utah 
+242,207,Utah 
+248,202,Utah 
+218,260,Utah 
+248,198,Utah 
+221,262,Utah 
+181,192,Utah 
+223,182,Utah 
+222,180,Utah 
+188,177,Utah 
+185,176,Utah 
+191,247,Utah 
+192,250,Utah 
+191,242,Utah 
+183,234,Utah 
+184,237,Utah 
+190,240,Utah 
+182,227,Utah 
+185,228,Utah 
+181,226,Utah 
+179,216,Utah 
+226,211,Utah 
+194,256,Utah 
+240,218,Utah 
+240,251,Utah 
+241,207,Utah 
+242,208,Utah 
+218,259,Utah 
+248,199,Utah 
+223,181,Utah 
+189,177,Utah 
+185,175,Utah 
+190,247,Utah 
+191,250,Utah 
+192,251,Utah 
+192,242,Utah 
+183,233,Utah 
+183,237,Utah 
+184,238,Utah 
+190,241,Utah 
+182,228,Utah 
+185,229,Utah 
+178,216,Utah 
+225,211,Utah 
+226,210,Utah 
+240,217,Utah 
+240,250,Utah 
+240,207,Utah 
+243,208,Utah 
+218,258,Utah 
+184,175,Utah 
+189,247,Utah 
+190,250,Utah 
+192,252,Utah 
+192,241,Utah 
+183,232,Utah 
+183,236,Utah 
+184,239,Utah 
+181,228,Utah 
+186,229,Utah 
+177,216,Utah 
+224,211,Utah 
+227,210,Utah 
+241,217,Utah 
+241,250,Utah 
+240,208,Utah 
+243,209,Utah 
+189,246,Utah 
+189,250,Utah 
+190,251,Utah 
+193,252,Utah 
+193,241,Utah 
+184,232,Utah 
+182,236,Utah 
+185,239,Utah 
+180,228,Utah 
+187,229,Utah 
+177,215,Utah 
+223,211,Utah 
+224,212,Utah 
+241,216,Utah 
+239,208,Utah 
+244,209,Utah 
+188,246,Utah 
+188,250,Utah 
+189,251,Utah 
+194,241,Utah 
+184,231,Utah 
+182,235,Utah 
+185,240,Utah 
+180,227,Utah 
+177,214,Utah 
+242,216,Utah 
+239,209,Utah 
+244,210,Utah 
+188,245,Utah 
+188,249,Utah 
+189,252,Utah 
+184,230,Utah 
+186,240,Utah 
+179,227,Utah 
+177,213,Utah 
+242,215,Utah 
+245,210,Utah 
+187,245,Utah 
+187,249,Utah 
+188,252,Utah 
+183,230,Utah 
+186,241,Utah 
+179,226,Utah 
+177,212,Utah 
+242,214,Utah 
+245,211,Utah 
+187,244,Utah 
+187,248,Utah 
+188,253,Utah 
+183,229,Utah 
+186,242,Utah 
+179,225,Utah 
+243,214,Utah 
+246,211,Utah 
+186,244,Utah 
+186,248,Utah 
+187,253,Utah 
+185,242,Utah 
+186,243,Utah 
+180,225,Utah 
+244,214,Utah 
+247,211,Utah 
+185,244,Utah 
+186,247,Utah 
+187,254,Utah 
+185,243,Utah 
+245,214,Utah 
+244,215,Utah 
+247,212,Utah 
+185,245,Utah 
+186,246,Utah 
+187,255,Utah 
+246,214,Utah 
+245,215,Utah 
+184,245,Utah 
+186,255,Utah 
+187,256,Utah 
+246,215,Utah 
+183,245,Utah 
+185,255,Utah 
+188,256,Utah 
+246,216,Utah 
+183,244,Utah 
+184,255,Utah 
+185,256,Utah 
+188,257,Utah 
+182,244,Utah 
+183,255,Utah 
+184,256,Utah 
+189,257,Utah 
+181,244,Utah 
+182,255,Utah 
+183,256,Utah 
+190,257,Utah 
+180,244,Utah 
+181,245,Utah 
+182,254,Utah 
+183,257,Utah 
+190,256,Utah 
+179,244,Utah 
+180,245,Utah 
+181,254,Utah 
+182,257,Utah 
+191,256,Utah 
+178,244,Utah 
+179,245,Utah 
+180,254,Utah 
+181,257,Utah 
+191,255,Utah 
+178,243,Utah 
+179,246,Utah 
+180,253,Utah 
+180,257,Utah 
+181,258,Utah 
+191,254,Utah 
+178,242,Utah 
+179,247,Utah 
+180,252,Utah 
+180,256,Utah 
+181,259,Utah 
+192,254,Utah 
+177,242,Utah 
+178,241,Utah 
+180,247,Utah 
+179,252,Utah 
+180,251,Utah 
+180,259,Utah 
+176,242,Utah 
+179,241,Utah 
+181,247,Utah 
+178,252,Utah 
+181,251,Utah 
+179,259,Utah 
+176,241,Utah 
+180,241,Utah 
+182,247,Utah 
+177,252,Utah 
+178,253,Utah 
+181,250,Utah 
+179,258,Utah 
+176,240,Utah 
+180,240,Utah 
+183,247,Utah 
+182,248,Utah 
+177,251,Utah 
+178,254,Utah 
+181,249,Utah 
+175,240,Utah 
+176,239,Utah 
+180,239,Utah 
+183,248,Utah 
+176,251,Utah 
+177,254,Utah 
+180,249,Utah 
+175,239,Utah 
+176,238,Utah 
+181,239,Utah 
+184,248,Utah 
+175,251,Utah 
+176,254,Utah 
+179,249,Utah 
+175,238,Utah 
+176,237,Utah 
+181,238,Utah 
+174,251,Utah 
+175,252,Utah 
+176,253,Utah 
+178,249,Utah 
+174,238,Utah 
+177,237,Utah 
+182,238,Utah 
+173,251,Utah 
+174,252,Utah 
+177,249,Utah 
+178,250,Utah 
+174,237,Utah 
+177,236,Utah 
+173,250,Utah 
+174,253,Utah 
+177,248,Utah 
+174,236,Utah 
+177,235,Utah 
+173,249,Utah 
+174,254,Utah 
+177,247,Utah 
+175,236,Utah 
+176,235,Utah 
+177,234,Utah 
+174,249,Utah 
+173,254,Utah 
+176,247,Utah 
+175,235,Utah 
+178,234,Utah 
+175,249,Utah 
+172,254,Utah 
+175,247,Utah 
+175,234,Utah 
+178,233,Utah 
+171,254,Utah 
+172,255,Utah 
+175,246,Utah 
+175,233,Utah 
+178,232,Utah 
+171,253,Utah 
+172,256,Utah 
+175,245,Utah 
+176,233,Utah 
+177,232,Utah 
+178,231,Utah 
+171,252,Utah 
+173,256,Utah 
+174,245,Utah 
+175,244,Utah 
+177,231,Utah 
+178,230,Utah 
+172,252,Utah 
+174,256,Utah 
+173,245,Utah 
+176,244,Utah 
+176,231,Utah 
+179,230,Utah 
+175,256,Utah 
+172,245,Utah 
+173,246,Utah 
+176,230,Utah 
+179,229,Utah 
+175,255,Utah 
+171,245,Utah 
+172,246,Utah 
+175,230,Utah 
+171,244,Utah 
+172,247,Utah 
+175,229,Utah 
+171,247,Utah 
+174,229,Utah 
+170,247,Utah 
+174,228,Utah 
+174,227,Utah 
+174,226,Utah 
+207,237,Utah 
+208,236,Utah 
+211,237,Utah 
+210,235,Utah 
+202,238,Utah 
+201,240,Utah 
+201,241,Utah 
+202,237,Utah 
+214,238,Utah 
+211,234,Utah 
+202,235,Utah 
+212,240,Utah 
+204,244,Utah 
+198,235,Utah 
+211,231,Utah 
+203,233,Utah 
+214,229,Utah 
+201,232,Utah 
+212,228,Utah 
+199,231,Utah 
+211,228,Utah 
+197,234,Utah 
+206,247,Utah 
+215,229,Utah 
+200,230,Utah 
+205,245,Utah 
+218,241,Utah 
+197,246,Utah 
+208,230,Utah 
+194,232,Utah 
+198,244,Utah 
+209,232,Utah 
+195,230,Utah 
+198,249,Utah 
+217,225,Utah 
+195,245,Utah 
+208,246,Utah 
+221,240,Utah 
+204,229,Utah 
+209,244,Utah 
+223,241,Utah 
+202,228,Utah 
+197,251,Utah 
+207,234,Utah 
+192,229,Utah 
+194,247,Utah 
+204,226,Utah 
+218,222,Utah 
+194,234,Utah 
+198,252,Utah 
+209,234,Utah 
+222,237,Utah 
+204,225,Utah 
+206,241,Utah 
+215,223,Utah 
+223,237,Utah 
+202,224,Utah 
+205,243,Utah 
+214,225,Utah 
+188,229,Utah 
+195,236,Utah 
+199,242,Utah 
+210,243,Utah 
+218,238,Utah 
+188,234,Utah 
+201,227,Utah 
+201,253,Utah 
+222,221,Utah 
+224,241,Utah 
+190,237,Utah 
+203,250,Utah 
+212,222,Utah 
+227,237,Utah 
+188,232,Utah 
+199,227,Utah 
+213,243,Utah 
+221,224,Utah 
+226,241,Utah 
+192,237,Utah 
+205,250,Utah 
+210,222,Utah 
+215,237,Utah 
+226,242,Utah 
+196,226,Utah 
+214,244,Utah 
+224,225,Utah 
+223,242,Utah 
+195,224,Utah 
+203,256,Utah 
+222,226,Utah 
+227,233,Utah 
+189,221,Utah 
+201,255,Utah 
+223,216,Utah 
+223,244,Utah 
+195,222,Utah 
+205,254,Utah 
+224,216,Utah 
+228,232,Utah 
+191,221,Utah 
+199,229,Utah 
+219,218,Utah 
+226,227,Utah 
+228,245,Utah 
+194,221,Utah 
+198,255,Utah 
+220,216,Utah 
+226,228,Utah 
+226,246,Utah 
+192,224,Utah 
+199,257,Utah 
+228,217,Utah 
+226,229,Utah 
+227,242,Utah 
+186,219,Utah 
+196,253,Utah 
+206,259,Utah 
+227,223,Utah 
+228,230,Utah 
+183,221,Utah 
+192,218,Utah 
+200,258,Utah 
+228,215,Utah 
+226,231,Utah 
+230,241,Utah 
+189,220,Utah 
+197,220,Utah 
+208,253,Utah 
+229,215,Utah 
+221,229,Utah 
+231,229,Utah 
+230,248,Utah 
+194,218,Utah 
+202,258,Utah 
+216,215,Utah 
+230,225,Utah 
+233,230,Utah 
+228,249,Utah 
+194,217,Utah 
+202,259,Utah 
+209,260,Utah 
+231,223,Utah 
+223,233,Utah 
+231,239,Utah 
+192,216,Utah 
+200,260,Utah 
+207,261,Utah 
+230,219,Utah 
+228,227,Utah 
+231,234,Utah 
+231,250,Utah 
+196,219,Utah 
+202,261,Utah 
+206,261,Utah 
+232,218,Utah 
+230,228,Utah 
+233,227,Utah 
+225,249,Utah 
+194,214,Utah 
+204,260,Utah 
+211,255,Utah 
+220,215,Utah 
+231,220,Utah 
+234,233,Utah 
+225,246,Utah 
+195,214,Utah 
+203,258,Utah 
+211,260,Utah 
+233,217,Utah 
+236,228,Utah 
+235,241,Utah 
+188,216,Utah 
+203,219,Utah 
+212,252,Utah 
+222,213,Utah 
+226,223,Utah 
+234,231,Utah 
+225,252,Utah 
+206,217,Utah 
+215,250,Utah 
+213,260,Utah 
+235,217,Utah 
+236,226,Utah 
+223,245,Utah 
+198,214,Utah 
+196,260,Utah 
+214,254,Utah 
+222,211,Utah 
+236,221,Utah 
+236,229,Utah 
+221,246,Utah 
+228,253,Utah 
+205,214,Utah 
+216,249,Utah 
+219,211,Utah 
+236,220,Utah 
+236,232,Utah 
+222,244,Utah 
+186,214,Utah 
+205,221,Utah 
+208,264,Utah 
+236,219,Utah 
+237,232,Utah 
+221,250,Utah 
+200,213,Utah 
+214,247,Utah 
+221,207,Utah 
+239,225,Utah 
+239,239,Utah 
+221,253,Utah 
+199,211,Utah 
+217,253,Utah 
+237,210,Utah 
+239,232,Utah 
+218,251,Utah 
+196,213,Utah 
+201,262,Utah 
+222,206,Utah 
+240,228,Utah 
+241,241,Utah 
+232,252,Utah 
+204,212,Utah 
+224,207,Utah 
+242,227,Utah 
+240,235,Utah 
+220,249,Utah 
+183,212,Utah 
+200,209,Utah 
+224,206,Utah 
+242,228,Utah 
+240,246,Utah 
+230,254,Utah 
+197,209,Utah 
+217,206,Utah 
+234,207,Utah 
+242,231,Utah 
+223,254,Utah 
+194,211,Utah 
+209,210,Utah 
+223,203,Utah 
+243,229,Utah 
+220,246,Utah 
+187,213,Utah 
+203,213,Utah 
+224,203,Utah 
+244,231,Utah 
+234,253,Utah 
+204,209,Utah 
+234,206,Utah 
+244,232,Utah 
+235,255,Utah 
+199,207,Utah 
+226,205,Utah 
+243,222,Utah 
+236,253,Utah 
+201,208,Utah 
+227,203,Utah 
+245,221,Utah 
+236,252,Utah 
+192,208,Utah 
+211,207,Utah 
+225,208,Utah 
+226,257,Utah 
+186,209,Utah 
+206,207,Utah 
+227,201,Utah 
+226,258,Utah 
+186,208,Utah 
+206,206,Utah 
+228,203,Utah 
+240,203,Utah 
+236,249,Utah 
+188,205,Utah 
+206,205,Utah 
+228,200,Utah 
+240,200,Utah 
+236,248,Utah 
+192,206,Utah 
+205,203,Utah 
+229,206,Utah 
+223,260,Utah 
+237,260,Utah 
+195,204,Utah 
+214,207,Utah 
+230,206,Utah 
+242,202,Utah 
+236,246,Utah 
+188,204,Utah 
+203,203,Utah 
+214,214,Utah 
+231,202,Utah 
+223,262,Utah 
+238,261,Utah 
+192,203,Utah 
+207,202,Utah 
+214,215,Utah 
+230,210,Utah 
+243,239,Utah 
+238,262,Utah 
+197,203,Utah 
+205,201,Utah 
+212,216,Utah 
+231,210,Utah 
+223,264,Utah 
+184,203,Utah 
+196,201,Utah 
+217,204,Utah 
+215,216,Utah 
+240,198,Utah 
+235,263,Utah 
+192,202,Utah 
+203,199,Utah 
+211,217,Utah 
+241,196,Utah 
+238,265,Utah 
+198,201,Utah 
+218,203,Utah 
+234,198,Utah 
+227,267,Utah 
+186,198,Utah 
+205,199,Utah 
+210,218,Utah 
+221,266,Utah 
+187,198,Utah 
+198,207,Utah 
+218,201,Utah 
+237,199,Utah 
+239,267,Utah 
+193,199,Utah 
+202,198,Utah 
+218,200,Utah 
+237,198,Utah 
+182,201,Utah 
+199,198,Utah 
+210,197,Utah 
+209,220,Utah 
+232,264,Utah 
+189,197,Utah 
+203,195,Utah 
+218,198,Utah 
+236,195,Utah 
+186,197,Utah 
+201,196,Utah 
+215,198,Utah 
+217,222,Utah 
+182,204,Utah 
+199,197,Utah 
+208,194,Utah 
+211,221,Utah 
+190,195,Utah 
+207,194,Utah 
+208,221,Utah 
+191,195,Utah 
+211,193,Utah 
+182,205,Utah 
+191,194,Utah 
+207,192,Utah 
+217,194,Utah 
+188,192,Utah 
+202,192,Utah 
+214,194,Utah 
+182,207,Utah 
+203,194,Utah 
+213,194,Utah 
+183,205,Utah 
+203,191,Utah 
+212,196,Utah 
+186,191,Utah 
+194,189,Utah 
+213,190,Utah 
+182,208,Utah 
+195,189,Utah 
+211,189,Utah 
+219,197,Utah 
+197,190,Utah 
+209,188,Utah 
+220,191,Utah 
+191,187,Utah 
+214,188,Utah 
+222,198,Utah 
+199,190,Utah 
+214,201,Utah 
+187,187,Utah 
+212,186,Utah 
+222,188,Utah 
+199,188,Utah 
+211,202,Utah 
+185,187,Utah 
+216,186,Utah 
+222,186,Utah 
+192,185,Utah 
+211,184,Utah 
+221,184,Utah 
+194,184,Utah 
+208,202,Utah 
+183,186,Utah 
+196,187,Utah 
+209,204,Utah 
+188,186,Utah 
+218,184,Utah 
+189,184,Utah 
+214,183,Utah 
+184,182,Utah 
+201,183,Utah 
+227,199,Utah 
+197,182,Utah 
+218,181,Utah 
+189,181,Utah 
+202,188,Utah 
+186,181,Utah 
+204,185,Utah 
+192,182,Utah 
+204,186,Utah 
+192,181,Utah 
+205,182,Utah 
+228,195,Utah 
+200,180,Utah 
+218,176,Utah 
+201,180,Utah 
+224,195,Utah 
+213,177,Utah 
+203,180,Utah 
+218,175,Utah 
+202,178,Utah 
+220,174,Utah 
+207,180,Utah 
+221,176,Utah 
+210,176,Utah 
+223,195,Utah 
+207,176,Utah 
+220,173,Utah 
+208,176,Utah 
+196,175,Utah 
+209,176,Utah 
+198,176,Utah 
+205,177,Utah 
+197,174,Utah 
+205,174,Utah 
+195,179,Utah 
+209,181,Utah 
+207,174,Utah 
+197,181,Utah 
+210,182,Utah 
+211,182,Utah 
+201,170,Utah 
+197,170,Utah 
+195,169,Utah 
+192,169,Utah 
+192,173,Utah 
+191,173,Utah 
+190,176,Utah 
+191,171,Utah 
+191,169,Utah 
+206,237,Utah 
+203,237,Utah 
+200,242,Utah 
+215,232,Utah 
+203,235,Utah 
+198,231,Utah 
+217,228,Utah 
+200,249,Utah 
+194,229,Utah 
+218,228,Utah 
+194,243,Utah 
+206,234,Utah 
+221,237,Utah 
+220,237,Utah 
+220,220,Utah 
+201,223,Utah 
+187,228,Utah 
+188,236,Utah 
+224,223,Utah 
+206,221,Utah 
+211,245,Utah 
+225,234,Utah 
+195,226,Utah 
+213,247,Utah 
+222,216,Utah 
+221,216,Utah 
+219,219,Utah 
+201,222,Utah 
+227,241,Utah 
+206,250,Utah 
+229,228,Utah 
+232,246,Utah 
+209,253,Utah 
+232,245,Utah 
+194,227,Utah 
+220,228,Utah 
+207,249,Utah 
+230,213,Utah 
+192,215,Utah 
+231,213,Utah 
+195,219,Utah 
+232,219,Utah 
+224,249,Utah 
+203,262,Utah 
+221,215,Utah 
+234,226,Utah 
+190,214,Utah 
+224,233,Utah 
+237,215,Utah 
+234,238,Utah 
+215,251,Utah 
+233,224,Utah 
+194,257,Utah 
+213,264,Utah 
+222,248,Utah 
+215,259,Utah 
+236,237,Utah 
+237,245,Utah 
+218,254,Utah 
+236,225,Utah 
+217,209,Utah 
+182,214,Utah 
+236,233,Utah 
+216,208,Utah 
+238,246,Utah 
+184,210,Utah 
+230,255,Utah 
+217,205,Utah 
+242,222,Utah 
+229,255,Utah 
+222,203,Utah 
+220,204,Utah 
+232,256,Utah 
+244,227,Utah 
+192,211,Utah 
+227,205,Utah 
+226,256,Utah 
+212,210,Utah 
+233,258,Utah 
+237,201,Utah 
+214,208,Utah 
+226,209,Utah 
+229,203,Utah 
+210,206,Utah 
+222,259,Utah 
+228,210,Utah 
+216,206,Utah 
+229,210,Utah 
+188,203,Utah 
+227,263,Utah 
+214,210,Utah 
+231,204,Utah 
+197,204,Utah 
+213,218,Utah 
+209,215,Utah 
+202,199,Utah 
+222,264,Utah 
+236,267,Utah 
+197,198,Utah 
+190,198,Utah 
+207,217,Utah 
+234,267,Utah 
+207,218,Utah 
+206,196,Utah 
+239,262,Utah 
+211,218,Utah 
+190,196,Utah 
+195,196,Utah 
+185,197,Utah 
+181,195,Utah 
+200,192,Utah 
+180,207,Utah 
+215,192,Utah 
+179,202,Utah 
+186,190,Utah 
+207,187,Utah 
+183,210,Utah 
+208,187,Utah 
+196,192,Utah 
+223,197,Utah 
+185,189,Utah 
+220,200,Utah 
+194,188,Utah 
+216,187,Utah 
+221,202,Utah 
+210,184,Utah 
+184,188,Utah 
+183,182,Utah 
+187,181,Utah 
+225,197,Utah 
+206,184,Utah 
+206,183,Utah 
+213,179,Utah 
+207,181,Utah 
+230,194,Utah 
+218,174,Utah 
+222,176,Utah 
+200,178,Utah 
+208,172,Utah 
+204,173,Utah 
+213,180,Utah 
+196,174,Utah 
+190,177,Utah 
+187,170,Utah 
+197,236,Utah 
+215,231,Utah 
+217,229,Utah 
+219,228,Utah 
+199,244,Utah 
+196,239,Utah 
+187,230,Utah 
+212,221,Utah 
+187,231,Utah 
+211,246,Utah 
+226,232,Utah 
+196,230,Utah 
+195,254,Utah 
+217,230,Utah 
+182,222,Utah 
+181,220,Utah 
+182,218,Utah 
+209,254,Utah 
+183,217,Utah 
+207,263,Utah 
+223,249,Utah 
+210,254,Utah 
+235,234,Utah 
+214,262,Utah 
+235,236,Utah 
+238,214,Utah 
+194,255,Utah 
+239,212,Utah 
+218,255,Utah 
+237,220,Utah 
+182,212,Utah 
+239,248,Utah 
+230,256,Utah 
+240,223,Utah 
+185,210,Utah 
+208,206,Utah 
+237,255,Utah 
+192,212,Utah 
+245,220,Utah 
+232,258,Utah 
+209,214,Utah 
+233,260,Utah 
+238,258,Utah 
+227,262,Utah 
+244,200,Utah 
+222,262,Utah 
+244,198,Utah 
+231,211,Utah 
+246,196,Utah 
+184,197,Utah 
+233,267,Utah 
+206,219,Utah 
+230,262,Utah 
+184,195,Utah 
+183,194,Utah 
+218,191,Utah 
+178,207,Utah 
+185,191,Utah 
+219,191,Utah 
+215,190,Utah 
+211,203,Utah 
+220,202,Utah 
+182,187,Utah 
+194,182,Utah 
+187,180,Utah 
+184,180,Utah 
+189,179,Utah 
+220,179,Utah 
+224,175,Utah 
+204,172,Utah 
+187,173,Utah 
+216,231,Utah 
+194,250,Utah 
+194,240,Utah 
+196,238,Utah 
+188,238,Utah 
+229,237,Utah 
+185,226,Utah 
+183,224,Utah 
+181,218,Utah 
+192,213,Utah 
+191,212,Utah 
+235,235,Utah 
+233,237,Utah 
+217,257,Utah 
+216,260,Utah 
+239,221,Utah 
+180,213,Utah 
+240,248,Utah 
+230,257,Utah 
+241,221,Utah 
+238,253,Utah 
+243,219,Utah 
+243,203,Utah 
+239,258,Utah 
+215,209,Utah 
+244,203,Utah 
+245,198,Utah 
+221,263,Utah 
+231,266,Utah 
+231,260,Utah 
+182,194,Utah 
+178,208,Utah 
+206,186,Utah 
+207,186,Utah 
+208,184,Utah 
+194,181,Utah 
+188,178,Utah 
+221,179,Utah 
+209,182,Utah 
+188,176,Utah 
+206,235,Utah 
+193,251,Utah 
+197,238,Utah 
+187,237,Utah 
+230,237,Utah 
+181,223,Utah 
+179,219,Utah 
+228,238,Utah 
+224,213,Utah 
+192,259,Utah 
+217,259,Utah 
+218,257,Utah 
+182,217,Utah 
+181,210,Utah 
+231,259,Utah 
+228,257,Utah 
+242,219,Utah 
+243,204,Utah 
+239,261,Utah 
+246,200,Utah 
+247,199,Utah 
+247,197,Utah 
+230,260,Utah 
+180,210,Utah 
+184,190,Utah 
+217,190,Utah 
+221,182,Utah 
+221,181,Utah 
+223,178,Utah 
+231,194,Utah 
+186,175,Utah 
+186,173,Utah 
+193,247,Utah 
+184,235,Utah 
+192,238,Utah 
+183,226,Utah 
+193,254,Utah 
+227,212,Utah 
+192,258,Utah 
+216,262,Utah 
+180,216,Utah 
+219,258,Utah 
+239,223,Utah 
+241,219,Utah 
+240,261,Utah 
+247,200,Utah 
+220,261,Utah 
+196,196,Utah 
+197,193,Utah 
+182,191,Utah 
+182,190,Utah 
+232,196,Utah 
+185,173,Utah 
+192,247,Utah 
+191,245,Utah 
+185,233,Utah 
+232,237,Utah 
+181,225,Utah 
+225,213,Utah 
+218,261,Utah 
+239,218,Utah 
+238,250,Utah 
+248,200,Utah 
+219,261,Utah 
+196,195,Utah 
+222,181,Utah 
+230,197,Utah 
+191,249,Utah 
+192,240,Utah 
+185,238,Utah 
+183,228,Utah 
+178,217,Utah 
+192,256,Utah 
+178,212,Utah 
+243,207,Utah 
+248,197,Utah 
+223,180,Utah 
+185,177,Utah 
+193,250,Utah 
+182,234,Utah 
+184,236,Utah 
+181,227,Utah 
+180,226,Utah 
+227,211,Utah 
+241,251,Utah 
+241,208,Utah 
+189,176,Utah 
+190,246,Utah 
+193,242,Utah 
+182,237,Utah 
+189,241,Utah 
+185,230,Utah 
+225,210,Utah 
+240,216,Utah 
+244,208,Utah 
+189,248,Utah 
+191,252,Utah 
+182,232,Utah 
+183,239,Utah 
+181,229,Utah 
+177,217,Utah 
+242,217,Utah 
+240,209,Utah 
+189,245,Utah 
+190,252,Utah 
+181,236,Utah 
+179,228,Utah 
+223,212,Utah 
+245,209,Utah 
+187,250,Utah 
+185,231,Utah 
+185,241,Utah 
+243,216,Utah 
+244,211,Utah 
+188,248,Utah 
+187,240,Utah 
+178,213,Utah 
+246,210,Utah 
+186,249,Utah 
+182,230,Utah 
+178,226,Utah 
+242,213,Utah 
+187,243,Utah 
+188,254,Utah 
+178,225,Utah 
+243,213,Utah 
+185,248,Utah 
+184,242,Utah 
+244,213,Utah 
+184,244,Utah 
+186,254,Utah 
+245,213,Utah 
+185,246,Utah 
+246,213,Utah 
+184,246,Utah 
+187,257,Utah 
+183,246,Utah 
+189,256,Utah 
+183,243,Utah 
+185,257,Utah 
+182,243,Utah 
+184,257,Utah 
+181,243,Utah 
+182,256,Utah 
+190,258,Utah 
+181,246,Utah 
+183,258,Utah 
+179,243,Utah 
+181,253,Utah 
+177,244,Utah 
+179,254,Utah 
+181,256,Utah 
+177,243,Utah 
+179,253,Utah 
+180,258,Utah 
+191,253,Utah 
+178,247,Utah 
+181,252,Utah 
+182,259,Utah 
+178,240,Utah 
+179,251,Utah 
+175,242,Utah 
+179,240,Utah 
+178,251,Utah 
+178,259,Utah 
+181,241,Utah 
+182,246,Utah 
+177,253,Utah 
+178,258,Utah 
+181,240,Utah 
+182,249,Utah 
+178,255,Utah 
+177,239,Utah 
+180,238,Utah 
+176,250,Utah 
+174,239,Utah 
+182,239,Utah 
+175,250,Utah 
+176,255,Utah 
+175,237,Utah 
+181,237,Utah 
+175,253,Utah 
+173,238,Utah 
+172,251,Utah 
+176,249,Utah 
+178,236,Utah 
+173,253,Utah 
+173,236,Utah 
+178,235,Utah 
+173,248,Utah 
+177,246,Utah 
+177,233,Utah 
+173,255,Utah 
+179,234,Utah 
+172,253,Utah 
+174,234,Utah 
+170,254,Utah 
+174,246,Utah 
+175,232,Utah 
+170,253,Utah 
+172,257,Utah 
+176,232,Utah 
+170,252,Utah 
+173,257,Utah 
+175,243,Utah 
+178,229,Utah 
+173,244,Utah 
+180,230,Utah 
+175,257,Utah 
+173,247,Utah 
+171,246,Utah 
+171,243,Utah 
+175,228,Utah 
+170,248,Utah 
+175,226,Utah 
+208,235,Utah 
+205,244,Utah 
+207,247,Utah 
+207,235,Utah 
+203,257,Utah 
+202,262,Utah 
+239,224,Utah 
+201,263,Utah 
+225,209,Utah 
+237,249,Utah 
+237,246,Utah 
+228,267,Utah 
+239,268,Utah 
+211,183,Utah 
+182,186,Utah 
+193,182,Utah 
+217,175,Utah 
+230,212,Utah 
+238,215,Utah 
+214,264,Utah 
+228,211,Utah 
+228,263,Utah 
+236,268,Utah 
+240,262,Utah 
+185,190,Utah 
+197,239,Utah 
+181,222,Utah 
+239,214,Utah 
+239,211,Utah 
+239,249,Utah 
+238,255,Utah 
+232,260,Utah 
+228,262,Utah 
+233,268,Utah 
+216,190,Utah 
+219,179,Utah 
+188,239,Utah 
+180,214,Utah 
+243,218,Utah 
+244,204,Utah 
+231,267,Utah 
+180,223,Utah 
+179,220,Utah 
+192,260,Utah 
+223,179,Utah 
+228,212,Utah 
+216,263,Utah 
+238,223,Utah 
+192,246,Utah 
+186,233,Utah 
+237,250,Utah 
+244,207,Utah 
+184,177,Utah 
+181,234,Utah 
+241,209,Utah 
+189,242,Utah 
+240,215,Utah 
+181,232,Utah 
+183,240,Utah 
+176,217,Utah 
+243,217,Utah 
+189,244,Utah 
+180,236,Utah 
+246,209,Utah 
+187,251,Utah 
+243,211,Utah 
+188,240,Utah 
+185,249,Utah 
+241,213,Utah 
+188,243,Utah 
+177,225,Utah 
+243,212,Utah 
+186,257,Utah 
+189,255,Utah 
+182,242,Utah 
+181,242,Utah 
+183,259,Utah 
+179,255,Utah 
+178,239,Utah 
+182,241,Utah 
+178,257,Utah 
+178,256,Utah 
+180,237,Utah 
+172,238,Utah 
+173,235,Utah 
+180,234,Utah 
+169,254,Utah 
+174,232,Utah 
+171,257,Utah 
+170,251,Utah 
+174,243,Utah 
+173,243,Utah 
+176,257,Utah 
+172,243,Utah 
+170,249,Utah 
+175,225,Utah 
+224,209,Utah 
+228,266,Utah 
+182,185,Utah 
+239,215,Utah 
+214,265,Utah 
+228,264,Utah 
+237,268,Utah 
+180,222,Utah 
+240,211,Utah 
+238,256,Utah 
+245,204,Utah 
+230,267,Utah 
+178,220,Utah 
+191,260,Utah 
+215,263,Utah 
+216,264,Utah 
+186,232,Utah 
+244,206,Utah 
+181,233,Utah 
+188,242,Utah 
+180,232,Utah 
+183,241,Utah 
+244,217,Utah 
+247,209,Utah 
+186,251,Utah 
+185,250,Utah 
+241,212,Utah 
+177,224,Utah 
+184,259,Utah 
+177,257,Utah 
+179,237,Utah 
+180,233,Utah 
+173,232,Utah 
+170,257,Utah 
+173,242,Utah 
+172,242,Utah 
+175,224,Utah 
+229,266,Utah 
+215,265,Utah 
+179,222,Utah 
+241,211,Utah 
+246,204,Utah 
+177,220,Utah 
+190,260,Utah 
+217,264,Utah 
+245,206,Utah 
+247,208,Utah 
+186,252,Utah 
+176,224,Utah 
+185,259,Utah 
+173,231,Utah 
+169,257,Utah 
+173,241,Utah 
+175,223,Utah 
+178,222,Utah 
+246,205,Utah 
+177,219,Utah 
+189,260,Utah 
+217,265,Utah 
+247,207,Utah 
+176,223,Utah 
+185,260,Utah 
+174,241,Utah 
+175,222,Utah 
+178,223,Utah 
+176,219,Utah 
+189,259,Utah 
+246,207,Utah 
+176,222,Utah 
+175,221,Utah 
+176,221,Utah 
+208,239,Utah 
+204,238,Utah 
+212,235,Utah 
+211,238,Utah 
+202,236,Utah 
+211,233,Utah 
+214,231,Utah 
+215,241,Utah 
+214,243,Utah 
+215,243,Utah 
+216,241,Utah 
+210,228,Utah 
+199,245,Utah 
+196,231,Utah 
+220,242,Utah 
+206,244,Utah 
+206,229,Utah 
+219,245,Utah 
+219,226,Utah 
+195,248,Utah 
+191,231,Utah 
+204,227,Utah 
+202,227,Utah 
+208,234,Utah 
+198,242,Utah 
+219,222,Utah 
+197,240,Utah 
+220,224,Utah 
+198,240,Utah 
+219,238,Utah 
+205,224,Utah 
+214,222,Utah 
+196,234,Utah 
+209,224,Utah 
+188,233,Utah 
+211,225,Utah 
+187,227,Utah 
+205,251,Utah 
+218,237,Utah 
+198,227,Utah 
+224,220,Utah 
+190,224,Utah 
+221,220,Utah 
+187,224,Utah 
+221,219,Utah 
+225,245,Utah 
+214,246,Utah 
+187,222,Utah 
+215,246,Utah 
+185,223,Utah 
+207,255,Utah 
+230,233,Utah 
+201,228,Utah 
+225,219,Utah 
+187,221,Utah 
+207,257,Utah 
+219,230,Utah 
+192,225,Utah 
+227,215,Utah 
+229,241,Utah 
+200,220,Utah 
+228,223,Utah 
+230,247,Utah 
+202,257,Utah 
+228,220,Utah 
+231,243,Utah 
+197,219,Utah 
+230,217,Utah 
+232,241,Utah 
+198,217,Utah 
+217,213,Utah 
+232,232,Utah 
+197,217,Utah 
+218,213,Utah 
+231,228,Utah 
+195,216,Utah 
+212,257,Utah 
+229,221,Utah 
+233,239,Utah 
+202,216,Utah 
+210,260,Utah 
+223,236,Utah 
+232,247,Utah 
+211,252,Utah 
+232,220,Utah 
+224,250,Utah 
+204,258,Utah 
+235,216,Utah 
+234,243,Utah 
+195,258,Utah 
+222,212,Utah 
+236,238,Utah 
+205,219,Utah 
+211,259,Utah 
+238,227,Utah 
+223,250,Utah 
+195,256,Utah 
+237,213,Utah 
+237,241,Utah 
+207,215,Utah 
+222,209,Utah 
+238,241,Utah 
+202,221,Utah 
+237,223,Utah 
+238,244,Utah 
+202,222,Utah 
+240,225,Utah 
+232,251,Utah 
+216,251,Utah 
+238,234,Utah 
+196,212,Utah 
+238,209,Utah 
+238,245,Utah 
+198,211,Utah 
+238,208,Utah 
+219,247,Utah 
+204,210,Utah 
+241,224,Utah 
+232,255,Utah 
+219,205,Utah 
+241,235,Utah 
+198,208,Utah 
+245,224,Utah 
+187,210,Utah 
+245,223,Utah 
+192,210,Utah 
+235,204,Utah 
+189,210,Utah 
+236,204,Utah 
+234,258,Utah 
+225,202,Utah 
+236,251,Utah 
+209,212,Utah 
+236,250,Utah 
+212,212,Utah 
+226,259,Utah 
+200,205,Utah 
+227,209,Utah 
+185,207,Utah 
+212,214,Utah 
+233,248,Utah 
+207,204,Utah 
+233,201,Utah 
+236,262,Utah 
+215,205,Utah 
+243,200,Utah 
+187,204,Utah 
+214,203,Utah 
+233,205,Utah 
+187,203,Utah 
+215,203,Utah 
+243,198,Utah 
+189,202,Utah 
+216,211,Utah 
+242,242,Utah 
+198,204,Utah 
+232,197,Utah 
+187,200,Utah 
+209,216,Utah 
+237,267,Utah 
+218,202,Utah 
+238,267,Utah 
+207,198,Utah 
+233,265,Utah 
+199,201,Utah 
+217,219,Utah 
+188,201,Utah 
+218,199,Utah 
+182,198,Utah 
+210,196,Utah 
+180,199,Utah 
+207,196,Utah 
+233,261,Utah 
+202,194,Utah 
+180,203,Utah 
+214,197,Utah 
+200,194,Utah 
+186,193,Utah 
+210,191,Utah 
+192,192,Utah 
+219,193,Utah 
+213,192,Utah 
+191,191,Utah 
+221,195,Utah 
+206,189,Utah 
+189,189,Utah 
+214,198,Utah 
+202,189,Utah 
+185,209,Utah 
+214,200,Utah 
+214,187,Utah 
+197,187,Utah 
+185,188,Utah 
+222,187,Utah 
+210,200,Utah 
+199,186,Utah 
+185,185,Utah 
+222,184,Utah 
+212,183,Utah 
+200,184,Utah 
+202,185,Utah 
+195,183,Utah 
+187,182,Utah 
+226,197,Utah 
+218,180,Utah 
+218,179,Utah 
+217,177,Utah 
+219,178,Utah 
+204,180,Utah 
+213,178,Utah 
+224,194,Utah 
+194,178,Utah 
+193,176,Utah 
+204,178,Utah 
+204,177,Utah 
+202,176,Utah 
+201,178,Utah 
+200,176,Utah 
+200,175,Utah 
+207,175,Utah 
+197,173,Utah 
+203,172,Utah 
+199,170,Utah 
+192,170,Utah 
+193,175,Utah 
+191,172,Utah 
+191,168,Utah 
+199,238,Utah 
+215,239,Utah 
+200,244,Utah 
+217,245,Utah 
+194,244,Utah 
+193,246,Utah 
+202,223,Utah 
+227,238,Utah 
+211,226,Utah 
+186,226,Utah 
+186,225,Utah 
+217,232,Utah 
+193,224,Utah 
+217,231,Utah 
+224,231,Utah 
+194,226,Utah 
+183,218,Utah 
+232,244,Utah 
+230,239,Utah 
+232,238,Utah 
+232,235,Utah 
+205,262,Utah 
+233,235,Utah 
+213,254,Utah 
+206,218,Utah 
+188,213,Utah 
+236,218,Utah 
+223,210,Utah 
+208,214,Utah 
+208,213,Utah 
+201,213,Utah 
+243,227,Utah 
+216,207,Utah 
+239,207,Utah 
+194,212,Utah 
+240,206,Utah 
+236,255,Utah 
+243,221,Utah 
+223,258,Utah 
+237,257,Utah 
+237,258,Utah 
+228,205,Utah 
+237,247,Utah 
+243,202,Utah 
+201,201,Utah 
+222,263,Utah 
+227,265,Utah 
+214,219,Utah 
+193,200,Utah 
+206,198,Utah 
+200,201,Utah 
+208,220,Utah 
+231,263,Utah 
+208,193,Utah 
+185,193,Utah 
+192,191,Utah 
+211,196,Utah 
+222,196,Utah 
+219,198,Utah 
+195,188,Utah 
+224,199,Utah 
+218,187,Utah 
+217,186,Utah 
+196,181,Utah 
+185,180,Utah 
+229,196,Utah 
+221,177,Utah 
+200,179,Utah 
+198,177,Utah 
+206,171,Utah 
+189,175,Utah 
+186,168,Utah 
+207,248,Utah 
+194,242,Utah 
+194,238,Utah 
+188,237,Utah 
+219,237,Utah 
+184,224,Utah 
+228,239,Utah 
+208,255,Utah 
+229,213,Utah 
+202,215,Utah 
+222,215,Utah 
+236,217,Utah 
+195,261,Utah 
+183,216,Utah 
+236,234,Utah 
+220,256,Utah 
+242,247,Utah 
+238,254,Utah 
+241,204,Utah 
+214,209,Utah 
+211,204,Utah 
+230,204,Utah 
+229,205,Utah 
+220,265,Utah 
+208,215,Utah 
+213,219,Utah 
+199,194,Utah 
+181,209,Utah 
+182,210,Utah 
+218,190,Utah 
+209,184,Utah 
+220,182,Utah 
+199,178,Utah 
+217,176,Utah 
+187,174,Utah 
+193,249,Utah 
+195,238,Utah 
+189,239,Utah 
+225,214,Utah 
+228,213,Utah 
+223,213,Utah 
+194,258,Utah 
+239,213,Utah 
+181,214,Utah 
+219,203,Utah 
+191,210,Utah 
+210,204,Utah 
+245,200,Utah 
+216,209,Utah 
+232,267,Utah 
+217,191,Utah 
+215,191,Utah 
+182,188,Utah 
+189,178,Utah 
+204,171,Utah 
+209,247,Utah 
+186,234,Utah 
+183,225,Utah 
+180,220,Utah 
+238,217,Utah 
+215,262,Utah 
+241,248,Utah 
+240,221,Utah 
+245,218,Utah 
+227,258,Utah 
+219,264,Utah 
+198,193,Utah 
+216,189,Utah 
+184,189,Utah 
+222,179,Utah 
+185,170,Utah 
+192,243,Utah 
+232,236,Utah 
+180,217,Utah 
+193,261,Utah 
+179,212,Utah 
+239,252,Utah 
+228,258,Utah 
+219,263,Utah 
+182,192,Utah 
+186,178,Utah 
+204,237,Utah 
+193,240,Utah 
+185,227,Utah 
+192,257,Utah 
+219,259,Utah 
+247,203,Utah 
+181,194,Utah 
+190,248,Utah 
+184,233,Utah 
+184,229,Utah 
+193,255,Utah 
+248,203,Utah 
+184,176,Utah 
+190,242,Utah 
+189,240,Utah 
+179,215,Utah 
+240,252,Utah 
+185,174,Utah 
+182,233,Utah 
+182,229,Utah 
+239,217,Utah 
+188,247,Utah 
+192,253,Utah 
+184,240,Utah 
+224,210,Utah 
+243,210,Utah 
+185,232,Utah 
+180,229,Utah 
+187,246,Utah 
+181,235,Utah 
+239,210,Utah 
+189,253,Utah 
+243,215,Utah 
+187,252,Utah 
+241,214,Utah 
+187,247,Utah 
+179,224,Utah 
+186,253,Utah 
+247,210,Utah 
+184,243,Utah 
+188,255,Utah 
+186,256,Utah 
+185,254,Utah 
+184,254,Utah 
+183,254,Utah 
+181,255,Utah 
+180,243,Utah 
+190,255,Utah 
+182,258,Utah 
+180,255,Utah 
+178,246,Utah 
+190,254,Utah 
+179,248,Utah 
+177,241,Utah 
+180,250,Utah 
+181,248,Utah 
+175,241,Utah 
+176,252,Utah 
+177,240,Utah 
+177,250,Utah 
+179,239,Utah 
+177,255,Utah 
+184,249,Utah 
+179,250,Utah 
+174,250,Utah 
+178,237,Utah 
+173,237,Utah 
+176,248,Utah 
+172,249,Utah 
+176,234,Utah 
+176,246,Utah 
+174,247,Utah 
+171,255,Utah 
+179,232,Utah 
+176,245,Utah 
+171,251,Utah 
+177,230,Utah 
+175,231,Utah 
+172,244,Utah 
+174,230,Utah 
+171,248,Utah 
+207,236,Utah 
+199,230,Utah 
+187,232,Utah 
+207,264,Utah 
+224,208,Utah 
+237,248,Utah 
+220,266,Utah 
+194,183,Utah 
+193,181,Utah 
+203,263,Utah 
+213,265,Utah 
+227,264,Utah 
+195,195,Utah 
+186,231,Utah 
+240,212,Utah 
+240,224,Utah 
+238,257,Utah 
+230,263,Utah 
+187,238,Utah 
+239,253,Utah 
+230,266,Utah 
+178,219,Utah 
+242,218,Utah 
+191,258,Utah 
+181,190,Utah 
+218,262,Utah 
+248,196,Utah 
+241,252,Utah 
+239,216,Utah 
+182,231,Utah 
+177,218,Utah 
+190,253,Utah 
+186,250,Utah 
+244,212,Utah 
+177,226,Utah 
+189,254,Utah 
+183,242,Utah 
+185,258,Utah 
+190,259,Utah 
+182,252,Utah 
+177,258,Utah 
+179,238,Utah 
+179,236,Utah 
+173,234,Utah 
+169,253,Utah 
+173,258,Utah 
+180,231,Utah 
+176,228,Utah 
+202,263,Utah 
+238,268,Utah 
+215,264,Utah 
+235,268,Utah 
+240,214,Utah 
+179,214,Utah 
+179,223,Utah 
+192,261,Utah 
+187,233,Utah 
+184,178,Utah 
+189,243,Utah 
+176,218,Utah 
+246,208,Utah 
+240,213,Utah 
+186,258,Utah 
+177,256,Utah 
+169,255,Utah 
+170,250,Utah 
+171,249,Utah 
+228,265,Utah 
+180,221,Utah 
+245,205,Utah 
+191,261,Utah 
+245,217,Utah 
+184,250,Utah 
+184,260,Utah 
+170,256,Utah 
+229,265,Utah 
+176,220,Utah 
+218,264,Utah 
+185,252,Utah 
+169,256,Utah 
+177,222,Utah 
+188,260,Utah 
+247,206,Utah 
+188,259,Utah 
+185,179,Utah 
+242,248,Utah 
+219,265,Utah 
+246,218,Utah 
+248,204,Utah 
+242,210,Utah 
+184,253,Utah 
+171,250,Utah 
+230,264,Utah 
+241,253,Utah 
+183,252,Utah 
+177,228,Utah 
+183,250,Utah 
+184,252,Utah 
+187,259,Utah 
+183,251,Utah 
+209,236,Utah 
+213,237,Utah 
+214,239,Utah 
+201,244,Utah 
+202,247,Utah 
+204,233,Utah 
+210,231,Utah 
+201,229,Utah 
+207,227,Utah 
+220,245,Utah 
+196,242,Utah 
+206,243,Utah 
+208,240,Utah 
+207,225,Utah 
+209,226,Utah 
+200,253,Utah 
+199,239,Utah 
+200,227,Utah 
+191,237,Utah 
+190,225,Utah 
+225,235,Utah 
+218,235,Utah 
+216,234,Utah 
+219,234,Utah 
+215,233,Utah 
+225,216,Utah 
+204,257,Utah 
+199,223,Utah 
+228,247,Utah 
+225,231,Utah 
+207,259,Utah 
+194,219,Utah 
+223,231,Utah 
+210,258,Utah 
+189,218,Utah 
+229,227,Utah 
+209,249,Utah 
+226,247,Utah 
+219,213,Utah 
+187,217,Utah 
+232,217,Utah 
+202,219,Utah 
+234,232,Utah 
+213,261,Utah 
+189,214,Utah 
+234,220,Utah 
+214,248,Utah 
+237,240,Utah 
+216,255,Utah 
+223,253,Utah 
+238,225,Utah 
+208,263,Utah 
+185,213,Utah 
+241,242,Utah 
+236,208,Utah 
+218,252,Utah 
+220,255,Utah 
+237,235,Utah 
+224,205,Utah 
+203,210,Utah 
+233,253,Utah 
+242,243,Utah 
+224,254,Utah 
+226,255,Utah 
+223,257,Utah 
+238,201,Utah 
+236,202,Utah 
+234,203,Utah 
+212,205,Utah 
+203,205,Utah 
+190,205,Utah 
+226,262,Utah 
+232,207,Utah 
+201,202,Utah 
+226,264,Utah 
+231,198,Utah 
+204,201,Utah 
+184,202,Utah 
+227,266,Utah 
+239,197,Utah 
+233,196,Utah 
+217,218,Utah 
+210,198,Utah 
+202,197,Utah 
+201,199,Utah 
+194,197,Utah 
+188,194,Utah 
+194,195,Utah 
+219,195,Utah 
+180,206,Utah 
+195,192,Utah 
+213,191,Utah 
+222,193,Utah 
+184,209,Utah 
+201,189,Utah 
+220,199,Utah 
+211,188,Utah 
+222,202,Utah 
+198,184,Utah 
+183,185,Utah 
+227,200,Utah 
+201,188,Utah 
+200,183,Utah 
+198,181,Utah 
+193,180,Utah 
+205,178,Utah 
+216,175,Utah 
+212,179,Utah 
+210,179,Utah 
+209,172,Utah 
+205,173,Utah 
+196,172,Utah 
+190,175,Utah 
+205,237,Utah 
+202,248,Utah 
+209,246,Utah 
+195,241,Utah 
+200,223,Utah 
+225,224,Utah 
+195,221,Utah 
+194,220,Utah 
+229,220,Utah 
+215,214,Utah 
+210,248,Utah 
+219,235,Utah 
+225,223,Utah 
+212,253,Utah 
+201,214,Utah 
+238,222,Utah 
+219,255,Utah 
+221,249,Utah 
+240,205,Utah 
+191,209,Utah 
+209,213,Utah 
+191,206,Utah 
+194,201,Utah 
+215,210,Utah 
+237,200,Utah 
+238,197,Utah 
+194,199,Utah 
+195,194,Utah 
+213,193,Utah 
+190,187,Utah 
+199,191,Utah 
+193,183,Utah 
+214,180,Utah 
+189,180,Utah 
+217,173,Utah 
+192,171,Utah 
+204,235,Utah 
+193,238,Utah 
+228,237,Utah 
+226,214,Utah 
+225,232,Utah 
+204,262,Utah 
+195,260,Utah 
+238,224,Utah 
+207,207,Utah 
+190,210,Utah 
+191,207,Utah 
+221,261,Utah 
+195,199,Utah 
+198,196,Utah 
+216,191,Utah 
+216,188,Utah 
+224,197,Utah 
+224,174,Utah 
+192,245,Utah 
+231,235,Utah 
+231,212,Utah 
+217,258,Utah 
+220,257,Utah 
+244,218,Utah 
+194,200,Utah 
+197,195,Utah 
+219,202,Utah 
+230,196,Utah 
+193,243,Utah 
+193,253,Utah 
+193,260,Utah 
+221,259,Utah 
+240,258,Utah 
+231,265,Utah 
+207,184,Utah 
+207,183,Utah 
+185,236,Utah 
+238,218,Utah 
+229,258,Utah 
+246,203,Utah 
+217,187,Utah 
+190,244,Utah 
+178,218,Utah 
+243,206,Utah 
+186,177,Utah 
+191,241,Utah 
+239,250,Utah 
+191,246,Utah 
+186,228,Utah 
+242,209,Utah 
+183,238,Utah 
+240,249,Utah 
+183,231,Utah 
+241,249,Utah 
+186,239,Utah 
+188,251,Utah 
+188,244,Utah 
+186,245,Utah 
+245,212,Utah 
+246,212,Utah 
+185,247,Utah 
+245,216,Utah 
+246,217,Utah 
+189,258,Utah 
+182,253,Utah 
+178,245,Utah 
+179,257,Utah 
+179,256,Utah 
+176,243,Utah 
+180,242,Utah 
+184,247,Utah 
+183,249,Utah 
+175,254,Utah 
+178,248,Utah 
+172,250,Utah 
+174,255,Utah 
+175,248,Utah 
+174,233,Utah 
+179,231,Utah 
+174,257,Utah 
+176,229,Utah 
+175,227,Utah 
+208,247,Utah 
+238,210,Utah 
+230,211,Utah 
+186,180,Utah 
+233,238,Utah 
+234,268,Utah 
+214,263,Utah 
+232,259,Utah 
+184,179,Utah 
+239,257,Utah 
+191,259,Utah 
+180,215,Utah 
+238,249,Utah 
+188,241,Utah 
+181,230,Utah 
+178,228,Utah 
+187,239,Utah 
+178,224,Utah 
+184,258,Utah 
+174,242,Utah 
+173,239,Utah 
+170,255,Utah 
+177,229,Utah 
+176,226,Utah 
+229,212,Utah 
+198,239,Utah 
+244,205,Utah 
+217,263,Utah 
+241,210,Utah 
+180,235,Utah 
+176,225,Utah 
+172,239,Utah 
+176,258,Utah 
+229,264,Utah 
+178,221,Utah 
+185,251,Utah 
+173,233,Utah 
+247,204,Utah 
+246,206,Utah 
+173,240,Utah 
+218,265,Utah 
+186,227,Utah 
+239,254,Utah 
+218,263,Utah 
+185,253,Utah 
+204,263,Utah 
+177,227,Utah 
+176,227,Utah 
+187,260,Utah 
+240,257,Utah 
+240,254,Utah 
+240,255,Utah 
+204,241,Utah 
+200,234,Utah 
+201,247,Utah 
+207,246,Utah 
+197,247,Utah 
+223,240,Utah 
+192,235,Utah 
+190,233,Utah 
+217,240,Utah 
+211,222,Utah 
+205,249,Utah 
+196,228,Utah 
+194,224,Utah 
+230,232,Utah 
+205,252,Utah 
+227,232,Utah 
+184,218,Utah 
+208,249,Utah 
+231,226,Utah 
+221,235,Utah 
+234,239,Utah 
+196,214,Utah 
+215,256,Utah 
+235,212,Utah 
+237,225,Utah 
+184,215,Utah 
+223,208,Utah 
+218,250,Utah 
+206,209,Utah 
+241,246,Utah 
+220,205,Utah 
+210,208,Utah 
+200,206,Utah 
+195,207,Utah 
+226,260,Utah 
+231,201,Utah 
+233,246,Utah 
+200,202,Utah 
+233,207,Utah 
+205,200,Utah 
+191,198,Utah 
+234,263,Utah 
+214,220,Utah 
+216,196,Utah 
+200,193,Utah 
+220,193,Utah 
+204,188,Utah 
+193,188,Utah 
+199,187,Utah 
+187,184,Utah 
+213,181,Utah 
+200,182,Utah 
+192,178,Utah 
+216,174,Utah 
+211,173,Utah 
+203,171,Utah 
+191,170,Utah 
+197,230,Utah 
+197,235,Utah 
+195,227,Utah 
+184,223,Utah 
+210,255,Utah 
+212,248,Utah 
+206,220,Utah 
+218,253,Utah 
+189,212,Utah 
+192,207,Utah 
+213,211,Utah 
+244,197,Utah 
+181,201,Utah 
+217,193,Utah 
+215,189,Utah 
+189,186,Utah 
+194,180,Utah 
+187,172,Utah 
+227,239,Utah 
+194,252,Utah 
+203,214,Utah 
+238,247,Utah 
+237,256,Utah 
+238,199,Utah 
+196,193,Utah 
+207,205,Utah 
+186,169,Utah 
+181,221,Utah 
+181,215,Utah 
+228,260,Utah 
+183,192,Utah 
+186,170,Utah 
+205,263,Utah 
+237,251,Utah 
+179,210,Utah 
+206,236,Utah 
+240,220,Utah 
+229,262,Utah 
+186,238,Utah 
+219,262,Utah 
+225,212,Utah 
+183,235,Utah 
+191,251,Utah 
+190,249,Utah 
+189,249,Utah 
+178,214,Utah 
+187,241,Utah 
+180,224,Utah 
+182,245,Utah 
+191,257,Utah 
+192,255,Utah 
+180,248,Utah 
+182,250,Utah 
+177,238,Utah 
+173,252,Utah 
+174,248,Utah 
+171,256,Utah 
+176,256,Utah 
+209,235,Utah 
+207,206,Utah 
+198,230,Utah 
+217,174,Utah 
+247,196,Utah 
+198,238,Utah 
+190,245,Utah 
+245,208,Utah 
+184,241,Utah 
+187,258,Utah 
+182,240,Utah 
+172,258,Utah 
+229,267,Utah 
+239,255,Utah 
+245,207,Utah 
+242,211,Utah 
+174,231,Utah 
+239,256,Utah 
+177,223,Utah 
+177,221,Utah 
+247,205,Utah 
+208,248,Utah 
+240,253,Utah 
+230,265,Utah 
+184,251,Utah 
+172,240,Utah 
+202,243,Utah 
+216,244,Utah 
+206,232,Utah 
+191,235,Utah 
+223,223,Utah 
+202,249,Utah 
+193,222,Utah 
+187,219,Utah 
+228,229,Utah 
+198,259,Utah 
+220,212,Utah 
+227,253,Utah 
+216,248,Utah 
+204,213,Utah 
+185,211,Utah 
+209,208,Utah 
+195,208,Utah 
+234,201,Utah 
+230,198,Utah 
+216,202,Utah 
+189,199,Utah 
+211,220,Utah 
+206,190,Utah 
+211,198,Utah 
+210,203,Utah 
+203,183,Utah 
+213,175,Utah 
+198,179,Utah 
+198,237,Utah 
+227,240,Utah 
+232,224,Utah 
+213,263,Utah 
+196,209,Utah 
+233,259,Utah 
+235,267,Utah 
+193,189,Utah 
+229,197,Utah 
+210,244,Utah 
+193,213,Utah 
+222,258,Utah 
+180,201,Utah 
+207,182,Utah 
+238,216,Utah 
+196,197,Utah 
+190,239,Utah 
+245,203,Utah 
+181,224,Utah 
+210,183,Utah 
+190,243,Utah 
+241,218,Utah 
+186,230,Utah 
+178,227,Utah 
+244,216,Utah 
+180,246,Utah 
+182,251,Utah 
+176,236,Utah 
+179,233,Utah 
+172,248,Utah 
+231,264,Utah 
+238,248,Utah 
+186,174,Utah 
+240,210,Utah 
+177,245,Utah 
+175,258,Utah 
+179,221,Utah 
+178,238,Utah 
+216,265,Utah 
+186,259,Utah 
+209,248,Utah 
+174,258,Utah 
+240,256,Utah 
+204,246,Utah 
+190,230,Utah 
+211,244,Utah 
+228,225,Utah 
+230,250,Utah 
+232,223,Utah 
+239,231,Utah 
+237,205,Utah 
+235,260,Utah 
+233,244,Utah 
+233,195,Utah 
+191,190,Utah 
+225,199,Utah 
+211,179,Utah 
+195,250,Utah 
+201,220,Utah 
+203,206,Utah 
+232,261,Utah 
+195,180,Utah 
+214,261,Utah 
+197,192,Utah 
+210,207,Utah 
+238,219,Utah 
+243,205,Utah 
+181,191,Utah 
+241,215,Utah 
+188,258,Utah 
+174,240,Utah 
+174,244,Utah 
+229,211,Utah 
+185,178,Utah 
+179,235,Utah 
+181,231,Utah 
+172,241,Utah 
+183,253,Utah 
+219,240,Utah 
+198,229,Utah 
+211,249,Utah 
+240,233,Utah 
+193,203,Utah 
+185,195,Utah 
+191,179,Utah 
+208,254,Utah 
+229,198,Utah 
+216,232,Utah 
+187,234,Utah 
+186,179,Utah 
+178,215,Utah 
+179,242,Utah 
+215,215,Utah 
+242,212,Utah 
+223,209,Utah 
+241,254,Utah 
+225,239,Utah 
+200,215,Utah 
+196,200,Utah 
+192,172,Utah 
+218,188,Utah 
+219,180,Utah 
+187,242,Utah 
+179,213,Utah 
+186,260,Utah 
+216,216,Utah 
+212,202,Utah 
+228,261,Utah 
+174,235,Utah 
+212,209,Utah 
+217,262,Utah 
+238,211,Utah 
+229,263,Utah 

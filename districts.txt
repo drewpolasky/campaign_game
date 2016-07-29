@@ -100,3 +100,18 @@ Wisconsin, Northern Wisconsin ,2
 Wisconsin, Central Wisconsin ,3
 Wyoming, 1st ,1
 Maine, 1st, 2
+Alabama, Northern Alabama, 2
+Alabama, Central Alabama, 3
+Alabama, Southern Alabama, 2
+Indiana, Northern Indiana, 3
+Indiana, Central Indiana,  3
+Indiana, Southern Indiana, 3
+Oklahoma, 1st, 5
+Oregon, Portland and Salem, 3
+Oregon, Southern and Easthern Oregon, 2
+Tennessee, Central Tennessee, 4
+Tennessee, Eastern Tennessee, 3
+Tennessee, Memphis and Western Tennessee, 2
+Washington, Seattle, 5
+Washington, Central Washington, 3
+Washington, Eastern Washington, 2
