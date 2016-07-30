@@ -16,8 +16,8 @@ numPlayers = 2
 currentDate = 0
 players = {}            #dictionaries of class instances of players and states
 states = {}
-calendarOfContests = [('Iowa' , 2),('New Hampshire' , 4) ,('Nevada',7), ('South Carolina',7),('Minnesota',9),('Alabama' , 9), ('Arkansas', 9), ('Colorado', 9), ('Georgia', 9), ('Massachusetts', 9), ('North Dakota', 9), ('Oklahoma', 9), ('Tennessee', 9), ('Texas', 9), ('Vermont', 9), ('Virginia', 9), ('Kansas', 10), ('Kentucky', 10), ('Louisiana', 10), ('Maine', 10), ('Nebraska', 10), ('Hawaii', 10), ('Michigan', 10), ('Mississippi', 10), ('Wyoming', 11), ('Florida', 11), ('Illinois' , 11), ('Missouri', 11), ('North Carolina', 11), ('Ohio', 11), ('Arizona', 12), ('Idaho', 12), ('Utah', 12),('Alaska', 13), ('Washington', 13), ('Wisconsin', 14), ('New York', 15), ('Connecticut', 15), ('Delaware', 15), ('Maryland', 15), ('Pennsylvania', 15), ('Rhode Island', 15), ('Indiana', 16), ('West Virginia', 16), ('Oregon', 17), ('California', 19), ('Montana', 19), ('New Mexico', 19), ('South Dakota', 19)]#, ('DC', 20)]
-playerColors = [(255,0,0), (0,0,255), (0,255,0), (128,0,128), 'orange', 'brown', 'cyan', 'yellow']
+calendarOfContests = [('Iowa' , 2),('New Hampshire' , 4) ,('Nevada',7), ('South Carolina',8),('Minnesota',9),('Alabama' , 9), ('Arkansas', 9), ('Colorado', 9), ('Georgia', 9), ('Massachusetts', 9), ('North Dakota', 9), ('Oklahoma', 9), ('Tennessee', 9), ('Texas', 9), ('Vermont', 9), ('Virginia', 9), ('Kansas', 10), ('Kentucky', 10), ('Louisiana', 10), ('Maine', 10), ('Nebraska', 10), ('Hawaii', 10), ('Michigan', 10), ('Mississippi', 10), ('Wyoming', 11), ('Florida', 11), ('Illinois' , 11), ('Missouri', 11), ('North Carolina', 11), ('Ohio', 11), ('Arizona', 12), ('Idaho', 12), ('Utah', 12),('Alaska', 13), ('Washington', 13), ('Wisconsin', 14), ('New Jersey', 15), ('New York', 15), ('Connecticut', 15), ('Delaware', 15), ('Maryland', 15), ('Pennsylvania', 15), ('Rhode Island', 15), ('Indiana', 16), ('West Virginia', 16), ('Oregon', 17), ('California', 19), ('Montana', 19), ('New Mexico', 19), ('South Dakota', 19)]#, ('DC', 20)]
+playerColors = [(255,0,0), (0,0,255), (0,255,0), (128,0,128)]
 eventOfTheWeek = 0
 issueNames = ['Immigration', 'Gun Control', 'Jobs', 'Tax Reform', 'Education']
 pastElections = {}          #stores the winner of each elections thats happened
@@ -42,14 +42,14 @@ class State:
         self.organizations = []
         self.districts = []
 
-    def updateSupport(self):        #needs to be checked
+    def updateSupport(self):        
         newSupport = []
-        for district in self.districts:
-            if len(newSupport) == 0:
-                newSupport = district.support
-            else:
-                for i in range(len(district.support)):
-                    newSupport[i] += district.support[i] * district.population
+        global numPlayers
+        for j in range(numPlayers):
+            newSupport.append(0)
+        for i in range(numPlayers): 
+            for district in self.districts:
+                newSupport[i] += district.support[i] * district.population
         self.support = newSupport
         return
 
@@ -77,7 +77,7 @@ class District:
 
     def setSupport(self, playerIndex, s):
         try:
-            self.support[playerIndex] = s
+            self.support[playerIndex] += s
         except IndexError:
             self.support.append(s)
 
@@ -163,7 +163,8 @@ def setUpPlayers(numP, setUpWindow, mode):
                 district.setSupport(i, 0)
                 district.setCampaigningThisTurn(i, 0)
                 district.setAdsThisTurn(i, 0)
-            states[state].updateSupport()
+    for state in states:
+        states[state].updateSupport()
 
     if mode == 1:
         for person in players:
@@ -238,14 +239,13 @@ def paintNationalMap(natMapImage):         #his function will repaint the nation
         try:
             for stateTime in calendarOfContests:
                 if stateTime[1] < currentDate and stateTime[0] == state:
-                    stateLeaders[state] = pastElections[state]
+                    stateLeaders[state] = pastElections[state] - 1
                 elif stateTime[0] == state:
                     support = states[state].support
                     if max(support) > 0:
                         stateLeaders[state] = support.index(max(support))
         except KeyError:
             pass
-
     for line in pixelList:
         l = line.split(',')
         x = int(l[0])
@@ -253,7 +253,7 @@ def paintNationalMap(natMapImage):         #his function will repaint the nation
         state = l[2].strip()
         try:
             leader = stateLeaders[state]
-            color = playerColors[leader - 1]
+            color = playerColors[leader]
             pixels[(x,y)] = color
         except KeyError:
             pass
@@ -431,15 +431,24 @@ def zoomToState(event):  #this will bring up the state window, seperate from the
                 for line in districts:
                     l = line.split(',')
                     if l[0].strip() == stateName:
-                        delegates += int(l[2].strip())
+                        delegates += int(l[2].strip()) * 3
                 delegatesLabel = Label(leftPane, text = 'This State has ' + str(delegates) + " delegates")
                 leftPane.add(delegatesLabel)
 
-                eventOfTheWeekLabel = Label(leftPane, text = 'At the top of the news \n cycle this week: %s' %(issueNames[eventOfTheWeek]))
+                for district in states[stateName].districts:
+                    districtDelegatesLabel = Label(leftPane, text = district.name + " District has " + str(int(district.population)) + " delegates")
+                    leftPane.add(districtDelegatesLabel)
+                    for person in range(numPlayers):
+                        districtSupportLabel = Label(leftPane, text = "Current Support for player " + str(person + 1) + "in this district: " + str(district.support[person]))
+                        leftPane.add(districtSupportLabel)
+
+                '''eventOfTheWeekLabel = Label(leftPane, text = 'At the top of the news \n cycle this week: %s' %(issueNames[eventOfTheWeek]))
                 leftPane.add(eventOfTheWeekLabel)
                 for i in range(len(stats)):
                     issue = Label(leftPane, text = "Position on " + issueNames[i] + ": " + str(stats[i]), anchor = N)
-                    leftPane.add(issue)
+                    leftPane.add(issue)'''
+                placeHolderLabel = Label(leftPane)
+                leftPane.add(placeHolderLabel)
                 statePane.add(leftPane)
 
                 stateImage = Image.open(path + '\\stateDistricts\\' + stateName + '.jpeg')
@@ -451,6 +460,7 @@ def zoomToState(event):  #this will bring up the state window, seperate from the
                 currentOrg = states[stateName].organizations[player-1]
 
                 rightPane = PanedWindow(stateWindow, orient = VERTICAL)
+                moreRightPane = PanedWindow(stateWindow, orient = VERTICAL)
                 if currentOrg == 0:      #if the player has not yet on the ballot in the state
                     ballotLabel = Label(rightPane, text = 'Cost to get on the ballot ' + stateName + ': $10,000')
                     ballotButton = Button(rightPane, text = 'Get on the Ballot', command = lambda : getOnBallot(player, stateName, 10000, stateWindow, event))
@@ -482,24 +492,41 @@ def zoomToState(event):  #this will bring up the state window, seperate from the
                 for line in districts:
                     l = line.split(',')
                     if l[0] == stateName:
-                        districtLabel = Label(rightPane, text = l[1].strip())
-                        addBuySlider = Scale(rightPane, label = "Add buys for this district", from_ = 0, to = resources[1], resolution = 1000, orient = HORIZONTAL)
-                        campaigningSlider = Scale(rightPane, label = "Time Campaigning in this District", from_ = 0, to = resources[0], orient = HORIZONTAL)
-                        districtAllocatedTime = states[stateName].districts[j].campaigningThisTurn[player - 1]
-                        j += 1
-                        campaigningSlider.set(districtAllocatedTime)
-                        allocatedTime += districtAllocatedTime
+                        if j < 4:
+                            districtLabel = Label(rightPane, text = l[1].strip())
+                            addBuySlider = Scale(rightPane, label = "Add buys for this district", from_ = 0, to = resources[1], resolution = 1000, orient = HORIZONTAL)
+                            campaigningSlider = Scale(rightPane, label = "Time Campaigning in this District", from_ = 0, to = resources[0], orient = HORIZONTAL)
+                            districtAllocatedTime = states[stateName].districts[j].campaigningThisTurn[player - 1]
+                            j += 1
+                            campaigningSlider.set(districtAllocatedTime)
+                            allocatedTime += districtAllocatedTime
 
-                        addBuys.append(addBuySlider)
-                        campaingingTime.append(campaigningSlider)
-                        rightPane.add(districtLabel)
-                        rightPane.add(campaigningSlider)
-                        rightPane.add(addBuySlider)
+                            addBuys.append(addBuySlider)
+                            campaingingTime.append(campaigningSlider)
+                            rightPane.add(districtLabel)
+                            rightPane.add(campaigningSlider)
+                            rightPane.add(addBuySlider)
+                        else: 
+                            districtLabel = Label(moreRightPane, text = l[1].strip())
+                            addBuySlider = Scale(moreRightPane, label = "Add buys for this district", from_ = 0, to = resources[1], resolution = 1000, orient = HORIZONTAL)
+                            campaigningSlider = Scale(moreRightPane, label = "Time Campaigning in this District", from_ = 0, to = resources[0], orient = HORIZONTAL)
+                            districtAllocatedTime = states[stateName].districts[j].campaigningThisTurn[player - 1]
+                            j += 1
+                            campaigningSlider.set(districtAllocatedTime)
+                            allocatedTime += districtAllocatedTime
+
+                            addBuys.append(addBuySlider)
+                            campaingingTime.append(campaigningSlider)
+                            moreRightPane.add(districtLabel)
+                            moreRightPane.add(campaigningSlider)
+                            moreRightPane.add(addBuySlider)
 
                 doneButton = Button(rightPane, text = "Done with State", command = lambda : backToMap(event.widget.winfo_toplevel(), campaingingTime, stateName, allocatedTime, addBuys), anchor = S)
                 rightPane.add(doneButton)
 
                 statePane.add(rightPane)
+                if j > 4:
+                    statePane.add(moreRightPane)
                 statePane.pack()
 
                 center(stateWindow)
@@ -600,7 +627,7 @@ def endTurn(window, fundraising):
                 for person in players:
                     district.setCampaigningThisTurn(person - 1, 0)
                     district.setAdsThisTurn(person - 1, 0)
-    if currentDate <= 21:
+    if currentDate <= 20:
         return
     else:
         winner = 0
@@ -608,7 +635,7 @@ def endTurn(window, fundraising):
         for person in players:
             if players[person].delegateCount > mostDelegates:
                 winner = person
-                mostDelegates = player[person].delegateCount
+                mostDelegates = players[person].delegateCount
         tkMessageBox.showinfo("Winner", "The Winner is: Player " + str(winner))
         exit()
 
@@ -624,8 +651,8 @@ def calcEndTurn(fundraising):      #this will calculate the new resources availa
     #money: remaining + fundraising + baseline + momentum + from states organization
     localFundraising = 0
     for state in states:
-        states[state].updateSupport()
-        localFundraising += states[state].organizations[player - 1] * 1000 + states[state].organizations[player - 1] * (states[state].support[player - 1]/2) * 1000 - states[state].organizations[player - 1] * 3000
+        localFundraising += states[state].organizations[player - 1] * 1000 + states[state].organizations[player - 1] * (states[state].support[player - 1]/60) * 1000 - states[state].organizations[player - 1] * 3000
+    localFundraising = round(localFundraising)
     resources[1] = resources[1] + fundraising * 2000 + 20000 + localFundraising
     players[player].momentum = players[player].momentum * 2 ** (-1)
 
@@ -660,11 +687,12 @@ def calculateStateOpinions():       #this function will calculate the opinion of
                     campaingingTime = district.campaigningThisTurn[i]
                     adBuy = district.adsThisTurn[i]
                     adsTotal = sum(district.adsThisTurn)
-                    support = (campaingingTime + org + (adBuy / 2000) * 1.3 ** -(float(adsTotal) / 10000)) * (1 + float(players[i + 1].momentum) / 100.0) * mult
-                    district.setSupport(i + 1, support)
+                    support = (campaingingTime + org + float(adBuy) / float(adsTotal + 1) * (adsTotal / 100.0) ** (1.1/2.0)) * (1 + float(players[i + 1].momentum) / 100.0) * mult          #the plus 1 is to avoid dividing by 0 when there is no advertising in a state
+                    support = round(support)
+                    district.setSupport(i, support)
                 states[state].updateSupport()
 
-        print states["Iowa"].support
+        #print states["Iowa"].support
 
 def decideContests():
     global currentDate
@@ -693,9 +721,13 @@ def decideContests():
                 for i in range(numPlayers):
                     if orgs[i] > 0:
                         votes = random.gauss(district.support[i], 15)
+                        if votes < 0:
+                            votes = 1
                         if votes > mostVotes:
                             winner = i + 1
                             mostVotes = votes
+                        elif votes == mostVotes:
+                            winner = random.randint(1, numPlayers)
                         stateVotes[i] += votes * district.population
                     else:
                         votes = 0
@@ -703,6 +735,8 @@ def decideContests():
                 if winner == 0:
                     winner = random.randint(1, numPlayers)
                     stateVotes[winner - 1] += 1
+                districtResultsLabel = Label(resultsWindow, text = district.name + " district in " + stateName + " is won by player " + str(winner) + " giving " + str(districtDelegates) + " delegates")
+                districtResultsLabel.pack()
                 players[winner].delegateCount += districtDelegates
                 players[winner].momentum += 3
 
@@ -713,7 +747,7 @@ def decideContests():
 
             pastElections[stateName] = stateWinner
             print stateName, stateWinner, stateDelegates
-            resultsLabel = Label(resultsWindow, text = stateName + " is won by " + str(winner))
+            resultsLabel = Label(resultsWindow, text = stateName + " is won by player " + str(winner) + " giving " + str(stateDelegates) + " delegates")
             resultsLabel.pack()
     if j >= 1:
         center(resultsWindow)
