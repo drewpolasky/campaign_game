@@ -8,7 +8,7 @@ import os
 
 def main():
     for i in os.listdir(os.getcwd()):
-        if i.endswith(".jpeg"):
+        if i == 'Maine.jpeg' or i == 'Washington.jpeg':
             window = Tk()
             mapWindow = PanedWindow()
 
