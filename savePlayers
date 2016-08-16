@@ -14,7 +14,7 @@ aI0
 aI0
 asS'momentum'
 p5
-F3.25
+F2.15625
 sS'name'
 p6
 I1
@@ -22,7 +22,7 @@ sS'resources'
 p7
 (lp8
 I80
-aF301600.0
+aF43061150.0
 asS'delegateCount'
 p9
 I12
@@ -39,13 +39,13 @@ aI0
 aI0
 aI0
 asg5
-F13.0
+F18.4375
 sg6
 I2
 sg7
 (lp13
 I80
-aF413200.0
+aF8236700.0
 asg9
-I6
+I39
 sbs.

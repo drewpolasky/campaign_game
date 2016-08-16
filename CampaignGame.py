@@ -10,6 +10,11 @@ import time
 import math
 import sys
 import pickle
+import sys
+import tkFileDialog
+
+sys.setrecursionlimit(5000)
+
 
 #global variables fro tracking players and turns
 player = 1                  #keeps track of whose turn it is. indexed at 1
@@ -17,7 +22,7 @@ numPlayers = 2
 currentDate = 7
 players = {}            #dictionaries of class instances of players and states
 states = {}
-calendarOfContests = [('Iowa' , 2),('New Hampshire' , 5) ,('Nevada',7), ('South Carolina',8),('Minnesota',9),('Alabama' , 9), ('Arkansas', 9), ('Colorado', 9), ('Georgia', 9), ('Massachusetts', 9), ('North Dakota', 9), ('Oklahoma', 9), ('Tennessee', 9), ('Texas', 9), ('Vermont', 9), ('Virginia', 9), ('Kansas', 10), ('Kentucky', 10), ('Louisiana', 10), ('Maine', 10), ('Nebraska', 10), ('Hawaii', 10), ('Michigan', 10), ('Mississippi', 10), ('Wyoming', 11), ('Florida', 11), ('Illinois' , 11), ('Missouri', 11), ('North Carolina', 11), ('Ohio', 11), ('Arizona', 12), ('Idaho', 12), ('Utah', 12),('Alaska', 13), ('Washington', 13), ('Wisconsin', 14), ('New Jersey', 15), ('New York', 15), ('Connecticut', 15), ('Delaware', 15), ('Maryland', 15), ('Pennsylvania', 15), ('Rhode Island', 15), ('Indiana', 16), ('West Virginia', 16), ('Oregon', 17), ('California', 19), ('Montana', 19), ('New Mexico', 19), ('South Dakota', 19)]#, ('DC', 20)]
+calendarOfContests = [('Iowa' , 4),('New Hampshire' , 5) ,('Nevada',7), ('South Carolina',8),('Minnesota',9),('Alabama' , 9), ('Arkansas', 9), ('Colorado', 9), ('Georgia', 9), ('Massachusetts', 9), ('North Dakota', 9), ('Oklahoma', 9), ('Tennessee', 9), ('Texas', 9), ('Vermont', 9), ('Virginia', 9), ('Kansas', 10), ('Kentucky', 10), ('Louisiana', 10), ('Maine', 10), ('Nebraska', 10), ('Hawaii', 10), ('Michigan', 10), ('Mississippi', 10), ('Wyoming', 11), ('Florida', 11), ('Illinois' , 11), ('Missouri', 11), ('North Carolina', 11), ('Ohio', 11), ('Arizona', 12), ('Idaho', 12), ('Utah', 12),('Alaska', 13), ('Washington', 13), ('Wisconsin', 14), ('New Jersey', 15), ('New York', 15), ('Connecticut', 15), ('Delaware', 15), ('Maryland', 15), ('Pennsylvania', 15), ('Rhode Island', 15), ('Indiana', 16), ('West Virginia', 16), ('Oregon', 17), ('California', 19), ('Montana', 19), ('New Mexico', 19), ('South Dakota', 19)]#, ('DC', 20)]
 playerColors = [(255,0,0), (0,0,255), (0,255,0), (128,0,128)]
 eventOfTheWeek = 0
 issueNames = ['Immigration', 'Gun Control', 'Jobs', 'Tax Reform', 'Education']
@@ -26,7 +31,7 @@ pastElections = {}          #stores the winner of each elections thats happened
 class Player:
     def __init__(self, player):
         self.name = player
-        self.resources = [80, 100000]
+        self.resources = [800, 100000]
         self.positions = []
         self.delegateCount = 0
         self.momentum = 0
@@ -96,7 +101,6 @@ class District:
             self.adsThisTurn[playerIndex] = ads
         except IndexError:
             self.adsThisTurn.append(ads)
-
 
 def main():
     setUpStates()
@@ -531,13 +535,15 @@ def zoomToState(event):  #this will bring up the state window, seperate from the
                     if l[0] == stateName:
                         if j < 4:
                             districtLabel = Label(rightPane, text = l[1].strip())
-                            addBuySlider = Scale(rightPane, label = "Add buys for this district", from_ = 0, to = resources[1], resolution = 1000, orient = HORIZONTAL)
-                            campaigningSlider = Scale(rightPane, label = "Time Campaigning in this District", from_ = 0, to = resources[0], orient = HORIZONTAL)
                             districtAllocatedTime = states[stateName].districts[j].campaigningThisTurn[player - 1]
+                            districtAllocatedMoney = states[stateName].districts[j].adsThisTurn[player - 1]
+                            addBuySlider = Scale(rightPane, label = "Add buys for this district", from_ = 0, to = resources[1] + districtAllocatedMoney, resolution = 1000, orient = HORIZONTAL)
+                            campaigningSlider = Scale(rightPane, label = "Time Campaigning in this District", from_ = 0, to = resources[0] + districtAllocatedTime, orient = HORIZONTAL)
+                            
                             campaigningSlider.set(districtAllocatedTime)
                             allocatedTime += districtAllocatedTime
 
-                            districtAllocatedMoney = states[stateName].districts[j].adsThisTurn[player - 1]
+                            
                             addBuySlider.set(districtAllocatedMoney)
                             allocatedMoney += districtAllocatedMoney
 
@@ -549,8 +555,10 @@ def zoomToState(event):  #this will bring up the state window, seperate from the
                             rightPane.add(addBuySlider)
                         else: 
                             districtLabel = Label(moreRightPane, text = l[1].strip())
-                            addBuySlider = Scale(moreRightPane, label = "Add buys for this district", from_ = 0, to = resources[1], resolution = 1000, orient = HORIZONTAL)
-                            campaigningSlider = Scale(moreRightPane, label = "Time Campaigning in this District", from_ = 0, to = resources[0], orient = HORIZONTAL)
+                            districtAllocatedTime = states[stateName].districts[j].campaigningThisTurn[player - 1]
+                            districtAllocatedMoney = states[stateName].districts[j].adsThisTurn[player - 1]
+                            addBuySlider = Scale(moreRightPane, label = "Add buys for this district", from_ = 0, to = resources[1]+ districtAllocatedMoney, resolution = 1000, orient = HORIZONTAL)
+                            campaigningSlider = Scale(moreRightPane, label = "Time Campaigning in this District", from_ = 0, to = resources[0] + districtAllocatedTime, orient = HORIZONTAL)
                             districtAllocatedTime = states[stateName].districts[j].campaigningThisTurn[player - 1]
                             
                             campaigningSlider.set(districtAllocatedTime)
@@ -698,9 +706,9 @@ def calcEndTurn(fundraising):      #this will calculate the new resources availa
     #money: remaining + fundraising + baseline + momentum + from states organization
     localFundraising = 0
     for state in states:
-        localFundraising += states[state].organizations[player - 1] * 1000 + states[state].organizations[player - 1] * (states[state].support[player - 1]/60) * 1000 - states[state].organizations[player - 1] * 3000
+        localFundraising += states[state].organizations[player - 1] * 1000 + states[state].organizations[player - 1] * (float(states[state].support[player - 1])/30.0) * 1000 - states[state].organizations[player - 1] * 1000
     localFundraising = round(localFundraising)
-    resources[1] = resources[1] + fundraising * 2000 + 20000 + localFundraising
+    resources[1] = resources[1] + fundraising * 4000 + 20000 + localFundraising
     players[player].momentum = players[player].momentum * 2 ** (-1)
 
 def calculateStateOpinions():       #this function will calculate the opinion of each player in each state
@@ -806,16 +814,18 @@ def decideContests():
             print stateName, stateWinner, stateDelegates
             if k2 != 0:
                 resultsBox.insert(k2, '')
-            resultsBox.insert(k2 + 1,stateName + " overall is won by player " + str(winner) + " giving " + str(stateDelegates) + " delegates")
+                k2+=1
+            resultsBox.insert(k2,stateName + " overall is won by player " + str(winner) + " giving " + str(stateDelegates) + " delegates")
             votesCounts = ''
             stateVotesTotal = sum(stateVotes)
             for i in range(numPlayers):
                 playerStateVotes = stateVotes[i]
                 votesPercentage = round(float(playerStateVotes) / float(stateVotesTotal) * 100) 
                 votesCounts += 'Player ' + str(i+1) + ' with ' + str(votesPercentage) + '% of the vote, '
-            resultsBox.insert(k2+2, votesCounts)
-            k2 += k
+            resultsBox.insert(k2+1, votesCounts)
+            k2 += k - 1
             k = 3
+            
 
     if j >= 1:
         resultsBox.pack(side = LEFT, fill = BOTH)
@@ -833,11 +843,31 @@ def saveGame():
     global states
     global pastElections    
 
-    pickle.dump(players, open("savePlayers", 'wb'))
-    pickle.dump(states, open("saveStates", 'wb'))
-    pickle.dump(pastElections, open("savePastElections", 'wb'))
-    pickle.dump(player, open("savePlayer", 'wb'))
-    pickle.dump(currentDate, open("saveCurrentDate", 'wb'))
+    saveName = Tk()
+    saveNameLabel = Label(saveName, text = "Name for the save file: ")
+    saveNameLabel.pack()
+    saveNameEntry = Entry(saveName)
+    saveNameEntry.pack(side= RIGHT)
+    saveButton = Button(saveName, text = "Save Game", command = lambda : saveGameSecond(saveNameEntry.get(), saveName))
+    saveButton.pack()
+    center(saveName)
+    saveName.mainLoop()
+
+def saveGameSecond(fileName, window):
+    global player
+    global currentDate
+    global players
+    global states
+    global pastElections
+    window.destroy()
+    saveFile = []
+    saveFile.append(pickle.dumps(players))
+    saveFile.append(pickle.dumps(states))
+    saveFile.append(pickle.dumps(pastElections))
+    saveFile.append(pickle.dumps(player))
+    saveFile.append(pickle.dumps(currentDate))
+
+    pickle.dump(saveFile, open(fileName, 'wb'))
 
     tkMessageBox.showinfo("Save Succesful", "Save Succesful")
     return
@@ -850,12 +880,17 @@ def loadGame(window):
     global pastElections    
 
     window.destroy()
+    root = Tk()
+    root.withdraw()
+    file_path = tkFileDialog.askopenfilename()
+    saveFile = pickle.load(open(file_path, 'rb'))
+    root.destroy()
 
-    players = pickle.load(open("savePlayers", 'rb'))
-    states = pickle.load(open("saveStates", 'rb'))
-    pastElections = pickle.load(open("savePastElections", 'rb'))
-    player = pickle.load(open("savePlayer", 'rb'))
-    currentDate = pickle.load(open("saveCurrentDate", 'rb'))
+    players = pickle.loads(saveFile[0])
+    states = pickle.loads(saveFile[1])
+    pastElections = pickle.loads(saveFile[2])
+    player = pickle.loads(saveFile[3])
+    currentDate = pickle.loads(saveFile[4])
 
     createNationalMap()
 

@@ -1,8 +1,14 @@
 (dp0
-S'New Hampshire'
+S'South Carolina'
 p1
 I2
-sS'Iowa'
+sS'New Hampshire'
 p2
+I2
+sS'Nevada'
+p3
 I1
+sS'Iowa'
+p4
+I2
 s.
