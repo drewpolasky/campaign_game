@@ -12,14 +12,14 @@ import sys
 import pickle
 import sys
 import tkFileDialog
+from time import sleep
 
 sys.setrecursionlimit(5000)
-
 
 #global variables fro tracking players and turns
 player = 1                  #keeps track of whose turn it is. indexed at 1
 numPlayers = 2
-currentDate = 7
+currentDate = 1
 players = {}            #dictionaries of class instances of players and states
 states = {}
 calendarOfContests = [('Iowa' , 4),('New Hampshire' , 5) ,('Nevada',7), ('South Carolina',8),('Minnesota',9),('Alabama' , 9), ('Arkansas', 9), ('Colorado', 9), ('Georgia', 9), ('Massachusetts', 9), ('North Dakota', 9), ('Oklahoma', 9), ('Tennessee', 9), ('Texas', 9), ('Vermont', 9), ('Virginia', 9), ('Kansas', 10), ('Kentucky', 10), ('Louisiana', 10), ('Maine', 10), ('Nebraska', 10), ('Hawaii', 10), ('Michigan', 10), ('Mississippi', 10), ('Wyoming', 11), ('Florida', 11), ('Illinois' , 11), ('Missouri', 11), ('North Carolina', 11), ('Ohio', 11), ('Arizona', 12), ('Idaho', 12), ('Utah', 12),('Alaska', 13), ('Washington', 13), ('Wisconsin', 14), ('New Jersey', 15), ('New York', 15), ('Connecticut', 15), ('Delaware', 15), ('Maryland', 15), ('Pennsylvania', 15), ('Rhode Island', 15), ('Indiana', 16), ('West Virginia', 16), ('Oregon', 17), ('California', 19), ('Montana', 19), ('New Mexico', 19), ('South Dakota', 19)]#, ('DC', 20)]
@@ -31,7 +31,8 @@ pastElections = {}          #stores the winner of each elections thats happened
 class Player:
     def __init__(self, player):
         self.name = player
-        self.resources = [800, 100000]
+        self.publicName = ''
+        self.resources = [80, 100000]
         self.positions = []
         self.delegateCount = 0
         self.momentum = 0
@@ -47,6 +48,7 @@ class State:
         self.support = []
         self.organizations = []
         self.districts = []
+        self.pollingAverage = []
 
     def updateSupport(self):        
         newSupport = []
@@ -57,6 +59,39 @@ class State:
             for district in self.districts:
                 newSupport[i] += district.support[i] * district.population
         self.support = newSupport
+        self.calculatePollingAverage()
+        return
+
+    def calculatePollingAverage(self):
+        global currentDate
+        global calendarOfContests
+
+        for election in calendarOfContests:
+            if election[0] == self.name:
+                electionDate = election[1]
+        numDecided = 0
+        timeToElection = electionDate - currentDate
+        stateVoteTotals = []
+        for i in range(len(self.support)):
+            stateVoteTotals.append(0)
+        if timeToElection >= 0:
+            for district in self.districts:
+                polling = []
+                for person in range(len(self.support)):
+                    totalSupport = float(sum(district.support))
+                    numDecided = 1 - (2.5 + self.organizations[person] / 80.0) ** (totalSupport / -100.0)
+                    numVoting = numDecided * district.population * 150000
+                    
+                    numVoters = (district.support[person] / (totalSupport + 0.0001)) * numVoting
+                    stateVoteTotals[person] += numVoters
+                    polling.append(round(numVoters / (district.population * 150000.0), 2))
+                district.pollingAverage = polling
+
+            totalVotes = float(sum(stateVoteTotals))
+            statePolling = []
+            for person in range(len(stateVoteTotals)):
+                statePolling.append(round(stateVoteTotals[person]/ (totalVotes + 1) , 2))
+            self.pollingAverage = statePolling
         return
 
     def setOrganization(self, playerIndex, organizations):
@@ -78,6 +113,7 @@ class District:
         self.state = parent
         self.opinions = []
         self.support = []
+        self.pollingAverage = []
         self.campaigningThisTurn = []
         self.adsThisTurn = []
 
@@ -104,11 +140,116 @@ class District:
 
 def main():
     setUpStates()
-    setUpGame()
+    mainMenu()
     while True:
         createNationalMap()
 
-def setUpGame():        #this will set up the basic parameters of the game, or have the option to load a previously saved game.  
+def mainMenu():         #this will be the intial meu of the game, with options to start a new game, load a game, or run the tutorial
+    mainMenuWindow = Tk()
+
+    startGameButton = Button(mainMenuWindow, text = 'Start a New Game', command = lambda:setUpGame(mainMenuWindow))
+    loadGameButton = Button(mainMenuWindow, text = 'Load Game', command = lambda:loadGame(mainMenuWindow))
+    tutorialButton = Button(mainMenuWindow, text = 'Launch the Tutorial', command = lambda:tutorial(mainMenuWindow))
+
+    startGameButton.pack()
+    loadGameButton.pack()
+    tutorialButton.pack()
+
+    w = 400
+    h = 300
+    ws = mainMenuWindow.winfo_screenwidth() # width of the screen
+    hs = mainMenuWindow.winfo_screenheight() # height of the screen
+    # calculate x and y coordinates for the Tk root window
+    x = (ws/2) - (w/2)
+    y = (hs/2) - (h/2)
+    mainMenuWindow.geometry('%dx%d+%d+%d' % (w, h, x, y))
+
+    mainMenuWindow.mainloop()
+
+def tutorial(window):      
+    window.destroy()
+
+    tutorialWindow = Tk()
+
+    welcomeLabel = Label(tutorialWindow, text = "Welcome to the Campaign! This tutorial will take you through the bascis of how the game is played, and get you ready to win the election" , wraplength = 400, justify = LEFT)
+    introLabel = Label(tutorialWindow, text = "The goal of campaign is to win the election by amassing the most delegates. Delegates are won by winning state and district elections. State and district elections are won by having more people vote for you than your opponents. click the button below to get started, and see how you get people to vote for, rather than against you.", wraplength = 400, justify = LEFT)
+    nextStepButton = Button(tutorialWindow, text = "Onwards", command = lambda:tutorialMap(tutorialWindow))
+
+    w = 400
+    h = 300
+    ws = tutorialWindow.winfo_screenwidth() # width of the screen
+    hs = tutorialWindow.winfo_screenheight() # height of the screen
+    # calculate x and y coordinates for the Tk root window
+    x = (ws/2) - (w/2)
+    y = (hs/2) - (h/2)
+    tutorialWindow.geometry('%dx%d+%d+%d' % (w, h, x, y))
+
+    welcomeLabel.pack()
+    introLabel.pack()
+    nextStepButton.pack()
+
+    tutorialWindow.mainloop()
+
+def tutorialMap(window):            #my idea is to have an annotated map, first of the national map, then of the state map for any new players to look at to get an idea of what is going on and what everything does. I think I should be able to have the national map fixed and have text boxes pop up and disappear explaining each piece.
+    window.destroy()
+    tutorialMapWindow = Tk()
+    natMapImage = Image.open("tutorialNationalMap.jpg")
+    natMapImg = ImageTk.PhotoImage(natMapImage)
+    natMap = Label(tutorialMapWindow, image = natMapImg)
+    natMap.pack()
+    center(tutorialMapWindow)
+
+    message = Tk()         #this message will explain the colors on the map, and will have a button for the player to advance through the tutorial
+    messageLabel = Label(message, text = "This is the national map for the campaign, where you will start and end each turn. There is a great deal of information on this screen, so we'll start with the map itself. Each state is colored based on who is currently leading in the polls in that state or, if the state has already voted, who won. The states that have already voted are colored in a darker shade of the players color than those that have yet to vote. At the top of the right side bar you can see which color correspond to each player. In this example, player 1 (red) has already won in a number of states including Texas and Michigan, and is leading in California, Arizona, and Utah. States in white are places where no candidate has any support. At the top of the screen, the main menu has options to save or load a game. Took look at a state in more detail, and to make desicions about what resources you want to spend there, you'll click on the state you want to zoom to.", wraplength = 400, justify = LEFT)
+    nextStepButton = Button(message, text = "Onwards", command = lambda:tutorialMapSecondMessage(message, tutorialMapWindow))
+    messageLabel.pack()
+    nextStepButton.pack()
+
+    for i in range(2):
+        if i == 1:
+            message.mainloop()
+        tutorialMapWindow.update_idletasks()
+
+def tutorialMapSecondMessage(message, mapWindow):
+    message.destroy()
+    message = Tk()         #this message will explain the colors on the map, and will have a button for the player to advance through the tutorial
+    messageLabel = Label(message, text = 'If you look now to the left of the screen, you will see the campaign calendar. At the top you can see what week it is right now (in this case, its week 11). Below that you can see the upcoming elections. Elections take place at the end of the turn, so Wyoming, Florida, and the other states that vote on week eleven will hold their elections after the last player ends their turn this week. Timing your campaining in states is important, you have to get your name on the ballot at least two weeks before the state votes, and, in the two weeks before the election, your campaining will be more effective, as people start to pay more attention to politics.', wraplength = 400, justify = LEFT)
+    nextStepButton = Button(message, text = "Onwards", command = lambda:tutorialMapThirdMessage(message, mapWindow))
+    messageLabel.pack()
+    nextStepButton.pack()
+
+def tutorialMapThirdMessage(message, mapWindow):
+    message.destroy()
+    message = Tk()         #this message will explain the colors on the map, and will have a button for the player to advance through the tutorial
+    messageLabel = Label(message, text = 'Finally on this screen we have the right side bar, which has a variety of information about your campaign. First, at the top, we have how many delegates each player has won to this point.\n Just below that is your current momentum score. Momentum is gotten by winning states and district, but there is a fixed amount for each turn, so winning Iowa, which is the only contest on week 4, gives a lot more momentum than winning Minnesota, one of many contests on week 9(super tuesday). Momentum makes people more likely to vote for you and donate to your campaign, but it fades quickly if you stop winning.\n Below momentum are your available resoures, time and money. Time is your candidates time, and can either be spent campaigning directly in a state to build support, or fundraising, soliciting big donations to increase the war chest. Money can be spent to build your ground game in states, or to buy advertising to increase support. We\'ll go into more depth on those options when we get to the state screen later on.\n Under your resources is the issue of the week. If you are playing without issues, you can ignore this.\n Next comes the fundraising slider, which lets you choose how much of your candidates time you want to spend raising money, and finally we have the end turn button, which ends your turn. With that, let\'s take a look at the state map.', wraplength = 400, justify = LEFT)
+    nextStepButton = Button(message, text = "Onwards", command = lambda:tutorialState(message, mapWindow))
+    messageLabel.pack()
+    nextStepButton.pack()
+
+def tutorialState(window, mapWindow):           #now do the tutorial explaining the state maps in the same way
+    window.destroy()
+    mapWindow.destroy()
+
+    tutorialMapWindow = Tk()
+    natMapImage = Image.open("tutorialStateMap.jpg")
+    natMapImg = ImageTk.PhotoImage(natMapImage)
+    natMap = Label(tutorialMapWindow, image = natMapImg)
+    natMap.pack()
+    center(tutorialMapWindow)
+
+    message = Tk()         #this message will explain the colors on the map, and will have a button for the player to advance through the tutorial
+    messageLabel = Label(message, text = "", wraplength = 400, justify = LEFT)
+    nextStepButton = Button(message, text = "Onwards", command = lambda:tutorialMapSecondMessage(message, tutorialMapWindow))
+    messageLabel.pack()
+    nextStepButton.pack()
+
+    for i in range(2):
+        if i == 1:
+            message.mainloop()
+        tutorialMapWindow.update_idletasks()
+
+def setUpGame(window):        #this will set up the basic parameters of the game, or have the option to load a previously saved game.  
+    window.destroy()
     setUpWindow = Tk()
 
     w = 200
@@ -435,7 +576,7 @@ def showStats(event):   #this will bring up a window with a quick overview of th
 
 def zoomToState(event):  #this will bring up the state window, seperate from the main window
     xLoc = event.x
-    yLoc = event.y
+    yLoc = event.y - 20
 
     pixelList = open('pixelList.txt' , 'r')
     global issueNames
@@ -462,7 +603,7 @@ def zoomToState(event):  #this will bring up the state window, seperate from the
                 #leftPane.add(opinionLabel)
 
                 for person in range(numPlayers):
-                    supportLabel = Label(leftPane, text = 'Current Level of Support for Player ' + str(person+1) + ': ' + str(states[stateName].support[person]))
+                    supportLabel = Label(leftPane, text = 'Current Polling for Player ' + str(person+1) + ': ' + str(states[stateName].pollingAverage[person]))
                     leftPane.add(supportLabel)
 
                 districts = open('districts.txt' , 'r')
@@ -477,8 +618,10 @@ def zoomToState(event):  #this will bring up the state window, seperate from the
                 for district in states[stateName].districts:
                     districtDelegatesLabel = Label(leftPane, text = district.name + " District has " + str(int(district.population)) + " delegates")
                     leftPane.add(districtDelegatesLabel)
+                    print district.pollingAverage
+                    print district.support
                     for person in range(numPlayers):
-                        districtSupportLabel = Label(leftPane, text = "Current Support for player " + str(person + 1) + "in this district: " + str(district.support[person]))
+                        districtSupportLabel = Label(leftPane, text = "Current Polling for player " + str(person + 1) + "in this district: " + str(district.pollingAverage[person]))
                         leftPane.add(districtSupportLabel)
 
                 '''eventOfTheWeekLabel = Label(leftPane, text = 'At the top of the news \n cycle this week: %s' %(issueNames[eventOfTheWeek]))
@@ -706,7 +849,13 @@ def calcEndTurn(fundraising):      #this will calculate the new resources availa
     #money: remaining + fundraising + baseline + momentum + from states organization
     localFundraising = 0
     for state in states:
-        localFundraising += states[state].organizations[player - 1] * 1000 + states[state].organizations[player - 1] * (float(states[state].support[player - 1])/30.0) * 1000 - states[state].organizations[player - 1] * 1000
+        #calculate % of population donating
+        for district in states[state].districts:
+            #expected range for number donating 0-.45 given support from 0-150
+            numberDonating = 1 - (1.5 + states[state].organizations[player-1] / 100.0) ** (district.support[player - 1] / -100.0)
+            localFundraising += numberDonating * district.population * 300
+            
+
     localFundraising = round(localFundraising)
     resources[1] = resources[1] + fundraising * 4000 + 20000 + localFundraising
     players[player].momentum = players[player].momentum * 2 ** (-1)
@@ -742,7 +891,7 @@ def calculateStateOpinions():       #this function will calculate the opinion of
                     campaingingTime = district.campaigningThisTurn[i]
                     adBuy = district.adsThisTurn[i]
                     adsTotal = sum(district.adsThisTurn)
-                    support = (campaingingTime + org + float(adBuy) / float(adsTotal + 1) * (adsTotal / 100.0) ** (1.1/2.0)) * (1 + float(players[i + 1].momentum) / 100.0) * mult          #the plus 1 is to avoid dividing by 0 when there is no advertising in a state
+                    support = (campaingingTime + org + float(adBuy) / float(adsTotal + 1) * (adsTotal / 100.0) ** (1.1/2.0)) * (1 + float(players[i + 1].momentum) / 100.0) * mult         #the plus 1 is to avoid dividing by 0 when there is no advertising in a state
                     support = round(support)
                     district.setSupport(i, support)
                 states[state].updateSupport()
@@ -826,7 +975,6 @@ def decideContests():
             k2 += k - 1
             k = 3
             
-
     if j >= 1:
         resultsBox.pack(side = LEFT, fill = BOTH)
         scrollBar.config(command = resultsBox.yview)
