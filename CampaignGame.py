@@ -19,7 +19,7 @@ sys.setrecursionlimit(5000)
 #global variables fro tracking players and turns
 player = 1                  #keeps track of whose turn it is. indexed at 1
 numPlayers = 2
-currentDate = 1
+currentDate = 7
 players = {}            #dictionaries of class instances of players and states
 states = {}
 calendarOfContests = [('Iowa' , 4),('New Hampshire' , 5) ,('Nevada',7), ('South Carolina',8),('Minnesota',9),('Alabama' , 9), ('Arkansas', 9), ('Colorado', 9), ('Georgia', 9), ('Massachusetts', 9), ('North Dakota', 9), ('Oklahoma', 9), ('Tennessee', 9), ('Texas', 9), ('Vermont', 9), ('Virginia', 9), ('Kansas', 10), ('Kentucky', 10), ('Louisiana', 10), ('Maine', 10), ('Nebraska', 10), ('Hawaii', 10), ('Michigan', 10), ('Mississippi', 10), ('Wyoming', 11), ('Florida', 11), ('Illinois' , 11), ('Missouri', 11), ('North Carolina', 11), ('Ohio', 11), ('Arizona', 12), ('Idaho', 12), ('Utah', 12),('Alaska', 13), ('Washington', 13), ('Wisconsin', 14), ('New Jersey', 15), ('New York', 15), ('Connecticut', 15), ('Delaware', 15), ('Maryland', 15), ('Pennsylvania', 15), ('Rhode Island', 15), ('Indiana', 16), ('West Virginia', 16), ('Oregon', 17), ('California', 19), ('Montana', 19), ('New Mexico', 19), ('South Dakota', 19)]#, ('DC', 20)]
@@ -84,13 +84,13 @@ class State:
                     
                     numVoters = (district.support[person] / (totalSupport + 0.0001)) * numVoting
                     stateVoteTotals[person] += numVoters
-                    polling.append(round(numVoters / (district.population * 150000.0), 2))
+                    polling.append(round(numVoters / (district.population * 150000.0) * 100, 1))
                 district.pollingAverage = polling
 
             totalVotes = float(sum(stateVoteTotals))
             statePolling = []
             for person in range(len(stateVoteTotals)):
-                statePolling.append(round(stateVoteTotals[person]/ (totalVotes + 1) , 2))
+                statePolling.append(round(stateVoteTotals[person]/ (totalVotes + 1) * 100 , 1))
             self.pollingAverage = statePolling
         return
 
@@ -618,10 +618,8 @@ def zoomToState(event):  #this will bring up the state window, seperate from the
                 for district in states[stateName].districts:
                     districtDelegatesLabel = Label(leftPane, text = district.name + " District has " + str(int(district.population)) + " delegates")
                     leftPane.add(districtDelegatesLabel)
-                    print district.pollingAverage
-                    print district.support
                     for person in range(numPlayers):
-                        districtSupportLabel = Label(leftPane, text = "Current Polling for player " + str(person + 1) + "in this district: " + str(district.pollingAverage[person]))
+                        districtSupportLabel = Label(leftPane, text = "Current Polling for player " + str(person + 1) + " in this district: " + str(district.pollingAverage[person]))
                         leftPane.add(districtSupportLabel)
 
                 '''eventOfTheWeekLabel = Label(leftPane, text = 'At the top of the news \n cycle this week: %s' %(issueNames[eventOfTheWeek]))
@@ -915,6 +913,7 @@ def decideContests():
     k2 = 0
     for state in calendarOfContests:
         if state[1] + 1 == currentDate:
+            states[state[0]].calculatePollingAverage()     #just in case it isn't up to date 
             j += 1
             stateName = state[0]
             orgs = states[stateName].organizations
@@ -930,7 +929,8 @@ def decideContests():
                 totalVotes = 0
                 for i in range(numPlayers):
                     if orgs[i] > 0:
-                        votes = random.gauss(district.support[i], 15)
+                        votes = random.gauss(district.pollingAverage[i], 3)
+                        votes = votes * district.population * 150000
                         totalVotes += votes
                         if votes < 0:
                             votes = 1
@@ -970,7 +970,7 @@ def decideContests():
             for i in range(numPlayers):
                 playerStateVotes = stateVotes[i]
                 votesPercentage = round(float(playerStateVotes) / float(stateVotesTotal) * 100) 
-                votesCounts += 'Player ' + str(i+1) + ' with ' + str(votesPercentage) + '% of the vote, '
+                votesCounts += 'Player ' + str(i+1) + ' with ' + str(int(round(playerStateVotes/100000.0 , 0))) + ' hundred thousand votes, '
             resultsBox.insert(k2+1, votesCounts)
             k2 += k - 1
             k = 3
