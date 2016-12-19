@@ -211609,3 +211609,3840 @@
 217,262,Utah 
 238,211,Utah 
 229,263,Utah 
+773,346,Delaware 
+774,346,Delaware 
+773,347,Delaware 
+774,345,Delaware 
+772,347,Delaware 
+775,345,Delaware 
+771,347,Delaware 
+776,345,Delaware 
+770,347,Delaware 
+771,348,Delaware 
+776,344,Delaware 
+769,347,Delaware 
+770,348,Delaware 
+777,344,Delaware 
+768,347,Delaware 
+769,348,Delaware 
+778,344,Delaware 
+767,347,Delaware 
+768,348,Delaware 
+779,344,Delaware 
+778,345,Delaware 
+767,346,Delaware 
+768,349,Delaware 
+779,343,Delaware 
+778,346,Delaware 
+767,345,Delaware 
+768,350,Delaware 
+779,342,Delaware 
+779,346,Delaware 
+766,345,Delaware 
+767,344,Delaware 
+780,342,Delaware 
+780,346,Delaware 
+765,345,Delaware 
+768,344,Delaware 
+781,342,Delaware 
+781,346,Delaware 
+780,347,Delaware 
+765,344,Delaware 
+769,344,Delaware 
+782,342,Delaware 
+781,343,Delaware 
+781,345,Delaware 
+780,348,Delaware 
+765,343,Delaware 
+769,343,Delaware 
+783,342,Delaware 
+782,343,Delaware 
+782,345,Delaware 
+781,348,Delaware 
+764,343,Delaware 
+765,342,Delaware 
+769,342,Delaware 
+783,341,Delaware 
+782,344,Delaware 
+782,348,Delaware 
+763,343,Delaware 
+766,342,Delaware 
+768,342,Delaware 
+769,341,Delaware 
+783,340,Delaware 
+783,348,Delaware 
+782,349,Delaware 
+763,342,Delaware 
+767,342,Delaware 
+768,341,Delaware 
+769,340,Delaware 
+784,340,Delaware 
+784,348,Delaware 
+783,349,Delaware 
+763,341,Delaware 
+768,340,Delaware 
+769,339,Delaware 
+784,339,Delaware 
+784,347,Delaware 
+762,341,Delaware 
+763,340,Delaware 
+768,339,Delaware 
+769,338,Delaware 
+784,338,Delaware 
+784,346,Delaware 
+762,340,Delaware 
+763,339,Delaware 
+768,338,Delaware 
+783,338,Delaware 
+783,346,Delaware 
+784,345,Delaware 
+762,339,Delaware 
+763,338,Delaware 
+782,338,Delaware 
+784,344,Delaware 
+762,338,Delaware 
+763,337,Delaware 
+782,339,Delaware 
+784,343,Delaware 
+762,337,Delaware 
+763,336,Delaware 
+785,343,Delaware 
+762,336,Delaware 
+763,335,Delaware 
+785,342,Delaware 
+762,335,Delaware 
+763,334,Delaware 
+785,341,Delaware 
+762,334,Delaware 
+763,333,Delaware 
+761,334,Delaware 
+764,333,Delaware 
+760,334,Delaware 
+765,333,Delaware 
+760,333,Delaware 
+765,332,Delaware 
+760,332,Delaware 
+765,331,Delaware 
+760,331,Delaware 
+766,331,Delaware 
+761,331,Delaware 
+766,330,Delaware 
+761,330,Delaware 
+762,330,Delaware 
+763,330,Delaware 
+764,330,Delaware 
+763,331,Delaware 
+772,346,Delaware 
+775,346,Delaware 
+773,348,Delaware 
+772,348,Delaware 
+771,346,Delaware 
+776,346,Delaware 
+771,349,Delaware 
+769,346,Delaware 
+777,343,Delaware 
+769,349,Delaware 
+766,347,Delaware 
+780,344,Delaware 
+766,346,Delaware 
+780,343,Delaware 
+778,347,Delaware 
+778,342,Delaware 
+779,347,Delaware 
+767,343,Delaware 
+780,345,Delaware 
+765,346,Delaware 
+781,341,Delaware 
+781,347,Delaware 
+770,344,Delaware 
+782,341,Delaware 
+779,348,Delaware 
+766,343,Delaware 
+784,342,Delaware 
+783,345,Delaware 
+764,342,Delaware 
+770,342,Delaware 
+783,344,Delaware 
+762,343,Delaware 
+766,341,Delaware 
+782,340,Delaware 
+783,347,Delaware 
+767,341,Delaware 
+785,340,Delaware 
+784,349,Delaware 
+767,340,Delaware 
+785,339,Delaware 
+761,341,Delaware 
+767,339,Delaware 
+785,338,Delaware 
+761,340,Delaware 
+767,338,Delaware 
+761,339,Delaware 
+781,338,Delaware 
+761,338,Delaware 
+781,339,Delaware 
+764,336,Delaware 
+761,336,Delaware 
+786,342,Delaware 
+764,334,Delaware 
+762,333,Delaware 
+761,333,Delaware 
+766,333,Delaware 
+766,332,Delaware 
+764,331,Delaware 
+760,330,Delaware 
+766,329,Delaware 
+762,329,Delaware 
+764,329,Delaware 
+775,347,Delaware 
+773,349,Delaware 
+771,345,Delaware 
+777,342,Delaware 
+766,348,Delaware 
+778,348,Delaware 
+764,346,Delaware 
+771,344,Delaware 
+779,349,Delaware 
+761,343,Delaware 
+766,340,Delaware 
+785,349,Delaware 
+761,342,Delaware 
+786,338,Delaware 
+766,338,Delaware 
+780,339,Delaware 
+787,342,Delaware 
+766,334,Delaware 
+766,328,Delaware 
+764,328,Delaware 
+774,349,Delaware 
+777,341,Delaware 
+766,349,Delaware 
+778,349,Delaware 
+764,347,Delaware 
+771,343,Delaware 
+765,340,Delaware 
+787,338,Delaware 
+765,338,Delaware 
+779,339,Delaware 
+788,342,Delaware 
+787,343,Delaware 
+765,328,Delaware 
+763,328,Delaware 
+775,349,Delaware 
+776,341,Delaware 
+765,349,Delaware 
+763,347,Delaware 
+772,343,Delaware 
+788,338,Delaware 
+787,339,Delaware 
+778,339,Delaware 
+779,340,Delaware 
+788,341,Delaware 
+787,344,Delaware 
+763,327,Delaware 
+775,350,Delaware 
+776,340,Delaware 
+765,350,Delaware 
+763,348,Delaware 
+772,342,Delaware 
+788,337,Delaware 
+787,340,Delaware 
+778,338,Delaware 
+789,341,Delaware 
+786,344,Delaware 
+787,345,Delaware 
+763,326,Delaware 
+776,339,Delaware 
+762,348,Delaware 
+773,342,Delaware 
+789,337,Delaware 
+777,338,Delaware 
+789,340,Delaware 
+788,345,Delaware 
+762,326,Delaware 
+763,325,Delaware 
+776,338,Delaware 
+762,349,Delaware 
+773,341,Delaware 
+789,336,Delaware 
+790,340,Delaware 
+789,345,Delaware 
+761,326,Delaware 
+764,325,Delaware 
+775,338,Delaware 
+761,349,Delaware 
+773,340,Delaware 
+789,335,Delaware 
+790,339,Delaware 
+789,344,Delaware 
+760,326,Delaware 
+761,327,Delaware 
+764,324,Delaware 
+775,337,Delaware 
+761,350,Delaware 
+774,340,Delaware 
+788,335,Delaware 
+789,334,Delaware 
+790,338,Delaware 
+789,343,Delaware 
+765,324,Delaware 
+774,337,Delaware 
+774,339,Delaware 
+788,334,Delaware 
+789,333,Delaware 
+790,343,Delaware 
+765,323,Delaware 
+788,333,Delaware 
+789,332,Delaware 
+790,342,Delaware 
+765,322,Delaware 
+788,332,Delaware 
+789,331,Delaware 
+764,322,Delaware 
+765,321,Delaware 
+788,331,Delaware 
+789,330,Delaware 
+764,321,Delaware 
+765,320,Delaware 
+788,330,Delaware 
+789,329,Delaware 
+764,320,Delaware 
+765,319,Delaware 
+788,329,Delaware 
+789,328,Delaware 
+764,319,Delaware 
+765,318,Delaware 
+788,328,Delaware 
+789,327,Delaware 
+764,318,Delaware 
+765,317,Delaware 
+788,327,Delaware 
+789,326,Delaware 
+764,317,Delaware 
+765,316,Delaware 
+788,326,Delaware 
+789,325,Delaware 
+764,316,Delaware 
+765,315,Delaware 
+788,325,Delaware 
+789,324,Delaware 
+764,315,Delaware 
+787,325,Delaware 
+790,324,Delaware 
+763,315,Delaware 
+787,324,Delaware 
+790,323,Delaware 
+786,324,Delaware 
+791,323,Delaware 
+785,324,Delaware 
+792,323,Delaware 
+784,324,Delaware 
+785,325,Delaware 
+792,324,Delaware 
+784,323,Delaware 
+785,326,Delaware 
+783,323,Delaware 
+784,326,Delaware 
+785,327,Delaware 
+783,322,Delaware 
+786,327,Delaware 
+782,322,Delaware 
+786,328,Delaware 
+782,321,Delaware 
+781,321,Delaware 
+780,321,Delaware 
+779,321,Delaware 
+780,322,Delaware 
+779,320,Delaware 
+780,323,Delaware 
+779,319,Delaware 
+781,323,Delaware 
+778,319,Delaware 
+779,318,Delaware 
+777,319,Delaware 
+780,318,Delaware 
+776,319,Delaware 
+777,320,Delaware 
+780,317,Delaware 
+776,318,Delaware 
+777,321,Delaware 
+780,316,Delaware 
+776,317,Delaware 
+777,322,Delaware 
+781,316,Delaware 
+775,317,Delaware 
+776,316,Delaware 
+778,322,Delaware 
+782,316,Delaware 
+774,317,Delaware 
+777,316,Delaware 
+778,323,Delaware 
+782,315,Delaware 
+773,317,Delaware 
+774,318,Delaware 
+777,315,Delaware 
+783,315,Delaware 
+773,316,Delaware 
+774,319,Delaware 
+784,315,Delaware 
+773,315,Delaware 
+774,320,Delaware 
+784,316,Delaware 
+774,315,Delaware 
+775,320,Delaware 
+785,316,Delaware 
+775,315,Delaware 
+786,316,Delaware 
+787,316,Delaware 
+786,317,Delaware 
+787,315,Delaware 
+786,318,Delaware 
+785,318,Delaware 
+786,319,Delaware 
+785,319,Delaware 
+786,320,Delaware 
+785,320,Delaware 
+786,321,Delaware 
+785,321,Delaware 
+786,322,Delaware 
+785,322,Delaware 
+773,345,Delaware 
+774,344,Delaware 
+777,345,Delaware 
+776,343,Delaware 
+768,346,Delaware 
+767,348,Delaware 
+767,349,Delaware 
+768,345,Delaware 
+766,344,Delaware 
+764,345,Delaware 
+782,346,Delaware 
+769,345,Delaware 
+780,349,Delaware 
+783,343,Delaware 
+765,341,Delaware 
+782,347,Delaware 
+770,341,Delaware 
+762,342,Delaware 
+785,348,Delaware 
+770,339,Delaware 
+764,340,Delaware 
+785,346,Delaware 
+785,345,Delaware 
+785,344,Delaware 
+761,337,Delaware 
+764,335,Delaware 
+786,341,Delaware 
+764,332,Delaware 
+761,332,Delaware 
+762,331,Delaware 
+763,329,Delaware 
+774,348,Delaware 
+776,347,Delaware 
+777,347,Delaware 
+781,340,Delaware 
+771,342,Delaware 
+786,340,Delaware 
+766,339,Delaware 
+780,338,Delaware 
+762,332,Delaware 
+762,328,Delaware 
+776,342,Delaware 
+777,348,Delaware 
+772,344,Delaware 
+786,349,Delaware 
+766,337,Delaware 
+787,341,Delaware 
+766,327,Delaware 
+774,350,Delaware 
+777,349,Delaware 
+765,339,Delaware 
+765,337,Delaware 
+789,342,Delaware 
+765,327,Delaware 
+775,341,Delaware 
+762,347,Delaware 
+789,338,Delaware 
+777,339,Delaware 
+788,340,Delaware 
+762,327,Delaware 
+765,351,Delaware 
+772,341,Delaware 
+790,341,Delaware 
+787,346,Delaware 
+775,339,Delaware 
+774,342,Delaware 
+777,337,Delaware 
+788,346,Delaware 
+763,324,Delaware 
+774,341,Delaware 
+791,340,Delaware 
+789,346,Delaware 
+765,325,Delaware 
+760,349,Delaware 
+773,339,Delaware 
+791,339,Delaware 
+761,328,Delaware 
+775,336,Delaware 
+790,334,Delaware 
+766,324,Delaware 
+790,333,Delaware 
+766,323,Delaware 
+790,332,Delaware 
+766,322,Delaware 
+790,331,Delaware 
+766,321,Delaware 
+790,330,Delaware 
+766,320,Delaware 
+790,329,Delaware 
+766,319,Delaware 
+790,328,Delaware 
+766,318,Delaware 
+790,327,Delaware 
+766,317,Delaware 
+790,326,Delaware 
+766,316,Delaware 
+790,325,Delaware 
+766,315,Delaware 
+789,323,Delaware 
+791,324,Delaware 
+787,323,Delaware 
+786,323,Delaware 
+785,323,Delaware 
+783,324,Delaware 
+792,325,Delaware 
+786,326,Delaware 
+783,326,Delaware 
+783,321,Delaware 
+786,329,Delaware 
+781,320,Delaware 
+778,321,Delaware 
+778,320,Delaware 
+780,324,Delaware 
+781,324,Delaware 
+779,317,Delaware 
+781,318,Delaware 
+776,320,Delaware 
+775,318,Delaware 
+779,316,Delaware 
+777,317,Delaware 
+777,323,Delaware 
+775,316,Delaware 
+783,316,Delaware 
+774,316,Delaware 
+778,324,Delaware 
+773,318,Delaware 
+772,316,Delaware 
+785,315,Delaware 
+773,320,Delaware 
+784,317,Delaware 
+785,317,Delaware 
+788,316,Delaware 
+788,315,Delaware 
+784,318,Delaware 
+784,319,Delaware 
+784,320,Delaware 
+784,321,Delaware 
+773,344,Delaware 
+775,343,Delaware 
+780,350,Delaware 
+786,348,Delaware 
+786,346,Delaware 
+776,348,Delaware 
+787,349,Delaware 
+766,326,Delaware 
+761,347,Delaware 
+766,351,Delaware 
+787,347,Delaware 
+788,347,Delaware 
+763,323,Delaware 
+790,346,Delaware 
+766,325,Delaware 
+773,338,Delaware 
+776,336,Delaware 
+767,324,Delaware 
+767,323,Delaware 
+767,322,Delaware 
+767,321,Delaware 
+767,320,Delaware 
+767,319,Delaware 
+767,318,Delaware 
+767,317,Delaware 
+767,316,Delaware 
+767,315,Delaware 
+789,322,Delaware 
+783,325,Delaware 
+782,326,Delaware 
+785,329,Delaware 
+781,319,Delaware 
+780,325,Delaware 
+778,317,Delaware 
+779,315,Delaware 
+777,324,Delaware 
+778,325,Delaware 
+771,316,Delaware 
+773,321,Delaware 
+788,317,Delaware 
+783,318,Delaware 
+781,350,Delaware 
+787,348,Delaware 
+788,349,Delaware 
+760,347,Delaware 
+788,348,Delaware 
+791,346,Delaware 
+767,325,Delaware 
+776,335,Delaware 
+768,323,Delaware 
+768,321,Delaware 
+768,319,Delaware 
+768,317,Delaware 
+768,315,Delaware 
+789,321,Delaware 
+781,326,Delaware 
+785,330,Delaware 
+779,325,Delaware 
+776,324,Delaware 
+778,326,Delaware 
+771,315,Delaware 
+772,321,Delaware 
+789,317,Delaware 
+781,351,Delaware 
+789,348,Delaware 
+791,345,Delaware 
+768,325,Delaware 
+776,334,Delaware 
+769,321,Delaware 
+769,317,Delaware 
+788,321,Delaware 
+789,320,Delaware 
+785,331,Delaware 
+775,324,Delaware 
+777,326,Delaware 
+771,321,Delaware 
+790,317,Delaware 
+790,348,Delaware 
+791,344,Delaware 
+768,326,Delaware 
+770,321,Delaware 
+769,322,Delaware 
+769,316,Delaware 
+788,320,Delaware 
+789,319,Delaware 
+786,331,Delaware 
+774,324,Delaware 
+775,325,Delaware 
+777,327,Delaware 
+771,322,Delaware 
+790,316,Delaware 
+791,348,Delaware 
+792,344,Delaware 
+770,320,Delaware 
+788,319,Delaware 
+786,332,Delaware 
+774,323,Delaware 
+775,326,Delaware 
+777,328,Delaware 
+791,316,Delaware 
+792,348,Delaware 
+792,343,Delaware 
+786,333,Delaware 
+774,322,Delaware 
+775,327,Delaware 
+777,329,Delaware 
+791,315,Delaware 
+792,349,Delaware 
+785,333,Delaware 
+775,322,Delaware 
+775,328,Delaware 
+777,330,Delaware 
+793,349,Delaware 
+784,333,Delaware 
+776,330,Delaware 
+783,333,Delaware 
+782,333,Delaware 
+781,333,Delaware 
+780,333,Delaware 
+780,334,Delaware 
+774,347,Delaware 
+770,346,Delaware 
+778,343,Delaware 
+777,346,Delaware 
+780,341,Delaware 
+764,344,Delaware 
+770,343,Delaware 
+784,341,Delaware 
+783,339,Delaware 
+764,341,Delaware 
+770,338,Delaware 
+764,338,Delaware 
+786,343,Delaware 
+763,332,Delaware 
+765,330,Delaware 
+772,345,Delaware 
+765,347,Delaware 
+770,345,Delaware 
+786,339,Delaware 
+765,336,Delaware 
+775,348,Delaware 
+763,346,Delaware 
+786,337,Delaware 
+766,335,Delaware 
+777,340,Delaware 
+787,337,Delaware 
+788,343,Delaware 
+764,349,Delaware 
+788,339,Delaware 
+788,344,Delaware 
+763,349,Delaware 
+786,345,Delaware 
+761,348,Delaware 
+789,339,Delaware 
+776,337,Delaware 
+790,345,Delaware 
+774,338,Delaware 
+790,335,Delaware 
+764,323,Delaware 
+791,338,Delaware 
+791,343,Delaware 
+791,342,Delaware 
+763,322,Delaware 
+763,321,Delaware 
+763,320,Delaware 
+763,319,Delaware 
+763,318,Delaware 
+763,317,Delaware 
+763,316,Delaware 
+786,325,Delaware 
+790,322,Delaware 
+792,322,Delaware 
+784,322,Delaware 
+785,328,Delaware 
+782,320,Delaware 
+779,322,Delaware 
+780,319,Delaware 
+777,318,Delaware 
+781,317,Delaware 
+780,315,Delaware 
+781,315,Delaware 
+782,317,Delaware 
+772,317,Delaware 
+773,319,Delaware 
+774,321,Delaware 
+786,315,Delaware 
+787,318,Delaware 
+787,320,Delaware 
+787,322,Delaware 
+763,345,Delaware 
+771,339,Delaware 
+775,342,Delaware 
+765,326,Delaware 
+791,341,Delaware 
+762,324,Delaware 
+789,347,Delaware 
+792,339,Delaware 
+791,333,Delaware 
+791,331,Delaware 
+791,329,Delaware 
+791,327,Delaware 
+791,325,Delaware 
+782,324,Delaware 
+783,320,Delaware 
+779,324,Delaware 
+782,318,Delaware 
+783,317,Delaware 
+772,320,Delaware 
+789,315,Delaware 
+780,351,Delaware 
+767,326,Delaware 
+762,323,Delaware 
+772,338,Delaware 
+768,322,Delaware 
+768,318,Delaware 
+788,322,Delaware 
+784,329,Delaware 
+780,326,Delaware 
+770,316,Delaware 
+773,322,Delaware 
+789,349,Delaware 
+791,347,Delaware 
+769,323,Delaware 
+769,315,Delaware 
+784,330,Delaware 
+776,325,Delaware 
+772,322,Delaware 
+792,345,Delaware 
+777,334,Delaware 
+770,317,Delaware 
+790,320,Delaware 
+785,332,Delaware 
+776,326,Delaware 
+791,317,Delaware 
+790,349,Delaware 
+770,322,Delaware 
+773,324,Delaware 
+776,327,Delaware 
+790,315,Delaware 
+770,319,Delaware 
+774,326,Delaware 
+792,316,Delaware 
+792,342,Delaware 
+774,327,Delaware 
+792,315,Delaware 
+785,334,Delaware 
+784,334,Delaware 
+782,334,Delaware 
+780,335,Delaware 
+786,336,Delaware 
+791,335,Delaware 
+791,337,Delaware 
+762,321,Delaware 
+762,319,Delaware 
+762,317,Delaware 
+792,321,Delaware 
+772,319,Delaware 
+771,340,Delaware 
+761,324,Delaware 
+792,331,Delaware 
+792,327,Delaware 
+783,329,Delaware 
+769,324,Delaware 
+772,323,Delaware 
+770,318,Delaware 
+792,317,Delaware 
+772,324,Delaware 
+771,319,Delaware 
+793,315,Delaware 
+785,335,Delaware 
+782,335,Delaware 
+780,336,Delaware 
+786,335,Delaware 
+791,336,Delaware 
+761,321,Delaware 
+761,317,Delaware 
+792,320,Delaware 
+792,332,Delaware 
+782,329,Delaware 
+770,324,Delaware 
+792,318,Delaware 
+772,325,Delaware 
+782,336,Delaware 
+792,336,Delaware 
+761,322,Delaware 
+761,318,Delaware 
+781,329,Delaware 
+782,330,Delaware 
+771,325,Delaware 
+783,336,Delaware 
+780,329,Delaware 
+781,330,Delaware 
+771,326,Delaware 
+780,328,Delaware 
+781,331,Delaware 
+780,331,Delaware 
+775,344,Delaware 
+779,345,Delaware 
+768,343,Delaware 
+781,349,Delaware 
+770,340,Delaware 
+764,339,Delaware 
+761,335,Delaware 
+761,329,Delaware 
+778,341,Delaware 
+785,337,Delaware 
+765,348,Delaware 
+780,340,Delaware 
+764,348,Delaware 
+776,349,Delaware 
+778,340,Delaware 
+788,336,Delaware 
+790,337,Delaware 
+790,336,Delaware 
+772,340,Delaware 
+787,335,Delaware 
+787,333,Delaware 
+787,331,Delaware 
+787,329,Delaware 
+787,327,Delaware 
+788,324,Delaware 
+791,322,Delaware 
+782,323,Delaware 
+780,320,Delaware 
+778,318,Delaware 
+776,321,Delaware 
+776,315,Delaware 
+778,315,Delaware 
+775,321,Delaware 
+787,319,Delaware 
+774,343,Delaware 
+765,335,Delaware 
+762,346,Delaware 
+792,340,Delaware 
+791,334,Delaware 
+791,330,Delaware 
+791,326,Delaware 
+792,326,Delaware 
+781,325,Delaware 
+772,318,Delaware 
+783,319,Delaware 
+761,346,Delaware 
+768,324,Delaware 
+768,316,Delaware 
+782,319,Delaware 
+771,317,Delaware 
+792,346,Delaware 
+769,319,Delaware 
+779,326,Delaware 
+789,318,Delaware 
+769,320,Delaware 
+784,331,Delaware 
+771,320,Delaware 
+769,326,Delaware 
+774,325,Delaware 
+791,349,Delaware 
+776,328,Delaware 
+786,334,Delaware 
+792,350,Delaware 
+783,334,Delaware 
+771,338,Delaware 
+792,338,Delaware 
+762,320,Delaware 
+762,316,Delaware 
+762,345,Delaware 
+792,333,Delaware 
+761,323,Delaware 
+783,330,Delaware 
+791,320,Delaware 
+773,325,Delaware 
+792,314,Delaware 
+781,335,Delaware 
+792,335,Delaware 
+761,319,Delaware 
+792,330,Delaware 
+783,328,Delaware 
+771,324,Delaware 
+781,336,Delaware 
+761,316,Delaware 
+782,328,Delaware 
+772,326,Delaware 
+781,328,Delaware 
+784,336,Delaware 
+770,326,Delaware 
+761,345,Delaware 
+783,331,Delaware 
+761,315,Delaware 
+761,314,Delaware 
+770,349,Delaware 
+781,344,Delaware 
+785,347,Delaware 
+765,334,Delaware 
+762,344,Delaware 
+761,344,Delaware 
+779,338,Delaware 
+775,340,Delaware 
+762,325,Delaware 
+790,344,Delaware 
+787,332,Delaware 
+787,328,Delaware 
+762,315,Delaware 
+781,322,Delaware 
+775,319,Delaware 
+778,316,Delaware 
+787,317,Delaware 
+771,341,Delaware 
+777,336,Delaware 
+791,332,Delaware 
+788,323,Delaware 
+776,323,Delaware 
+786,347,Delaware 
+768,320,Delaware 
+777,325,Delaware 
+777,335,Delaware 
+770,315,Delaware 
+769,318,Delaware 
+790,318,Delaware 
+771,323,Delaware 
+792,347,Delaware 
+777,331,Delaware 
+787,336,Delaware 
+762,318,Delaware 
+792,341,Delaware 
+770,323,Delaware 
+791,318,Delaware 
+784,335,Delaware 
+792,337,Delaware 
+792,328,Delaware 
+783,335,Delaware 
+792,319,Delaware 
+760,318,Delaware 
+780,330,Delaware 
+793,346,Delaware 
+760,345,Delaware 
+777,332,Delaware 
+779,341,Delaware 
+764,337,Delaware 
+765,329,Delaware 
+773,343,Delaware 
+761,325,Delaware 
+787,330,Delaware 
+784,325,Delaware 
+776,322,Delaware 
+787,321,Delaware 
+772,339,Delaware 
+786,330,Delaware 
+790,347,Delaware 
+788,318,Delaware 
+769,325,Delaware 
+790,319,Delaware 
+776,329,Delaware 
+762,322,Delaware 
+792,329,Delaware 
+773,326,Delaware 
+791,321,Delaware 
+761,320,Delaware 
+782,331,Delaware 
+791,319,Delaware 
+763,344,Delaware 
+764,327,Delaware 
+787,334,Delaware 
+779,323,Delaware 
+766,336,Delaware 
+789,316,Delaware 
+790,321,Delaware 
+773,323,Delaware 
+784,328,Delaware 
+785,336,Delaware 
+770,325,Delaware 
+762,314,Delaware 
+772,349,Delaware 
+787,326,Delaware 
+791,328,Delaware 
+775,323,Delaware 
+777,333,Delaware 
+792,334,Delaware 
+764,326,Delaware 
+782,325,Delaware 
+771,318,Delaware 
+772,315,Delaware 
+781,334,Delaware 
+774,284,Rhode Island 
+775,284,Rhode Island 
+774,285,Rhode Island 
+775,283,Rhode Island 
+773,285,Rhode Island 
+775,282,Rhode Island 
+774,282,Rhode Island 
+775,281,Rhode Island 
+774,281,Rhode Island 
+775,280,Rhode Island 
+774,280,Rhode Island 
+775,279,Rhode Island 
+774,279,Rhode Island 
+775,278,Rhode Island 
+774,278,Rhode Island 
+775,277,Rhode Island 
+774,277,Rhode Island 
+775,276,Rhode Island 
+774,276,Rhode Island 
+775,275,Rhode Island 
+774,275,Rhode Island 
+775,274,Rhode Island 
+774,274,Rhode Island 
+775,273,Rhode Island 
+774,273,Rhode Island 
+773,273,Rhode Island 
+773,284,Rhode Island 
+776,284,Rhode Island 
+776,283,Rhode Island 
+776,282,Rhode Island 
+776,281,Rhode Island 
+776,280,Rhode Island 
+776,279,Rhode Island 
+776,278,Rhode Island 
+776,277,Rhode Island 
+776,276,Rhode Island 
+776,275,Rhode Island 
+776,274,Rhode Island 
+776,273,Rhode Island 
+772,284,Rhode Island 
+777,284,Rhode Island 
+777,283,Rhode Island 
+777,281,Rhode Island 
+777,279,Rhode Island 
+777,277,Rhode Island 
+777,275,Rhode Island 
+777,273,Rhode Island 
+771,284,Rhode Island 
+778,284,Rhode Island 
+778,283,Rhode Island 
+778,279,Rhode Island 
+778,275,Rhode Island 
+770,284,Rhode Island 
+771,285,Rhode Island 
+778,285,Rhode Island 
+778,282,Rhode Island 
+778,278,Rhode Island 
+779,275,Rhode Island 
+778,276,Rhode Island 
+770,283,Rhode Island 
+779,285,Rhode Island 
+779,282,Rhode Island 
+780,275,Rhode Island 
+779,276,Rhode Island 
+770,282,Rhode Island 
+779,286,Rhode Island 
+779,281,Rhode Island 
+780,274,Rhode Island 
+779,277,Rhode Island 
+771,282,Rhode Island 
+780,286,Rhode Island 
+780,281,Rhode Island 
+781,274,Rhode Island 
+780,277,Rhode Island 
+771,281,Rhode Island 
+781,281,Rhode Island 
+782,274,Rhode Island 
+781,277,Rhode Island 
+772,281,Rhode Island 
+782,281,Rhode Island 
+781,282,Rhode Island 
+782,273,Rhode Island 
+782,277,Rhode Island 
+781,278,Rhode Island 
+783,281,Rhode Island 
+782,282,Rhode Island 
+783,273,Rhode Island 
+783,277,Rhode Island 
+782,278,Rhode Island 
+784,281,Rhode Island 
+783,282,Rhode Island 
+784,273,Rhode Island 
+784,277,Rhode Island 
+783,278,Rhode Island 
+785,281,Rhode Island 
+784,282,Rhode Island 
+785,273,Rhode Island 
+785,277,Rhode Island 
+784,278,Rhode Island 
+786,281,Rhode Island 
+785,282,Rhode Island 
+786,273,Rhode Island 
+786,277,Rhode Island 
+785,278,Rhode Island 
+787,281,Rhode Island 
+786,282,Rhode Island 
+787,273,Rhode Island 
+787,277,Rhode Island 
+786,278,Rhode Island 
+788,281,Rhode Island 
+787,282,Rhode Island 
+788,273,Rhode Island 
+788,277,Rhode Island 
+787,278,Rhode Island 
+789,281,Rhode Island 
+788,282,Rhode Island 
+789,273,Rhode Island 
+789,277,Rhode Island 
+788,278,Rhode Island 
+790,281,Rhode Island 
+789,282,Rhode Island 
+790,273,Rhode Island 
+790,277,Rhode Island 
+789,278,Rhode Island 
+791,281,Rhode Island 
+790,282,Rhode Island 
+791,273,Rhode Island 
+791,277,Rhode Island 
+790,278,Rhode Island 
+792,281,Rhode Island 
+791,282,Rhode Island 
+792,273,Rhode Island 
+792,277,Rhode Island 
+791,278,Rhode Island 
+792,280,Rhode Island 
+791,283,Rhode Island 
+792,274,Rhode Island 
+792,278,Rhode Island 
+792,279,Rhode Island 
+791,284,Rhode Island 
+793,278,Rhode Island 
+792,284,Rhode Island 
+794,278,Rhode Island 
+774,283,Rhode Island 
+772,285,Rhode Island 
+773,281,Rhode Island 
+773,279,Rhode Island 
+773,277,Rhode Island 
+773,275,Rhode Island 
+772,273,Rhode Island 
+776,285,Rhode Island 
+777,280,Rhode Island 
+777,276,Rhode Island 
+776,272,Rhode Island 
+777,285,Rhode Island 
+778,277,Rhode Island 
+771,283,Rhode Island 
+779,283,Rhode Island 
+778,280,Rhode Island 
+769,284,Rhode Island 
+778,286,Rhode Island 
+779,274,Rhode Island 
+780,285,Rhode Island 
+781,275,Rhode Island 
+769,282,Rhode Island 
+779,287,Rhode Island 
+780,273,Rhode Island 
+780,287,Rhode Island 
+781,273,Rhode Island 
+771,280,Rhode Island 
+783,274,Rhode Island 
+781,276,Rhode Island 
+782,280,Rhode Island 
+782,272,Rhode Island 
+781,279,Rhode Island 
+782,283,Rhode Island 
+783,276,Rhode Island 
+784,280,Rhode Island 
+784,274,Rhode Island 
+783,279,Rhode Island 
+784,283,Rhode Island 
+785,276,Rhode Island 
+786,280,Rhode Island 
+786,274,Rhode Island 
+785,279,Rhode Island 
+786,283,Rhode Island 
+787,276,Rhode Island 
+788,280,Rhode Island 
+788,274,Rhode Island 
+787,279,Rhode Island 
+788,283,Rhode Island 
+789,276,Rhode Island 
+790,280,Rhode Island 
+790,274,Rhode Island 
+789,279,Rhode Island 
+790,283,Rhode Island 
+791,276,Rhode Island 
+792,282,Rhode Island 
+792,276,Rhode Island 
+792,283,Rhode Island 
+790,284,Rhode Island 
+792,285,Rhode Island 
+772,277,Rhode Island 
+771,273,Rhode Island 
+780,283,Rhode Island 
+769,285,Rhode Island 
+781,285,Rhode Island 
+768,282,Rhode Island 
+779,288,Rhode Island 
+770,280,Rhode Island 
+783,275,Rhode Island 
+782,284,Rhode Island 
+784,284,Rhode Island 
+786,275,Rhode Island 
+787,275,Rhode Island 
+788,284,Rhode Island 
+790,275,Rhode Island 
+789,284,Rhode Island 
+792,286,Rhode Island 
+772,276,Rhode Island 
+770,273,Rhode Island 
+768,285,Rhode Island 
+782,285,Rhode Island 
+767,282,Rhode Island 
+768,283,Rhode Island 
+769,280,Rhode Island 
+783,284,Rhode Island 
+784,285,Rhode Island 
+788,285,Rhode Island 
+791,286,Rhode Island 
+771,276,Rhode Island 
+770,274,Rhode Island 
+768,286,Rhode Island 
+766,282,Rhode Island 
+767,283,Rhode Island 
+769,279,Rhode Island 
+784,286,Rhode Island 
+788,286,Rhode Island 
+791,287,Rhode Island 
+771,275,Rhode Island 
+770,275,Rhode Island 
+768,287,Rhode Island 
+766,281,Rhode Island 
+767,284,Rhode Island 
+769,278,Rhode Island 
+784,287,Rhode Island 
+789,286,Rhode Island 
+790,287,Rhode Island 
+769,275,Rhode Island 
+769,287,Rhode Island 
+765,281,Rhode Island 
+766,284,Rhode Island 
+770,278,Rhode Island 
+785,287,Rhode Island 
+789,287,Rhode Island 
+768,275,Rhode Island 
+770,287,Rhode Island 
+764,281,Rhode Island 
+765,284,Rhode Island 
+771,278,Rhode Island 
+786,287,Rhode Island 
+789,288,Rhode Island 
+768,274,Rhode Island 
+770,286,Rhode Island 
+763,281,Rhode Island 
+764,282,Rhode Island 
+765,283,Rhode Island 
+787,287,Rhode Island 
+786,288,Rhode Island 
+789,289,Rhode Island 
+768,273,Rhode Island 
+763,280,Rhode Island 
+764,283,Rhode Island 
+786,289,Rhode Island 
+790,289,Rhode Island 
+767,273,Rhode Island 
+763,279,Rhode Island 
+785,289,Rhode Island 
+786,290,Rhode Island 
+790,290,Rhode Island 
+767,272,Rhode Island 
+764,279,Rhode Island 
+784,289,Rhode Island 
+787,290,Rhode Island 
+791,290,Rhode Island 
+765,279,Rhode Island 
+784,290,Rhode Island 
+787,291,Rhode Island 
+791,291,Rhode Island 
+765,278,Rhode Island 
+788,291,Rhode Island 
+792,291,Rhode Island 
+766,278,Rhode Island 
+789,291,Rhode Island 
+792,292,Rhode Island 
+766,277,Rhode Island 
+792,293,Rhode Island 
+766,276,Rhode Island 
+792,294,Rhode Island 
+767,276,Rhode Island 
+791,294,Rhode Island 
+790,294,Rhode Island 
+789,294,Rhode Island 
+790,295,Rhode Island 
+789,293,Rhode Island 
+790,296,Rhode Island 
+789,296,Rhode Island 
+790,297,Rhode Island 
+789,297,Rhode Island 
+790,298,Rhode Island 
+789,298,Rhode Island 
+790,299,Rhode Island 
+789,299,Rhode Island 
+790,300,Rhode Island 
+789,300,Rhode Island 
+790,301,Rhode Island 
+789,301,Rhode Island 
+790,302,Rhode Island 
+789,302,Rhode Island 
+790,303,Rhode Island 
+789,303,Rhode Island 
+790,304,Rhode Island 
+789,304,Rhode Island 
+790,305,Rhode Island 
+789,305,Rhode Island 
+788,305,Rhode Island 
+775,285,Rhode Island 
+773,280,Rhode Island 
+773,276,Rhode Island 
+773,283,Rhode Island 
+777,278,Rhode Island 
+772,283,Rhode Island 
+778,273,Rhode Island 
+779,279,Rhode Island 
+770,285,Rhode Island 
+769,283,Rhode Island 
+780,276,Rhode Island 
+779,280,Rhode Island 
+780,280,Rhode Island 
+781,280,Rhode Island 
+772,280,Rhode Island 
+782,276,Rhode Island 
+783,272,Rhode Island 
+783,283,Rhode Island 
+785,280,Rhode Island 
+784,279,Rhode Island 
+786,276,Rhode Island 
+787,274,Rhode Island 
+787,283,Rhode Island 
+789,280,Rhode Island 
+788,279,Rhode Island 
+790,276,Rhode Island 
+791,274,Rhode Island 
+793,273,Rhode Island 
+792,275,Rhode Island 
+772,279,Rhode Island 
+772,274,Rhode Island 
+779,273,Rhode Island 
+769,281,Rhode Island 
+771,279,Rhode Island 
+784,275,Rhode Island 
+786,284,Rhode Island 
+789,275,Rhode Island 
+790,285,Rhode Island 
+772,278,Rhode Island 
+769,286,Rhode Island 
+768,281,Rhode Island 
+770,279,Rhode Island 
+787,284,Rhode Island 
+792,287,Rhode Island 
+767,285,Rhode Island 
+767,281,Rhode Island 
+785,285,Rhode Island 
+790,286,Rhode Island 
+769,274,Rhode Island 
+765,282,Rhode Island 
+768,279,Rhode Island 
+787,286,Rhode Island 
+791,288,Rhode Island 
+768,288,Rhode Island 
+768,278,Rhode Island 
+784,288,Rhode Island 
+769,276,Rhode Island 
+765,280,Rhode Island 
+770,277,Rhode Island 
+767,275,Rhode Island 
+770,288,Rhode Island 
+764,284,Rhode Island 
+786,286,Rhode Island 
+767,274,Rhode Island 
+763,282,Rhode Island 
+788,289,Rhode Island 
+762,280,Rhode Island 
+787,289,Rhode Island 
+766,273,Rhode Island 
+763,278,Rhode Island 
+786,291,Rhode Island 
+764,278,Rhode Island 
+792,290,Rhode Island 
+784,291,Rhode Island 
+791,292,Rhode Island 
+788,292,Rhode Island 
+789,292,Rhode Island 
+791,293,Rhode Island 
+766,275,Rhode Island 
+791,295,Rhode Island 
+788,294,Rhode Island 
+788,293,Rhode Island 
+788,296,Rhode Island 
+788,297,Rhode Island 
+788,298,Rhode Island 
+788,299,Rhode Island 
+788,300,Rhode Island 
+788,301,Rhode Island 
+788,302,Rhode Island 
+788,303,Rhode Island 
+788,304,Rhode Island 
+787,305,Rhode Island 
+792,288,Rhode Island 
+767,279,Rhode Island 
+768,289,Rhode Island 
+770,289,Rhode Island 
+764,285,Rhode Island 
+762,282,Rhode Island 
+762,278,Rhode Island 
+785,291,Rhode Island 
+764,277,Rhode Island 
+784,292,Rhode Island 
+765,275,Rhode Island 
+788,295,Rhode Island 
+787,296,Rhode Island 
+787,298,Rhode Island 
+787,300,Rhode Island 
+787,302,Rhode Island 
+787,304,Rhode Island 
+767,289,Rhode Island 
+768,290,Rhode Island 
+763,285,Rhode Island 
+762,283,Rhode Island 
+785,292,Rhode Island 
+784,293,Rhode Island 
+765,274,Rhode Island 
+786,296,Rhode Island 
+786,300,Rhode Island 
+786,304,Rhode Island 
+767,290,Rhode Island 
+768,291,Rhode Island 
+763,286,Rhode Island 
+785,293,Rhode Island 
+764,274,Rhode Island 
+786,295,Rhode Island 
+785,300,Rhode Island 
+786,301,Rhode Island 
+786,303,Rhode Island 
+767,291,Rhode Island 
+768,292,Rhode Island 
+763,287,Rhode Island 
+785,294,Rhode Island 
+764,273,Rhode Island 
+786,294,Rhode Island 
+785,299,Rhode Island 
+785,303,Rhode Island 
+767,292,Rhode Island 
+768,293,Rhode Island 
+764,287,Rhode Island 
+763,273,Rhode Island 
+785,298,Rhode Island 
+785,302,Rhode Island 
+767,293,Rhode Island 
+768,294,Rhode Island 
+764,288,Rhode Island 
+784,298,Rhode Island 
+784,302,Rhode Island 
+767,294,Rhode Island 
+768,295,Rhode Island 
+764,289,Rhode Island 
+784,297,Rhode Island 
+784,301,Rhode Island 
+767,295,Rhode Island 
+768,296,Rhode Island 
+765,289,Rhode Island 
+783,297,Rhode Island 
+783,301,Rhode Island 
+767,296,Rhode Island 
+768,297,Rhode Island 
+782,297,Rhode Island 
+783,300,Rhode Island 
+767,297,Rhode Island 
+768,298,Rhode Island 
+782,298,Rhode Island 
+783,299,Rhode Island 
+767,298,Rhode Island 
+768,299,Rhode Island 
+782,299,Rhode Island 
+767,299,Rhode Island 
+768,300,Rhode Island 
+766,299,Rhode Island 
+769,300,Rhode Island 
+765,299,Rhode Island 
+770,300,Rhode Island 
+764,299,Rhode Island 
+765,300,Rhode Island 
+770,299,Rhode Island 
+763,299,Rhode Island 
+764,300,Rhode Island 
+771,299,Rhode Island 
+762,299,Rhode Island 
+763,300,Rhode Island 
+772,299,Rhode Island 
+762,298,Rhode Island 
+763,301,Rhode Island 
+772,298,Rhode Island 
+762,297,Rhode Island 
+763,302,Rhode Island 
+772,297,Rhode Island 
+762,296,Rhode Island 
+764,302,Rhode Island 
+771,297,Rhode Island 
+763,296,Rhode Island 
+765,302,Rhode Island 
+770,297,Rhode Island 
+763,295,Rhode Island 
+765,303,Rhode Island 
+764,295,Rhode Island 
+766,303,Rhode Island 
+765,295,Rhode Island 
+767,303,Rhode Island 
+765,294,Rhode Island 
+768,303,Rhode Island 
+767,304,Rhode Island 
+769,303,Rhode Island 
+768,304,Rhode Island 
+770,303,Rhode Island 
+769,304,Rhode Island 
+771,303,Rhode Island 
+770,304,Rhode Island 
+772,303,Rhode Island 
+771,304,Rhode Island 
+773,303,Rhode Island 
+772,304,Rhode Island 
+774,303,Rhode Island 
+773,304,Rhode Island 
+775,303,Rhode Island 
+774,304,Rhode Island 
+776,303,Rhode Island 
+775,304,Rhode Island 
+777,303,Rhode Island 
+776,304,Rhode Island 
+778,303,Rhode Island 
+777,304,Rhode Island 
+779,303,Rhode Island 
+778,304,Rhode Island 
+780,303,Rhode Island 
+779,304,Rhode Island 
+781,303,Rhode Island 
+780,304,Rhode Island 
+782,303,Rhode Island 
+781,304,Rhode Island 
+783,303,Rhode Island 
+782,304,Rhode Island 
+783,304,Rhode Island 
+784,304,Rhode Island 
+784,305,Rhode Island 
+773,282,Rhode Island 
+773,274,Rhode Island 
+777,274,Rhode Island 
+779,284,Rhode Island 
+779,278,Rhode Island 
+770,281,Rhode Island 
+780,278,Rhode Island 
+781,283,Rhode Island 
+782,279,Rhode Island 
+785,274,Rhode Island 
+787,280,Rhode Island 
+788,276,Rhode Island 
+789,283,Rhode Island 
+790,279,Rhode Island 
+791,285,Rhode Island 
+768,284,Rhode Island 
+780,288,Rhode Island 
+785,275,Rhode Island 
+791,275,Rhode Island 
+771,274,Rhode Island 
+779,289,Rhode Island 
+789,285,Rhode Island 
+783,285,Rhode Island 
+787,285,Rhode Island 
+767,286,Rhode Island 
+785,286,Rhode Island 
+767,287,Rhode Island 
+769,277,Rhode Island 
+769,288,Rhode Island 
+785,288,Rhode Island 
+764,280,Rhode Island 
+788,288,Rhode Island 
+787,288,Rhode Island 
+763,283,Rhode Island 
+762,279,Rhode Island 
+790,291,Rhode Island 
+766,279,Rhode Island 
+765,277,Rhode Island 
+767,277,Rhode Island 
+792,295,Rhode Island 
+789,295,Rhode Island 
+791,297,Rhode Island 
+791,299,Rhode Island 
+791,301,Rhode Island 
+791,303,Rhode Island 
+791,305,Rhode Island 
+767,280,Rhode Island 
+768,277,Rhode Island 
+766,274,Rhode Island 
+763,277,Rhode Island 
+792,289,Rhode Island 
+787,294,Rhode Island 
+787,297,Rhode Island 
+787,301,Rhode Island 
+786,305,Rhode Island 
+770,290,Rhode Island 
+762,277,Rhode Island 
+764,275,Rhode Island 
+786,298,Rhode Island 
+766,289,Rhode Island 
+762,285,Rhode Island 
+784,294,Rhode Island 
+786,297,Rhode Island 
+785,304,Rhode Island 
+769,291,Rhode Island 
+786,293,Rhode Island 
+785,295,Rhode Island 
+785,301,Rhode Island 
+769,292,Rhode Island 
+763,288,Rhode Island 
+784,303,Rhode Island 
+769,293,Rhode Island 
+762,273,Rhode Island 
+766,293,Rhode Island 
+765,288,Rhode Island 
+783,302,Rhode Island 
+769,295,Rhode Island 
+764,290,Rhode Island 
+766,295,Rhode Island 
+765,290,Rhode Island 
+766,296,Rhode Island 
+781,297,Rhode Island 
+766,297,Rhode Island 
+781,298,Rhode Island 
+769,299,Rhode Island 
+767,300,Rhode Island 
+766,300,Rhode Island 
+765,298,Rhode Island 
+770,301,Rhode Island 
+765,301,Rhode Island 
+763,298,Rhode Island 
+771,298,Rhode Island 
+773,299,Rhode Island 
+762,301,Rhode Island 
+763,297,Rhode Island 
+763,303,Rhode Island 
+762,295,Rhode Island 
+764,296,Rhode Island 
+770,296,Rhode Island 
+765,304,Rhode Island 
+766,304,Rhode Island 
+767,302,Rhode Island 
+768,302,Rhode Island 
+769,302,Rhode Island 
+770,302,Rhode Island 
+771,302,Rhode Island 
+772,302,Rhode Island 
+773,302,Rhode Island 
+774,302,Rhode Island 
+775,302,Rhode Island 
+776,302,Rhode Island 
+777,302,Rhode Island 
+778,302,Rhode Island 
+779,302,Rhode Island 
+780,302,Rhode Island 
+781,302,Rhode Island 
+782,302,Rhode Island 
+782,305,Rhode Island 
+785,305,Rhode Island 
+780,289,Rhode Island 
+766,286,Rhode Island 
+792,296,Rhode Island 
+792,299,Rhode Island 
+792,303,Rhode Island 
+763,276,Rhode Island 
+761,277,Rhode Island 
+763,275,Rhode Island 
+784,295,Rhode Island 
+762,288,Rhode Island 
+761,273,Rhode Island 
+770,295,Rhode Island 
+764,291,Rhode Island 
+780,297,Rhode Island 
+780,298,Rhode Island 
+766,301,Rhode Island 
+774,299,Rhode Island 
+764,297,Rhode Island 
+763,304,Rhode Island 
+764,304,Rhode Island 
+766,305,Rhode Island 
+773,301,Rhode Island 
+775,301,Rhode Island 
+777,301,Rhode Island 
+779,301,Rhode Island 
+781,301,Rhode Island 
+765,286,Rhode Island 
+792,300,Rhode Island 
+792,304,Rhode Island 
+762,289,Rhode Island 
+763,291,Rhode Island 
+779,297,Rhode Island 
+779,298,Rhode Island 
+775,299,Rhode Island 
+774,300,Rhode Island 
+763,305,Rhode Island 
+775,300,Rhode Island 
+779,300,Rhode Island 
+762,290,Rhode Island 
+763,292,Rhode Island 
+778,298,Rhode Island 
+776,299,Rhode Island 
+762,305,Rhode Island 
+778,300,Rhode Island 
+762,292,Rhode Island 
+777,298,Rhode Island 
+777,299,Rhode Island 
+761,305,Rhode Island 
+762,293,Rhode Island 
+773,278,Rhode Island 
+778,281,Rhode Island 
+780,282,Rhode Island 
+782,275,Rhode Island 
+784,276,Rhode Island 
+786,279,Rhode Island 
+791,280,Rhode Island 
+772,275,Rhode Island 
+780,279,Rhode Island 
+771,277,Rhode Island 
+785,284,Rhode Island 
+768,280,Rhode Island 
+766,283,Rhode Island 
+766,280,Rhode Island 
+766,285,Rhode Island 
+765,285,Rhode Island 
+789,290,Rhode Island 
+785,290,Rhode Island 
+787,292,Rhode Island 
+765,276,Rhode Island 
+791,296,Rhode Island 
+791,300,Rhode Island 
+791,304,Rhode Island 
+767,288,Rhode Island 
+765,273,Rhode Island 
+790,292,Rhode Island 
+787,299,Rhode Island 
+769,289,Rhode Island 
+764,276,Rhode Island 
+786,302,Rhode Island 
+762,284,Rhode Island 
+786,299,Rhode Island 
+762,286,Rhode Island 
+784,300,Rhode Island 
+762,287,Rhode Island 
+766,292,Rhode Island 
+785,297,Rhode Island 
+783,298,Rhode Island 
+763,289,Rhode Island 
+769,296,Rhode Island 
+769,297,Rhode Island 
+769,298,Rhode Island 
+781,299,Rhode Island 
+769,301,Rhode Island 
+764,298,Rhode Island 
+764,301,Rhode Island 
+772,300,Rhode Island 
+762,302,Rhode Island 
+764,303,Rhode Island 
+763,294,Rhode Island 
+765,296,Rhode Island 
+767,305,Rhode Island 
+769,305,Rhode Island 
+771,305,Rhode Island 
+773,305,Rhode Island 
+775,305,Rhode Island 
+777,305,Rhode Island 
+779,305,Rhode Island 
+781,305,Rhode Island 
+781,288,Rhode Island 
+766,287,Rhode Island 
+792,301,Rhode Island 
+770,291,Rhode Island 
+766,288,Rhode Island 
+770,293,Rhode Island 
+763,290,Rhode Island 
+765,297,Rhode Island 
+771,301,Rhode Island 
+762,303,Rhode Island 
+765,305,Rhode Island 
+774,301,Rhode Island 
+778,301,Rhode Island 
+780,290,Rhode Island 
+792,302,Rhode Island 
+770,294,Rhode Island 
+780,296,Rhode Island 
+774,298,Rhode Island 
+764,305,Rhode Island 
+781,300,Rhode Island 
+778,297,Rhode Island 
+775,298,Rhode Island 
+780,300,Rhode Island 
+778,299,Rhode Island 
+762,306,Rhode Island 
+765,272,Rhode Island 
+781,290,Rhode Island 
+780,295,Rhode Island 
+775,297,Rhode Island 
+779,295,Rhode Island 
+780,294,Rhode Island 
+775,296,Rhode Island 
+781,294,Rhode Island 
+774,296,Rhode Island 
+775,295,Rhode Island 
+773,296,Rhode Island 
+776,295,Rhode Island 
+773,295,Rhode Island 
+773,294,Rhode Island 
+773,293,Rhode Island 
+773,292,Rhode Island 
+777,282,Rhode Island 
+772,282,Rhode Island 
+785,283,Rhode Island 
+791,279,Rhode Island 
+788,275,Rhode Island 
+769,273,Rhode Island 
+788,287,Rhode Island 
+768,276,Rhode Island 
+791,289,Rhode Island 
+767,278,Rhode Island 
+791,298,Rhode Island 
+786,285,Rhode Island 
+786,292,Rhode Island 
+787,303,Rhode Island 
+787,295,Rhode Island 
+785,296,Rhode Island 
+763,274,Rhode Island 
+784,299,Rhode Island 
+769,294,Rhode Island 
+784,296,Rhode Island 
+782,300,Rhode Island 
+768,301,Rhode Island 
+770,298,Rhode Island 
+773,298,Rhode Island 
+766,302,Rhode Island 
+765,293,Rhode Island 
+770,305,Rhode Island 
+774,305,Rhode Island 
+778,305,Rhode Island 
+783,305,Rhode Island 
+792,297,Rhode Island 
+762,276,Rhode Island 
+762,274,Rhode Island 
+767,301,Rhode Island 
+762,294,Rhode Island 
+776,301,Rhode Island 
+792,298,Rhode Island 
+764,292,Rhode Island 
+762,304,Rhode Island 
+762,291,Rhode Island 
+776,300,Rhode Island 
+776,298,Rhode Island 
+765,292,Rhode Island 
+774,297,Rhode Island 
+781,295,Rhode Island 
+779,294,Rhode Island 
+776,296,Rhode Island 
+774,295,Rhode Island 
+776,294,Rhode Island 
+774,293,Rhode Island 
+764,293,Rhode Island 
+775,293,Rhode Island 
+778,274,Rhode Island 
+789,274,Rhode Island 
+781,284,Rhode Island 
+790,288,Rhode Island 
+788,290,Rhode Island 
+791,302,Rhode Island 
+787,293,Rhode Island 
+769,290,Rhode Island 
+766,291,Rhode Island 
+766,294,Rhode Island 
+766,298,Rhode Island 
+762,300,Rhode Island 
+764,294,Rhode Island 
+772,305,Rhode Island 
+780,305,Rhode Island 
+792,305,Rhode Island 
+765,291,Rhode Island 
+772,301,Rhode Island 
+762,275,Rhode Island 
+777,300,Rhode Island 
+763,293,Rhode Island 
+780,291,Rhode Island 
+776,297,Rhode Island 
+781,293,Rhode Island 
+774,294,Rhode Island 
+779,293,Rhode Island 
+792,306,Rhode Island 
+780,292,Rhode Island 
+778,293,Rhode Island 
+778,292,Rhode Island 
+783,280,Rhode Island 
+770,276,Rhode Island 
+790,293,Rhode Island 
+764,286,Rhode Island 
+765,287,Rhode Island 
+771,300,Rhode Island 
+768,305,Rhode Island 
+779,290,Rhode Island 
+773,300,Rhode Island 
+780,299,Rhode Island 
+777,297,Rhode Island 
+780,293,Rhode Island 
+774,292,Rhode Island 
+779,291,Rhode Island 
+779,292,Rhode Island 
+780,284,Rhode Island 
+763,284,Rhode Island 
+782,301,Rhode Island 
+776,305,Rhode Island 
+780,301,Rhode Island 
+781,291,Rhode Island 
+793,305,Rhode Island 
+778,291,Rhode Island 
+762,281,Rhode Island 
+773,297,Rhode Island 
+779,299,Rhode Island 
+781,292,Rhode Island 
+766,290,Rhode Island 
+775,294,Rhode Island 
+770,292,Rhode Island 
+777,291,Rhode Island 
+779,238,Connecticut 
+780,238,Connecticut 
+779,239,Connecticut 
+780,237,Connecticut 
+778,239,Connecticut 
+781,237,Connecticut 
+777,239,Connecticut 
+782,237,Connecticut 
+776,239,Connecticut 
+777,240,Connecticut 
+782,236,Connecticut 
+775,239,Connecticut 
+776,240,Connecticut 
+783,236,Connecticut 
+774,239,Connecticut 
+775,240,Connecticut 
+784,236,Connecticut 
+773,239,Connecticut 
+774,240,Connecticut 
+785,236,Connecticut 
+784,237,Connecticut 
+773,238,Connecticut 
+774,241,Connecticut 
+785,235,Connecticut 
+784,238,Connecticut 
+773,237,Connecticut 
+774,242,Connecticut 
+785,234,Connecticut 
+785,238,Connecticut 
+772,237,Connecticut 
+773,236,Connecticut 
+775,242,Connecticut 
+786,234,Connecticut 
+786,238,Connecticut 
+771,237,Connecticut 
+774,236,Connecticut 
+776,242,Connecticut 
+786,233,Connecticut 
+786,237,Connecticut 
+770,237,Connecticut 
+771,238,Connecticut 
+774,235,Connecticut 
+776,243,Connecticut 
+786,232,Connecticut 
+769,237,Connecticut 
+770,238,Connecticut 
+775,235,Connecticut 
+785,232,Connecticut 
+786,231,Connecticut 
+769,236,Connecticut 
+770,239,Connecticut 
+775,234,Connecticut 
+785,231,Connecticut 
+786,230,Connecticut 
+769,235,Connecticut 
+770,240,Connecticut 
+775,233,Connecticut 
+785,230,Connecticut 
+768,235,Connecticut 
+769,234,Connecticut 
+771,240,Connecticut 
+774,233,Connecticut 
+775,232,Connecticut 
+767,235,Connecticut 
+770,234,Connecticut 
+772,240,Connecticut 
+773,233,Connecticut 
+776,232,Connecticut 
+766,235,Connecticut 
+767,236,Connecticut 
+770,233,Connecticut 
+772,233,Connecticut 
+773,234,Connecticut 
+776,231,Connecticut 
+766,234,Connecticut 
+767,237,Connecticut 
+770,232,Connecticut 
+772,234,Connecticut 
+776,230,Connecticut 
+766,233,Connecticut 
+767,238,Connecticut 
+771,232,Connecticut 
+772,235,Connecticut 
+777,230,Connecticut 
+767,233,Connecticut 
+766,238,Connecticut 
+767,239,Connecticut 
+771,235,Connecticut 
+768,233,Connecticut 
+765,238,Connecticut 
+768,239,Connecticut 
+768,232,Connecticut 
+765,237,Connecticut 
+768,240,Connecticut 
+764,237,Connecticut 
+768,241,Connecticut 
+764,236,Connecticut 
+769,241,Connecticut 
+763,236,Connecticut 
+769,242,Connecticut 
+763,235,Connecticut 
+769,243,Connecticut 
+763,234,Connecticut 
+770,243,Connecticut 
+764,234,Connecticut 
+764,233,Connecticut 
+778,238,Connecticut 
+781,238,Connecticut 
+779,240,Connecticut 
+778,240,Connecticut 
+777,238,Connecticut 
+782,238,Connecticut 
+777,241,Connecticut 
+775,238,Connecticut 
+783,235,Connecticut 
+775,241,Connecticut 
+772,239,Connecticut 
+786,236,Connecticut 
+772,238,Connecticut 
+786,235,Connecticut 
+784,239,Connecticut 
+773,242,Connecticut 
+785,233,Connecticut 
+772,236,Connecticut 
+787,234,Connecticut 
+786,239,Connecticut 
+775,236,Connecticut 
+787,233,Connecticut 
+770,236,Connecticut 
+774,234,Connecticut 
+768,237,Connecticut 
+776,235,Connecticut 
+787,231,Connecticut 
+769,239,Connecticut 
+784,231,Connecticut 
+770,235,Connecticut 
+770,241,Connecticut 
+784,230,Connecticut 
+769,233,Connecticut 
+774,232,Connecticut 
+767,234,Connecticut 
+772,241,Connecticut 
+777,232,Connecticut 
+766,236,Connecticut 
+772,232,Connecticut 
+765,234,Connecticut 
+769,232,Connecticut 
+775,230,Connecticut 
+766,232,Connecticut 
+771,231,Connecticut 
+767,232,Connecticut 
+767,240,Connecticut 
+765,239,Connecticut 
+765,236,Connecticut 
+767,241,Connecticut 
+764,235,Connecticut 
+770,242,Connecticut 
+768,243,Connecticut 
+763,233,Connecticut 
+778,237,Connecticut 
+780,240,Connecticut 
+778,241,Connecticut 
+782,239,Connecticut 
+783,234,Connecticut 
+787,235,Connecticut 
+784,240,Connecticut 
+784,233,Connecticut 
+787,239,Connecticut 
+776,236,Connecticut 
+777,235,Connecticut 
+783,231,Connecticut 
+774,231,Connecticut 
+777,233,Connecticut 
+769,231,Connecticut 
+765,232,Connecticut 
+771,230,Connecticut 
+766,240,Connecticut 
+765,240,Connecticut 
+767,242,Connecticut 
+767,243,Connecticut 
+762,233,Connecticut 
+778,236,Connecticut 
+780,241,Connecticut 
+782,240,Connecticut 
+783,233,Connecticut 
+783,240,Connecticut 
+784,241,Connecticut 
+787,240,Connecticut 
+776,237,Connecticut 
+777,234,Connecticut 
+783,232,Connecticut 
+778,233,Connecticut 
+765,231,Connecticut 
+772,230,Connecticut 
+765,241,Connecticut 
+766,243,Connecticut 
+762,232,Connecticut 
+781,241,Connecticut 
+782,241,Connecticut 
+783,241,Connecticut 
+784,242,Connecticut 
+787,241,Connecticut 
+782,232,Connecticut 
+764,231,Connecticut 
+773,230,Connecticut 
+765,242,Connecticut 
+766,244,Connecticut 
+781,242,Connecticut 
+783,242,Connecticut 
+786,241,Connecticut 
+787,242,Connecticut 
+763,231,Connecticut 
+764,242,Connecticut 
+766,245,Connecticut 
+788,242,Connecticut 
+763,230,Connecticut 
+764,243,Connecticut 
+767,245,Connecticut 
+789,242,Connecticut 
+762,230,Connecticut 
+764,244,Connecticut 
+767,246,Connecticut 
+789,241,Connecticut 
+761,230,Connecticut 
+763,244,Connecticut 
+767,247,Connecticut 
+789,240,Connecticut 
+763,245,Connecticut 
+767,248,Connecticut 
+789,239,Connecticut 
+763,246,Connecticut 
+767,249,Connecticut 
+789,238,Connecticut 
+764,246,Connecticut 
+766,249,Connecticut 
+788,238,Connecticut 
+789,237,Connecticut 
+764,247,Connecticut 
+766,250,Connecticut 
+790,237,Connecticut 
+765,247,Connecticut 
+765,250,Connecticut 
+791,237,Connecticut 
+765,248,Connecticut 
+765,251,Connecticut 
+791,236,Connecticut 
+764,251,Connecticut 
+792,236,Connecticut 
+763,251,Connecticut 
+793,236,Connecticut 
+762,251,Connecticut 
+763,252,Connecticut 
+793,237,Connecticut 
+762,252,Connecticut 
+793,238,Connecticut 
+792,238,Connecticut 
+792,239,Connecticut 
+792,240,Connecticut 
+793,240,Connecticut 
+793,241,Connecticut 
+779,237,Connecticut 
+780,236,Connecticut 
+783,237,Connecticut 
+782,235,Connecticut 
+774,238,Connecticut 
+773,240,Connecticut 
+773,241,Connecticut 
+774,237,Connecticut 
+785,239,Connecticut 
+787,238,Connecticut 
+777,242,Connecticut 
+771,239,Connecticut 
+769,238,Connecticut 
+768,236,Connecticut 
+787,230,Connecticut 
+776,233,Connecticut 
+771,241,Connecticut 
+771,234,Connecticut 
+765,235,Connecticut 
+777,231,Connecticut 
+770,231,Connecticut 
+768,238,Connecticut 
+766,239,Connecticut 
+768,231,Connecticut 
+768,242,Connecticut 
+762,235,Connecticut 
+764,232,Connecticut 
+779,241,Connecticut 
+775,237,Connecticut 
+783,239,Connecticut 
+788,234,Connecticut 
+788,233,Connecticut 
+783,230,Connecticut 
+772,231,Connecticut 
+766,231,Connecticut 
+764,239,Connecticut 
+771,242,Connecticut 
+763,232,Connecticut 
+778,242,Connecticut 
+788,235,Connecticut 
+788,239,Connecticut 
+778,235,Connecticut 
+773,231,Connecticut 
+770,230,Connecticut 
+766,242,Connecticut 
+779,236,Connecticut 
+782,233,Connecticut 
+788,240,Connecticut 
+779,233,Connecticut 
+764,241,Connecticut 
+762,231,Connecticut 
+785,242,Connecticut 
+781,232,Connecticut 
+765,244,Connecticut 
+787,243,Connecticut 
+765,245,Connecticut 
+788,243,Connecticut 
+768,245,Connecticut 
+789,243,Connecticut 
+764,245,Connecticut 
+762,244,Connecticut 
+790,240,Connecticut 
+766,248,Connecticut 
+762,246,Connecticut 
+767,250,Connecticut 
+765,246,Connecticut 
+788,237,Connecticut 
+764,248,Connecticut 
+790,236,Connecticut 
+792,237,Connecticut 
+765,252,Connecticut 
+764,252,Connecticut 
+763,250,Connecticut 
+762,250,Connecticut 
+762,253,Connecticut 
+791,239,Connecticut 
+792,241,Connecticut 
+780,235,Connecticut 
+788,230,Connecticut 
+768,230,Connecticut 
+789,234,Connecticut 
+788,232,Connecticut 
+766,230,Connecticut 
+789,235,Connecticut 
+779,235,Connecticut 
+780,233,Connecticut 
+779,234,Connecticut 
+780,232,Connecticut 
+786,243,Connecticut 
+788,244,Connecticut 
+789,244,Connecticut 
+762,247,Connecticut 
+763,248,Connecticut 
+790,235,Connecticut 
+765,253,Connecticut 
+763,249,Connecticut 
+762,254,Connecticut 
+792,242,Connecticut 
+789,230,Connecticut 
+790,234,Connecticut 
+780,231,Connecticut 
+788,245,Connecticut 
+789,245,Connecticut 
+766,253,Connecticut 
+763,254,Connecticut 
+791,242,Connecticut 
+790,230,Connecticut 
+791,234,Connecticut 
+779,231,Connecticut 
+787,245,Connecticut 
+790,245,Connecticut 
+767,253,Connecticut 
+764,254,Connecticut 
+791,243,Connecticut 
+790,231,Connecticut 
+791,233,Connecticut 
+786,245,Connecticut 
+791,245,Connecticut 
+768,253,Connecticut 
+767,254,Connecticut 
+791,244,Connecticut 
+790,232,Connecticut 
+791,232,Connecticut 
+786,246,Connecticut 
+791,246,Connecticut 
+768,252,Connecticut 
+767,255,Connecticut 
+792,232,Connecticut 
+786,247,Connecticut 
+791,247,Connecticut 
+768,255,Connecticut 
+793,232,Connecticut 
+785,247,Connecticut 
+786,248,Connecticut 
+792,247,Connecticut 
+769,255,Connecticut 
+793,231,Connecticut 
+784,247,Connecticut 
+787,248,Connecticut 
+793,247,Connecticut 
+770,255,Connecticut 
+769,256,Connecticut 
+783,247,Connecticut 
+784,248,Connecticut 
+787,249,Connecticut 
+793,248,Connecticut 
+770,254,Connecticut 
+769,257,Connecticut 
+783,248,Connecticut 
+788,249,Connecticut 
+793,249,Connecticut 
+768,257,Connecticut 
+769,258,Connecticut 
+789,249,Connecticut 
+792,249,Connecticut 
+767,257,Connecticut 
+770,258,Connecticut 
+790,249,Connecticut 
+789,250,Connecticut 
+792,250,Connecticut 
+767,258,Connecticut 
+770,259,Connecticut 
+790,250,Connecticut 
+791,250,Connecticut 
+766,258,Connecticut 
+771,259,Connecticut 
+790,251,Connecticut 
+765,258,Connecticut 
+772,259,Connecticut 
+790,252,Connecticut 
+765,257,Connecticut 
+773,259,Connecticut 
+772,260,Connecticut 
+791,252,Connecticut 
+764,257,Connecticut 
+774,259,Connecticut 
+773,260,Connecticut 
+792,252,Connecticut 
+763,257,Connecticut 
+775,259,Connecticut 
+774,260,Connecticut 
+793,252,Connecticut 
+762,257,Connecticut 
+763,258,Connecticut 
+775,258,Connecticut 
+774,261,Connecticut 
+793,253,Connecticut 
+762,258,Connecticut 
+776,258,Connecticut 
+775,261,Connecticut 
+793,254,Connecticut 
+762,259,Connecticut 
+776,257,Connecticut 
+775,262,Connecticut 
+793,255,Connecticut 
+777,257,Connecticut 
+776,262,Connecticut 
+793,256,Connecticut 
+777,256,Connecticut 
+792,256,Connecticut 
+778,256,Connecticut 
+791,256,Connecticut 
+779,256,Connecticut 
+790,256,Connecticut 
+791,257,Connecticut 
+779,255,Connecticut 
+789,256,Connecticut 
+790,257,Connecticut 
+780,255,Connecticut 
+788,256,Connecticut 
+789,257,Connecticut 
+781,255,Connecticut 
+787,256,Connecticut 
+788,257,Connecticut 
+782,255,Connecticut 
+781,256,Connecticut 
+787,255,Connecticut 
+788,258,Connecticut 
+782,254,Connecticut 
+781,257,Connecticut 
+787,254,Connecticut 
+788,259,Connecticut 
+780,257,Connecticut 
+781,258,Connecticut 
+788,254,Connecticut 
+787,259,Connecticut 
+788,260,Connecticut 
+782,258,Connecticut 
+789,254,Connecticut 
+786,259,Connecticut 
+789,260,Connecticut 
+783,258,Connecticut 
+790,254,Connecticut 
+785,259,Connecticut 
+786,260,Connecticut 
+789,261,Connecticut 
+783,257,Connecticut 
+791,254,Connecticut 
+785,258,Connecticut 
+786,261,Connecticut 
+789,262,Connecticut 
+783,256,Connecticut 
+785,261,Connecticut 
+786,262,Connecticut 
+790,262,Connecticut 
+784,261,Connecticut 
+787,262,Connecticut 
+783,261,Connecticut 
+784,262,Connecticut 
+783,260,Connecticut 
+782,260,Connecticut 
+780,239,Connecticut 
+776,238,Connecticut 
+784,235,Connecticut 
+783,238,Connecticut 
+773,235,Connecticut 
+787,237,Connecticut 
+784,232,Connecticut 
+769,240,Connecticut 
+775,231,Connecticut 
+771,233,Connecticut 
+765,233,Connecticut 
+764,238,Connecticut 
+762,236,Connecticut 
+781,239,Connecticut 
+787,236,Connecticut 
+786,240,Connecticut 
+778,232,Connecticut 
+767,231,Connecticut 
+768,244,Connecticut 
+782,234,Connecticut 
+777,236,Connecticut 
+769,230,Connecticut 
+767,244,Connecticut 
+785,241,Connecticut 
+765,230,Connecticut 
+782,242,Connecticut 
+764,230,Connecticut 
+763,242,Connecticut 
+763,243,Connecticut 
+762,229,Connecticut 
+766,247,Connecticut 
+790,239,Connecticut 
+790,238,Connecticut 
+789,236,Connecticut 
+764,250,Connecticut 
+791,235,Connecticut 
+793,235,Connecticut 
+793,239,Connecticut 
+793,242,Connecticut 
+778,231,Connecticut 
+789,233,Connecticut 
+763,239,Connecticut 
+781,233,Connecticut 
+763,241,Connecticut 
+787,244,Connecticut 
+762,243,Connecticut 
+764,249,Connecticut 
+764,253,Connecticut 
+791,241,Connecticut 
+767,230,Connecticut 
+786,244,Connecticut 
+762,248,Connecticut 
+762,255,Connecticut 
+789,231,Connecticut 
+780,230,Connecticut 
+789,246,Connecticut 
+763,255,Connecticut 
+792,234,Connecticut 
+787,246,Connecticut 
+767,252,Connecticut 
+791,231,Connecticut 
+785,245,Connecticut 
+769,253,Connecticut 
+792,244,Connecticut 
+792,246,Connecticut 
+767,256,Connecticut 
+787,247,Connecticut 
+791,248,Connecticut 
+793,233,Connecticut 
+786,249,Connecticut 
+769,254,Connecticut 
+784,246,Connecticut 
+793,246,Connecticut 
+770,256,Connecticut 
+784,249,Connecticut 
+771,254,Connecticut 
+783,249,Connecticut 
+793,250,Connecticut 
+769,259,Connecticut 
+791,249,Connecticut 
+771,258,Connecticut 
+789,251,Connecticut 
+767,259,Connecticut 
+791,251,Connecticut 
+771,260,Connecticut 
+765,259,Connecticut 
+789,252,Connecticut 
+765,256,Connecticut 
+772,261,Connecticut 
+764,256,Connecticut 
+773,261,Connecticut 
+763,256,Connecticut 
+775,260,Connecticut 
+762,256,Connecticut 
+775,257,Connecticut 
+761,258,Connecticut 
+776,261,Connecticut 
+762,260,Connecticut 
+792,255,Connecticut 
+777,262,Connecticut 
+777,255,Connecticut 
+778,255,Connecticut 
+780,256,Connecticut 
+790,255,Connecticut 
+779,254,Connecticut 
+790,258,Connecticut 
+788,255,Connecticut 
+781,254,Connecticut 
+787,257,Connecticut 
+782,256,Connecticut 
+787,258,Connecticut 
+782,257,Connecticut 
+787,253,Connecticut 
+780,258,Connecticut 
+788,253,Connecticut 
+788,261,Connecticut 
+789,253,Connecticut 
+790,260,Connecticut 
+783,259,Connecticut 
+785,260,Connecticut 
+784,257,Connecticut 
+787,261,Connecticut 
+784,256,Connecticut 
+791,262,Connecticut 
+782,261,Connecticut 
+781,260,Connecticut 
+762,237,Connecticut 
+762,242,Connecticut 
+793,243,Connecticut 
+763,240,Connecticut 
+785,244,Connecticut 
+789,247,Connecticut 
+793,244,Connecticut 
+788,247,Connecticut 
+786,250,Connecticut 
+771,256,Connecticut 
+772,254,Connecticut 
+768,259,Connecticut 
+771,257,Connecticut 
+767,260,Connecticut 
+764,259,Connecticut 
+788,252,Connecticut 
+772,262,Connecticut 
+776,260,Connecticut 
+775,256,Connecticut 
+763,260,Connecticut 
+778,262,Connecticut 
+777,254,Connecticut 
+779,253,Connecticut 
+786,257,Connecticut 
+787,252,Connecticut 
+780,259,Connecticut 
+785,256,Connecticut 
+792,262,Connecticut 
+781,261,Connecticut 
+780,260,Connecticut 
+762,240,Connecticut 
+785,250,Connecticut 
+772,256,Connecticut 
+772,255,Connecticut 
+772,257,Connecticut 
+767,261,Connecticut 
+771,262,Connecticut 
+774,256,Connecticut 
+763,261,Connecticut 
+778,261,Connecticut 
+777,253,Connecticut 
+780,253,Connecticut 
+786,252,Connecticut 
+779,259,Connecticut 
+793,262,Connecticut 
+792,263,Connecticut 
+781,262,Connecticut 
+785,251,Connecticut 
+773,255,Connecticut 
+766,261,Connecticut 
+767,262,Connecticut 
+774,255,Connecticut 
+763,262,Connecticut 
+778,260,Connecticut 
+777,252,Connecticut 
+785,252,Connecticut 
+794,262,Connecticut 
+780,262,Connecticut 
+765,261,Connecticut 
+768,262,Connecticut 
+774,254,Connecticut 
+764,262,Connecticut 
+777,251,Connecticut 
+785,253,Connecticut 
+769,262,Connecticut 
+776,251,Connecticut 
+777,250,Connecticut 
+785,254,Connecticut 
+775,251,Connecticut 
+778,250,Connecticut 
+784,254,Connecticut 
+775,250,Connecticut 
+778,249,Connecticut 
+775,249,Connecticut 
+778,248,Connecticut 
+776,249,Connecticut 
+777,248,Connecticut 
+778,247,Connecticut 
+777,247,Connecticut 
+778,246,Connecticut 
+777,246,Connecticut 
+778,245,Connecticut 
+777,245,Connecticut 
+778,244,Connecticut 
+777,244,Connecticut 
+781,236,Connecticut 
+785,237,Connecticut 
+771,236,Connecticut 
+776,234,Connecticut 
+773,232,Connecticut 
+778,230,Connecticut 
+762,234,Connecticut 
+772,242,Connecticut 
+774,230,Connecticut 
+781,240,Connecticut 
+782,231,Connecticut 
+780,242,Connecticut 
+765,243,Connecticut 
+786,242,Connecticut 
+790,242,Connecticut 
+762,245,Connecticut 
+765,249,Connecticut 
+791,238,Connecticut 
+763,253,Connecticut 
+781,235,Connecticut 
+782,230,Connecticut 
+779,232,Connecticut 
+790,243,Connecticut 
+766,252,Connecticut 
+780,234,Connecticut 
+790,244,Connecticut 
+792,243,Connecticut 
+788,246,Connecticut 
+791,230,Connecticut 
+790,246,Connecticut 
+792,233,Connecticut 
+768,254,Connecticut 
+766,255,Connecticut 
+790,247,Connecticut 
+785,248,Connecticut 
+793,230,Connecticut 
+771,255,Connecticut 
+787,250,Connecticut 
+788,250,Connecticut 
+789,248,Connecticut 
+790,248,Connecticut 
+770,260,Connecticut 
+764,258,Connecticut 
+790,253,Connecticut 
+791,253,Connecticut 
+792,253,Connecticut 
+793,251,Connecticut 
+774,262,Connecticut 
+792,254,Connecticut 
+778,257,Connecticut 
+792,257,Connecticut 
+779,257,Connecticut 
+789,255,Connecticut 
+789,258,Connecticut 
+783,255,Connecticut 
+783,254,Connecticut 
+789,259,Connecticut 
+787,260,Connecticut 
+786,258,Connecticut 
+784,259,Connecticut 
+785,257,Connecticut 
+785,262,Connecticut 
+783,262,Connecticut 
+781,234,Connecticut 
+762,239,Connecticut 
+781,230,Connecticut 
+766,256,Connecticut 
+793,245,Connecticut 
+783,250,Connecticut 
+788,251,Connecticut 
+765,260,Connecticut 
+773,262,Connecticut 
+777,261,Connecticut 
+776,255,Connecticut 
+790,259,Connecticut 
+779,258,Connecticut 
+784,255,Connecticut 
+782,262,Connecticut 
+784,244,Connecticut 
+773,254,Connecticut 
+766,260,Connecticut 
+777,260,Connecticut 
+779,262,Connecticut 
+778,253,Connecticut 
+787,251,Connecticut 
+792,261,Connecticut 
+779,260,Connecticut 
+773,257,Connecticut 
+770,262,Connecticut 
+779,261,Connecticut 
+780,252,Connecticut 
+793,261,Connecticut 
+766,262,Connecticut 
+762,262,Connecticut 
+784,252,Connecticut 
+775,254,Connecticut 
+784,253,Connecticut 
+776,250,Connecticut 
+774,251,Connecticut 
+774,250,Connecticut 
+774,249,Connecticut 
+779,248,Connecticut 
+779,247,Connecticut 
+779,246,Connecticut 
+779,245,Connecticut 
+779,244,Connecticut 
+794,230,Connecticut 
+770,261,Connecticut 
+792,258,Connecticut 
+783,251,Connecticut 
+783,244,Connecticut 
+792,260,Connecticut 
+793,260,Connecticut 
+783,252,Connecticut 
+774,252,Connecticut 
+773,249,Connecticut 
+780,248,Connecticut 
+780,246,Connecticut 
+780,244,Connecticut 
+792,259,Connecticut 
+793,259,Connecticut 
+772,249,Connecticut 
+780,249,Connecticut 
+772,248,Connecticut 
+780,250,Connecticut 
+772,247,Connecticut 
+773,247,Connecticut 
+774,247,Connecticut 
+775,247,Connecticut 
+775,246,Connecticut 
+776,241,Connecticut 
+787,232,Connecticut 
+766,237,Connecticut 
+777,237,Connecticut 
+766,241,Connecticut 
+764,240,Connecticut 
+788,241,Connecticut 
+790,241,Connecticut 
+766,251,Connecticut 
+791,240,Connecticut 
+788,236,Connecticut 
+767,251,Connecticut 
+789,232,Connecticut 
+790,233,Connecticut 
+779,230,Connecticut 
+792,245,Connecticut 
+792,231,Connecticut 
+792,248,Connecticut 
+783,246,Connecticut 
+768,258,Connecticut 
+792,251,Connecticut 
+772,258,Connecticut 
+774,258,Connecticut 
+763,259,Connecticut 
+776,256,Connecticut 
+791,255,Connecticut 
+780,254,Connecticut 
+786,255,Connecticut 
+781,259,Connecticut 
+784,258,Connecticut 
+788,262,Connecticut 
+763,238,Connecticut 
+762,241,Connecticut 
+785,249,Connecticut 
+769,260,Connecticut 
+765,255,Connecticut 
+762,261,Connecticut 
+786,253,Connecticut 
+791,261,Connecticut 
+786,251,Connecticut 
+764,260,Connecticut 
+776,254,Connecticut 
+785,255,Connecticut 
+773,256,Connecticut 
+764,261,Connecticut 
+778,259,Connecticut 
+767,263,Connecticut 
+765,262,Connecticut 
+769,261,Connecticut 
+779,250,Connecticut 
+775,248,Connecticut 
+776,247,Connecticut 
+776,245,Connecticut 
+793,229,Connecticut 
+783,253,Connecticut 
+777,259,Connecticut 
+761,262,Connecticut 
+773,250,Connecticut 
+780,247,Connecticut 
+793,258,Connecticut 
+773,252,Connecticut 
+771,249,Connecticut 
+771,248,Connecticut 
+772,246,Connecticut 
+774,246,Connecticut 
+779,251,Connecticut 
+772,252,Connecticut 
+771,250,Connecticut 
+771,246,Connecticut 
+774,245,Connecticut 
+770,250,Connecticut 
+770,246,Connecticut 
+773,245,Connecticut 
+770,247,Connecticut 
+784,234,Connecticut 
+763,237,Connecticut 
+785,240,Connecticut 
+766,246,Connecticut 
+792,235,Connecticut 
+781,231,Connecticut 
+765,254,Connecticut 
+764,255,Connecticut 
+768,256,Connecticut 
+770,257,Connecticut 
+766,259,Connecticut 
+776,259,Connecticut 
+793,257,Connecticut 
+786,256,Connecticut 
+782,259,Connecticut 
+784,260,Connecticut 
+784,245,Connecticut 
+771,261,Connecticut 
+778,254,Connecticut 
+762,238,Connecticut 
+775,255,Connecticut 
+780,261,Connecticut 
+776,253,Connecticut 
+778,252,Connecticut 
+777,249,Connecticut 
+776,248,Connecticut 
+792,230,Connecticut 
+791,259,Connecticut 
+773,251,Connecticut 
+780,245,Connecticut 
+773,248,Connecticut 
+771,247,Connecticut 
+775,245,Connecticut 
+770,249,Connecticut 
+772,245,Connecticut 
+771,251,Connecticut 
+774,244,Connecticut 
+772,244,Connecticut 
+768,234,Connecticut 
+778,234,Connecticut 
+779,242,Connecticut 
+766,254,Connecticut 
+788,248,Connecticut 
+773,258,Connecticut 
+791,258,Connecticut 
+790,261,Connecticut 
+784,250,Connecticut 
+791,260,Connecticut 
+779,252,Connecticut 
+784,251,Connecticut 
+779,249,Connecticut 
+778,258,Connecticut 
+774,248,Connecticut 
+772,250,Connecticut 
+793,228,Connecticut 
+772,251,Connecticut 
+773,244,Connecticut 
+788,231,Connecticut 
+762,249,Connecticut 
+766,257,Connecticut 
+786,254,Connecticut 
+774,257,Connecticut 
+768,261,Connecticut 
+776,246,Connecticut 
+783,245,Connecticut 
+770,248,Connecticut 
+763,247,Connecticut 
+777,258,Connecticut 
+768,260,Connecticut 
+780,251,Connecticut 
+771,245,Connecticut 
+785,246,Connecticut 
+778,251,Connecticut 
+793,234,Connecticut 
+773,246,Connecticut 
+771,200,Massachusetts 
+772,200,Massachusetts 
+771,201,Massachusetts 
+772,199,Massachusetts 
+770,201,Massachusetts 
+772,198,Massachusetts 
+771,198,Massachusetts 
+772,197,Massachusetts 
+771,197,Massachusetts 
+772,196,Massachusetts 
+771,196,Massachusetts 
+772,195,Massachusetts 
+771,195,Massachusetts 
+772,194,Massachusetts 
+771,194,Massachusetts 
+772,193,Massachusetts 
+771,193,Massachusetts 
+772,192,Massachusetts 
+771,192,Massachusetts 
+772,191,Massachusetts 
+771,191,Massachusetts 
+770,191,Massachusetts 
+770,200,Massachusetts 
+773,200,Massachusetts 
+773,199,Massachusetts 
+773,198,Massachusetts 
+773,197,Massachusetts 
+773,196,Massachusetts 
+773,195,Massachusetts 
+773,194,Massachusetts 
+773,193,Massachusetts 
+773,192,Massachusetts 
+773,191,Massachusetts 
+769,200,Massachusetts 
+774,200,Massachusetts 
+774,199,Massachusetts 
+774,197,Massachusetts 
+774,195,Massachusetts 
+774,193,Massachusetts 
+774,191,Massachusetts 
+769,199,Massachusetts 
+774,201,Massachusetts 
+775,197,Massachusetts 
+775,193,Massachusetts 
+768,199,Massachusetts 
+775,201,Massachusetts 
+776,197,Massachusetts 
+775,198,Massachusetts 
+775,192,Massachusetts 
+767,199,Massachusetts 
+776,201,Massachusetts 
+777,197,Massachusetts 
+776,198,Massachusetts 
+766,199,Massachusetts 
+767,200,Massachusetts 
+776,200,Massachusetts 
+778,197,Massachusetts 
+777,198,Massachusetts 
+765,199,Massachusetts 
+766,200,Massachusetts 
+777,200,Massachusetts 
+778,196,Massachusetts 
+777,199,Massachusetts 
+765,198,Massachusetts 
+766,201,Massachusetts 
+779,196,Massachusetts 
+778,199,Massachusetts 
+765,197,Massachusetts 
+766,202,Massachusetts 
+779,195,Massachusetts 
+764,197,Massachusetts 
+765,196,Massachusetts 
+767,202,Massachusetts 
+780,195,Massachusetts 
+763,197,Massachusetts 
+766,196,Massachusetts 
+767,203,Massachusetts 
+780,194,Massachusetts 
+763,198,Massachusetts 
+766,195,Massachusetts 
+781,194,Massachusetts 
+763,199,Massachusetts 
+766,194,Massachusetts 
+781,193,Massachusetts 
+765,194,Massachusetts 
+766,193,Massachusetts 
+781,192,Massachusetts 
+765,193,Massachusetts 
+766,192,Massachusetts 
+782,192,Massachusetts 
+764,193,Massachusetts 
+767,192,Massachusetts 
+783,192,Massachusetts 
+763,193,Massachusetts 
+768,192,Massachusetts 
+784,192,Massachusetts 
+783,193,Massachusetts 
+763,194,Massachusetts 
+768,191,Massachusetts 
+785,192,Massachusetts 
+784,193,Massachusetts 
+763,195,Massachusetts 
+785,191,Massachusetts 
+784,194,Massachusetts 
+786,191,Massachusetts 
+784,195,Massachusetts 
+783,195,Massachusetts 
+784,196,Massachusetts 
+783,196,Massachusetts 
+784,197,Massachusetts 
+783,197,Massachusetts 
+784,198,Massachusetts 
+783,198,Massachusetts 
+784,199,Massachusetts 
+783,199,Massachusetts 
+784,200,Massachusetts 
+783,200,Massachusetts 
+784,201,Massachusetts 
+783,201,Massachusetts 
+784,202,Massachusetts 
+783,202,Massachusetts 
+784,203,Massachusetts 
+783,203,Massachusetts 
+784,204,Massachusetts 
+783,204,Massachusetts 
+782,204,Massachusetts 
+781,204,Massachusetts 
+781,203,Massachusetts 
+781,202,Massachusetts 
+771,199,Massachusetts 
+769,201,Massachusetts 
+770,197,Massachusetts 
+770,195,Massachusetts 
+770,193,Massachusetts 
+769,191,Massachusetts 
+773,201,Massachusetts 
+774,196,Massachusetts 
+774,192,Massachusetts 
+775,200,Massachusetts 
+775,195,Massachusetts 
+769,198,Massachusetts 
+775,196,Massachusetts 
+775,194,Massachusetts 
+775,202,Massachusetts 
+776,192,Massachusetts 
+777,201,Massachusetts 
+777,196,Massachusetts 
+766,198,Massachusetts 
+779,197,Massachusetts 
+764,199,Massachusetts 
+778,200,Massachusetts 
+764,198,Massachusetts 
+780,196,Massachusetts 
+766,197,Massachusetts 
+766,203,Massachusetts 
+764,196,Massachusetts 
+781,195,Massachusetts 
+767,196,Massachusetts 
+780,193,Massachusetts 
+782,194,Massachusetts 
+767,194,Massachusetts 
+764,194,Massachusetts 
+780,192,Massachusetts 
+765,192,Massachusetts 
+782,191,Massachusetts 
+767,191,Massachusetts 
+763,192,Massachusetts 
+768,193,Massachusetts 
+783,194,Massachusetts 
+785,193,Massachusetts 
+785,194,Massachusetts 
+785,195,Massachusetts 
+785,196,Massachusetts 
+785,197,Massachusetts 
+785,198,Massachusetts 
+785,199,Massachusetts 
+785,200,Massachusetts 
+785,201,Massachusetts 
+785,202,Massachusetts 
+785,203,Massachusetts 
+784,205,Massachusetts 
+782,205,Massachusetts 
+781,201,Massachusetts 
+769,197,Massachusetts 
+769,193,Massachusetts 
+776,195,Massachusetts 
+775,203,Massachusetts 
+776,191,Massachusetts 
+777,202,Massachusetts 
+780,197,Massachusetts 
+764,200,Massachusetts 
+781,196,Massachusetts 
+765,203,Massachusetts 
+768,196,Massachusetts 
+768,194,Massachusetts 
+780,191,Massachusetts 
+763,191,Massachusetts 
+786,194,Massachusetts 
+786,196,Massachusetts 
+786,198,Massachusetts 
+786,200,Massachusetts 
+784,206,Massachusetts 
+780,201,Massachusetts 
+768,197,Massachusetts 
+769,194,Massachusetts 
+776,203,Massachusetts 
+777,191,Massachusetts 
+780,198,Massachusetts 
+764,203,Massachusetts 
+768,195,Massachusetts 
+762,191,Massachusetts 
+763,190,Massachusetts 
+787,196,Massachusetts 
+787,200,Massachusetts 
+779,201,Massachusetts 
+776,204,Massachusetts 
+781,198,Massachusetts 
+763,203,Massachusetts 
+764,204,Massachusetts 
+788,196,Massachusetts 
+787,197,Massachusetts 
+787,199,Massachusetts 
+776,205,Massachusetts 
+763,202,Massachusetts 
+764,205,Massachusetts 
+788,195,Massachusetts 
+788,199,Massachusetts 
+763,201,Massachusetts 
+765,205,Massachusetts 
+789,195,Massachusetts 
+789,199,Massachusetts 
+766,205,Massachusetts 
+790,195,Massachusetts 
+790,199,Massachusetts 
+789,200,Massachusetts 
+766,206,Massachusetts 
+790,194,Massachusetts 
+791,199,Massachusetts 
+790,200,Massachusetts 
+767,206,Massachusetts 
+791,194,Massachusetts 
+792,199,Massachusetts 
+791,200,Massachusetts 
+767,207,Massachusetts 
+791,193,Massachusetts 
+792,198,Massachusetts 
+791,201,Massachusetts 
+792,193,Massachusetts 
+793,198,Massachusetts 
+792,201,Massachusetts 
+793,193,Massachusetts 
+793,197,Massachusetts 
+792,202,Massachusetts 
+793,194,Massachusetts 
+793,202,Massachusetts 
+793,195,Massachusetts 
+792,195,Massachusetts 
+772,201,Massachusetts 
+770,196,Massachusetts 
+770,192,Massachusetts 
+774,198,Massachusetts 
+768,200,Massachusetts 
+775,191,Massachusetts 
+776,193,Massachusetts 
+776,196,Massachusetts 
+776,202,Massachusetts 
+767,201,Massachusetts 
+765,200,Massachusetts 
+765,201,Massachusetts 
+765,202,Massachusetts 
+765,195,Massachusetts 
+767,204,Massachusetts 
+763,200,Massachusetts 
+767,193,Massachusetts 
+766,191,Massachusetts 
+783,191,Massachusetts 
+784,191,Massachusetts 
+764,195,Massachusetts 
+782,195,Massachusetts 
+782,197,Massachusetts 
+782,199,Massachusetts 
+782,201,Massachusetts 
+782,203,Massachusetts 
+781,205,Massachusetts 
+769,195,Massachusetts 
+776,194,Massachusetts 
+778,201,Massachusetts 
+779,198,Massachusetts 
+767,197,Massachusetts 
+779,193,Massachusetts 
+765,191,Massachusetts 
+786,195,Massachusetts 
+786,199,Massachusetts 
+782,206,Massachusetts 
+769,196,Massachusetts 
+775,204,Massachusetts 
+764,201,Massachusetts 
+779,191,Massachusetts 
+787,194,Massachusetts 
+783,206,Massachusetts 
+778,191,Massachusetts 
+764,202,Massachusetts 
+787,195,Massachusetts 
+787,201,Massachusetts 
+763,204,Massachusetts 
+788,197,Massachusetts 
+763,205,Massachusetts 
+788,194,Massachusetts 
+765,206,Massachusetts 
+789,198,Massachusetts 
+791,195,Massachusetts 
+790,198,Massachusetts 
+766,207,Massachusetts 
+791,198,Massachusetts 
+792,194,Massachusetts 
+792,200,Massachusetts 
+791,192,Massachusetts 
+791,202,Massachusetts 
+793,201,Massachusetts 
+793,196,Massachusetts 
+793,203,Massachusetts 
+772,202,Massachusetts 
+781,206,Massachusetts 
+778,193,Massachusetts 
+782,207,Massachusetts 
+787,193,Massachusetts 
+778,192,Massachusetts 
+789,197,Massachusetts 
+788,193,Massachusetts 
+791,196,Massachusetts 
+766,208,Massachusetts 
+793,200,Massachusetts 
+791,191,Massachusetts 
+791,203,Massachusetts 
+772,203,Massachusetts 
+778,194,Massachusetts 
+787,192,Massachusetts 
+788,192,Massachusetts 
+766,209,Massachusetts 
+792,191,Massachusetts 
+791,204,Massachusetts 
+772,204,Massachusetts 
+788,191,Massachusetts 
+767,209,Massachusetts 
+793,191,Massachusetts 
+792,204,Massachusetts 
+773,204,Massachusetts 
+767,210,Massachusetts 
+792,205,Massachusetts 
+767,211,Massachusetts 
+792,206,Massachusetts 
+767,212,Massachusetts 
+793,206,Massachusetts 
+766,212,Massachusetts 
+793,207,Massachusetts 
+766,213,Massachusetts 
+765,213,Massachusetts 
+764,213,Massachusetts 
+763,213,Massachusetts 
+764,214,Massachusetts 
+763,214,Massachusetts 
+763,215,Massachusetts 
+770,198,Massachusetts 
+770,199,Massachusetts 
+775,199,Massachusetts 
+768,198,Massachusetts 
+776,199,Massachusetts 
+778,195,Massachusetts 
+779,194,Massachusetts 
+767,195,Massachusetts 
+781,191,Massachusetts 
+769,192,Massachusetts 
+787,191,Massachusetts 
+782,198,Massachusetts 
+782,202,Massachusetts 
+768,201,Massachusetts 
+777,192,Massachusetts 
+779,200,Massachusetts 
+779,192,Massachusetts 
+786,197,Massachusetts 
+781,200,Massachusetts 
+781,197,Massachusetts 
+764,191,Massachusetts 
+780,200,Massachusetts 
+761,191,Massachusetts 
+781,199,Massachusetts 
+775,205,Massachusetts 
+788,198,Massachusetts 
+767,205,Massachusetts 
+789,201,Massachusetts 
+790,201,Massachusetts 
+767,208,Massachusetts 
+792,192,Massachusetts 
+792,203,Massachusetts 
+777,193,Massachusetts 
+765,190,Massachusetts 
+783,207,Massachusetts 
+763,206,Massachusetts 
+790,197,Massachusetts 
+790,192,Massachusetts 
+793,204,Massachusetts 
+782,208,Massachusetts 
+765,208,Massachusetts 
+790,203,Massachusetts 
+789,192,Massachusetts 
+766,210,Massachusetts 
+791,205,Massachusetts 
+793,190,Massachusetts 
+793,205,Massachusetts 
+791,206,Massachusetts 
+767,213,Massachusetts 
+793,208,Massachusetts 
+765,214,Massachusetts 
+763,212,Massachusetts 
+763,216,Massachusetts 
+774,205,Massachusetts 
+789,202,Massachusetts 
+763,207,Massachusetts 
+782,209,Massachusetts 
+789,203,Massachusetts 
+790,205,Massachusetts 
+790,206,Massachusetts 
+768,213,Massachusetts 
+792,208,Massachusetts 
+765,215,Massachusetts 
+764,216,Massachusetts 
+774,206,Massachusetts 
+763,208,Massachusetts 
+782,210,Massachusetts 
+769,213,Massachusetts 
+791,208,Massachusetts 
+766,215,Massachusetts 
+764,217,Massachusetts 
+774,207,Massachusetts 
+781,210,Massachusetts 
+770,213,Massachusetts 
+791,209,Massachusetts 
+766,216,Massachusetts 
+764,218,Massachusetts 
+774,208,Massachusetts 
+771,213,Massachusetts 
+770,214,Massachusetts 
+766,217,Massachusetts 
+765,218,Massachusetts 
+774,209,Massachusetts 
+771,212,Massachusetts 
+770,215,Massachusetts 
+766,218,Massachusetts 
+772,212,Massachusetts 
+769,215,Massachusetts 
+770,216,Massachusetts 
+766,219,Massachusetts 
+768,215,Massachusetts 
+771,216,Massachusetts 
+767,219,Massachusetts 
+768,216,Massachusetts 
+771,217,Massachusetts 
+767,220,Massachusetts 
+772,217,Massachusetts 
+768,220,Massachusetts 
+773,217,Massachusetts 
+769,220,Massachusetts 
+774,217,Massachusetts 
+773,218,Massachusetts 
+769,219,Massachusetts 
+775,217,Massachusetts 
+774,218,Massachusetts 
+770,219,Massachusetts 
+776,217,Massachusetts 
+775,218,Massachusetts 
+771,219,Massachusetts 
+777,217,Massachusetts 
+776,218,Massachusetts 
+772,219,Massachusetts 
+778,217,Massachusetts 
+777,218,Massachusetts 
+772,220,Massachusetts 
+778,216,Massachusetts 
+777,219,Massachusetts 
+772,221,Massachusetts 
+778,215,Massachusetts 
+777,220,Massachusetts 
+773,221,Massachusetts 
+777,215,Massachusetts 
+778,214,Massachusetts 
+778,220,Massachusetts 
+774,221,Massachusetts 
+776,215,Massachusetts 
+779,214,Massachusetts 
+779,220,Massachusetts 
+775,221,Massachusetts 
+774,222,Massachusetts 
+776,214,Massachusetts 
+779,213,Massachusetts 
+779,219,Massachusetts 
+776,221,Massachusetts 
+775,222,Massachusetts 
+776,213,Massachusetts 
+780,219,Massachusetts 
+776,222,Massachusetts 
+777,213,Massachusetts 
+781,219,Massachusetts 
+777,222,Massachusetts 
+782,219,Massachusetts 
+781,220,Massachusetts 
+783,219,Massachusetts 
+782,220,Massachusetts 
+784,219,Massachusetts 
+783,220,Massachusetts 
+785,219,Massachusetts 
+784,220,Massachusetts 
+786,219,Massachusetts 
+785,220,Massachusetts 
+787,219,Massachusetts 
+786,220,Massachusetts 
+788,219,Massachusetts 
+787,220,Massachusetts 
+789,219,Massachusetts 
+788,220,Massachusetts 
+790,219,Massachusetts 
+789,220,Massachusetts 
+791,219,Massachusetts 
+790,220,Massachusetts 
+792,219,Massachusetts 
+791,220,Massachusetts 
+793,219,Massachusetts 
+792,220,Massachusetts 
+793,218,Massachusetts 
+792,221,Massachusetts 
+793,221,Massachusetts 
+793,222,Massachusetts 
+770,194,Massachusetts 
+774,202,Massachusetts 
+778,198,Massachusetts 
+763,196,Massachusetts 
+764,192,Massachusetts 
+782,196,Massachusetts 
+783,205,Massachusetts 
+777,195,Massachusetts 
+786,193,Massachusetts 
+774,203,Massachusetts 
+787,198,Massachusetts 
+788,200,Massachusetts 
+764,206,Massachusetts 
+790,196,Massachusetts 
+793,199,Massachusetts 
+793,192,Massachusetts 
+777,194,Massachusetts 
+788,201,Massachusetts 
+791,197,Massachusetts 
+781,207,Massachusetts 
+790,191,Massachusetts 
+765,209,Massachusetts 
+789,191,Massachusetts 
+766,211,Massachusetts 
+765,212,Massachusetts 
+764,212,Massachusetts 
+761,190,Massachusetts 
+783,208,Massachusetts 
+764,208,Massachusetts 
+794,205,Massachusetts 
+767,214,Massachusetts 
+763,211,Massachusetts 
+764,207,Massachusetts 
+789,204,Massachusetts 
+792,209,Massachusetts 
+773,206,Massachusetts 
+782,211,Massachusetts 
+767,215,Massachusetts 
+775,207,Massachusetts 
+770,212,Massachusetts 
+763,218,Massachusetts 
+772,213,Massachusetts 
+767,217,Massachusetts 
+771,211,Massachusetts 
+767,218,Massachusetts 
+769,216,Massachusetts 
+766,220,Massachusetts 
+768,219,Massachusetts 
+771,218,Massachusetts 
+772,218,Massachusetts 
+773,216,Massachusetts 
+769,221,Massachusetts 
+773,219,Massachusetts 
+775,216,Massachusetts 
+770,218,Massachusetts 
+775,219,Massachusetts 
+777,216,Massachusetts 
+779,217,Massachusetts 
+773,220,Massachusetts 
+778,219,Massachusetts 
+772,222,Massachusetts 
+776,220,Massachusetts 
+773,222,Massachusetts 
+778,213,Massachusetts 
+774,220,Massachusetts 
+780,214,Massachusetts 
+779,221,Massachusetts 
+775,214,Massachusetts 
+779,218,Massachusetts 
+776,212,Massachusetts 
+777,212,Massachusetts 
+778,222,Massachusetts 
+781,221,Massachusetts 
+782,221,Massachusetts 
+783,221,Massachusetts 
+784,221,Massachusetts 
+785,221,Massachusetts 
+786,221,Massachusetts 
+787,221,Massachusetts 
+788,221,Massachusetts 
+789,221,Massachusetts 
+790,221,Massachusetts 
+791,221,Massachusetts 
+793,217,Massachusetts 
+794,222,Massachusetts 
+765,211,Massachusetts 
+763,210,Massachusetts 
+770,211,Massachusetts 
+773,213,Massachusetts 
+771,210,Massachusetts 
+769,217,Massachusetts 
+766,221,Massachusetts 
+770,221,Massachusetts 
+780,217,Massachusetts 
+778,212,Massachusetts 
+780,215,Massachusetts 
+779,222,Massachusetts 
+776,211,Massachusetts 
+781,222,Massachusetts 
+783,222,Massachusetts 
+785,222,Massachusetts 
+787,222,Massachusetts 
+789,222,Massachusetts 
+791,222,Massachusetts 
+793,216,Massachusetts 
+794,223,Massachusetts 
+770,210,Massachusetts 
+773,214,Massachusetts 
+771,209,Massachusetts 
+766,222,Massachusetts 
+781,217,Massachusetts 
+778,211,Massachusetts 
+780,222,Massachusetts 
+781,223,Massachusetts 
+793,215,Massachusetts 
+770,209,Massachusetts 
+765,222,Massachusetts 
+766,223,Massachusetts 
+781,216,Massachusetts 
+780,223,Massachusetts 
+793,214,Massachusetts 
+764,222,Massachusetts 
+792,214,Massachusetts 
+763,222,Massachusetts 
+791,214,Massachusetts 
+762,222,Massachusetts 
+763,223,Massachusetts 
+791,213,Massachusetts 
+790,213,Massachusetts 
+774,194,Massachusetts 
+779,199,Massachusetts 
+786,192,Massachusetts 
+773,202,Massachusetts 
+786,201,Massachusetts 
+780,199,Massachusetts 
+789,194,Massachusetts 
+792,197,Massachusetts 
+774,204,Massachusetts 
+790,202,Massachusetts 
+773,203,Massachusetts 
+773,205,Massachusetts 
+766,214,Massachusetts 
+775,206,Massachusetts 
+765,210,Massachusetts 
+793,209,Massachusetts 
+781,209,Massachusetts 
+765,216,Massachusetts 
+769,214,Massachusetts 
+781,211,Massachusetts 
+764,219,Massachusetts 
+765,219,Massachusetts 
+772,211,Massachusetts 
+772,216,Massachusetts 
+767,221,Massachusetts 
+770,220,Massachusetts 
+769,218,Massachusetts 
+776,216,Massachusetts 
+776,219,Massachusetts 
+779,216,Massachusetts 
+779,215,Massachusetts 
+777,214,Massachusetts 
+775,215,Massachusetts 
+775,220,Massachusetts 
+775,213,Massachusetts 
+781,218,Massachusetts 
+783,218,Massachusetts 
+785,218,Massachusetts 
+787,218,Massachusetts 
+789,218,Massachusetts 
+791,218,Massachusetts 
+793,220,Massachusetts 
+764,209,Massachusetts 
+792,210,Massachusetts 
+772,214,Massachusetts 
+765,220,Massachusetts 
+769,222,Massachusetts 
+781,214,Massachusetts 
+774,214,Massachusetts 
+782,222,Massachusetts 
+786,222,Massachusetts 
+790,222,Massachusetts 
+795,222,Massachusetts 
+774,213,Massachusetts 
+765,221,Massachusetts 
+780,216,Massachusetts 
+776,210,Massachusetts 
+795,223,Massachusetts 
+767,222,Massachusetts 
+778,210,Massachusetts 
+770,208,Massachusetts 
+793,213,Massachusetts 
+792,213,Massachusetts 
+790,214,Massachusetts 
+789,213,Massachusetts 
+781,212,Massachusetts 
+772,215,Massachusetts 
+783,217,Massachusetts 
+787,217,Massachusetts 
+791,217,Massachusetts 
+768,222,Massachusetts 
+781,213,Massachusetts 
+796,223,Massachusetts 
+770,207,Massachusetts 
+792,212,Massachusetts 
+790,215,Massachusetts 
+789,212,Massachusetts 
+783,216,Massachusetts 
+788,217,Massachusetts 
+790,217,Massachusetts 
+782,213,Massachusetts 
+789,215,Massachusetts 
+788,212,Massachusetts 
+784,216,Massachusetts 
+788,216,Massachusetts 
+788,215,Massachusetts 
+787,212,Massachusetts 
+785,216,Massachusetts 
+787,215,Massachusetts 
+786,212,Massachusetts 
+787,213,Massachusetts 
+785,215,Massachusetts 
+787,214,Massachusetts 
+786,211,Massachusetts 
+785,214,Massachusetts 
+785,211,Massachusetts 
+784,214,Massachusetts 
+785,210,Massachusetts 
+784,213,Massachusetts 
+767,198,Massachusetts 
+782,200,Massachusetts 
+765,204,Massachusetts 
+790,193,Massachusetts 
+765,207,Massachusetts 
+790,204,Massachusetts 
+764,215,Massachusetts 
+791,207,Massachusetts 
+768,214,Massachusetts 
+765,217,Massachusetts 
+771,214,Massachusetts 
+770,217,Massachusetts 
+768,221,Massachusetts 
+774,219,Massachusetts 
+778,218,Massachusetts 
+777,221,Massachusetts 
+780,220,Massachusetts 
+780,218,Massachusetts 
+784,218,Massachusetts 
+788,218,Massachusetts 
+792,218,Massachusetts 
+764,211,Massachusetts 
+768,218,Massachusetts 
+771,222,Massachusetts 
+777,211,Massachusetts 
+788,222,Massachusetts 
+764,210,Massachusetts 
+770,222,Massachusetts 
+792,216,Massachusetts 
+782,217,Massachusetts 
+782,216,Massachusetts 
+763,221,Massachusetts 
+793,210,Massachusetts 
+774,215,Massachusetts 
+789,217,Massachusetts 
+782,214,Massachusetts 
+778,209,Massachusetts 
+789,214,Massachusetts 
+784,217,Massachusetts 
+787,216,Massachusetts 
+770,206,Massachusetts 
+789,211,Massachusetts 
+783,213,Massachusetts 
+788,211,Massachusetts 
+788,214,Massachusetts 
+786,216,Massachusetts 
+785,212,Massachusetts 
+786,214,Massachusetts 
+785,213,Massachusetts 
+784,212,Massachusetts 
+770,223,Massachusetts 
+763,220,Massachusetts 
+777,209,Massachusetts 
+770,205,Massachusetts 
+777,208,Massachusetts 
+782,193,Massachusetts 
+789,196,Massachusetts 
+789,193,Massachusetts 
+781,208,Massachusetts 
+763,209,Massachusetts 
+771,215,Massachusetts 
+774,216,Massachusetts 
+771,221,Massachusetts 
+780,213,Massachusetts 
+786,218,Massachusetts 
+792,222,Massachusetts 
+773,215,Massachusetts 
+784,222,Massachusetts 
+772,210,Massachusetts 
+771,208,Massachusetts 
+764,221,Massachusetts 
+764,220,Massachusetts 
+792,211,Massachusetts 
+793,212,Massachusetts 
+786,217,Massachusetts 
+790,216,Massachusetts 
+789,216,Massachusetts 
+787,211,Massachusetts 
+786,213,Massachusetts 
+783,214,Massachusetts 
+782,215,Massachusetts 
+778,208,Massachusetts 
+794,212,Massachusetts 
+778,207,Massachusetts 
+794,211,Massachusetts 
+766,204,Massachusetts 
+792,207,Massachusetts 
+767,216,Massachusetts 
+771,220,Massachusetts 
+782,218,Massachusetts 
+763,219,Massachusetts 
+792,217,Massachusetts 
+792,215,Massachusetts 
+785,217,Massachusetts 
+788,213,Massachusetts 
+783,215,Massachusetts 
+786,215,Massachusetts 
+771,223,Massachusetts 
+788,210,Massachusetts 
+795,212,Massachusetts 
+795,213,Massachusetts 
+792,196,Massachusetts 
+768,217,Massachusetts 
+790,218,Massachusetts 
+781,215,Massachusetts 
+777,210,Massachusetts 
+784,215,Massachusetts 
+793,211,Massachusetts 
+778,206,Massachusetts 
+763,217,Massachusetts 
+780,221,Massachusetts 
+791,216,Massachusetts 
+787,210,Massachusetts 
+762,217,Massachusetts 
+778,221,Massachusetts 
+786,210,Massachusetts 
+791,215,Massachusetts 
+778,205,Massachusetts 

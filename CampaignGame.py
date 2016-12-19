@@ -1,5 +1,5 @@
 #Campaign Game
-#going to try first in python, we'll see how that goes
+#Drew Polasky
 
 from Tkinter import *
 import tkMessageBox
@@ -19,14 +19,14 @@ sys.setrecursionlimit(5000)
 #global variables fro tracking players and turns
 player = 1                  #keeps track of whose turn it is. indexed at 1
 numPlayers = 2
-currentDate = 7
+currentDate = 1
 players = {}            #dictionaries of class instances of players and states
 states = {}
 calendarOfContests = [('Iowa' , 4),('New Hampshire' , 5) ,('Nevada',7), ('South Carolina',8),('Minnesota',9),('Alabama' , 9), ('Arkansas', 9), ('Colorado', 9), ('Georgia', 9), ('Massachusetts', 9), ('North Dakota', 9), ('Oklahoma', 9), ('Tennessee', 9), ('Texas', 9), ('Vermont', 9), ('Virginia', 9), ('Kansas', 10), ('Kentucky', 10), ('Louisiana', 10), ('Maine', 10), ('Nebraska', 10), ('Hawaii', 10), ('Michigan', 10), ('Mississippi', 10), ('Wyoming', 11), ('Florida', 11), ('Illinois' , 11), ('Missouri', 11), ('North Carolina', 11), ('Ohio', 11), ('Arizona', 12), ('Idaho', 12), ('Utah', 12),('Alaska', 13), ('Washington', 13), ('Wisconsin', 14), ('New Jersey', 15), ('New York', 15), ('Connecticut', 15), ('Delaware', 15), ('Maryland', 15), ('Pennsylvania', 15), ('Rhode Island', 15), ('Indiana', 16), ('West Virginia', 16), ('Oregon', 17), ('California', 19), ('Montana', 19), ('New Mexico', 19), ('South Dakota', 19)]#, ('DC', 20)]
 playerColors = [(255,0,0), (0,0,255), (0,255,0), (128,0,128)]
 eventOfTheWeek = 0
 issueNames = ['Immigration', 'Gun Control', 'Jobs', 'Tax Reform', 'Education']
-pastElections = {}          #stores the winner of each elections thats happened
+pastElections = {}          #stores the winner of each elections that's happened
 
 class Player:
     def __init__(self, player):
@@ -140,11 +140,12 @@ class District:
 
 def main():
     setUpStates()
+    setCalendar()
     mainMenu()
     while True:
         createNationalMap()
 
-def mainMenu():         #this will be the intial meu of the game, with options to start a new game, load a game, or run the tutorial
+def mainMenu():         #this will be the intial menu of the game, with options to start a new game, load a game, or run the tutorial
     mainMenuWindow = Tk()
 
     startGameButton = Button(mainMenuWindow, text = 'Start a New Game', command = lambda:setUpGame(mainMenuWindow))
@@ -274,6 +275,14 @@ def setUpGame(window):        #this will set up the basic parameters of the game
     startGame.pack()
     numP.pack()
     setUpWindow.mainloop()
+
+def setCalendar():
+    global calendarOfContests
+    calendarOfContests = []
+    calendarFile = open('shortSchedule.txt' ,'r')
+    for line in calendarFile:
+        line = line.split(',')
+        calendarOfContests.append((line[0],int(line[1])))
 
 def setUpStates(): 
     statesList = open('statesPositions.txt', 'r')
@@ -742,7 +751,7 @@ def getOnBallot(player, stateName, cost, window, event):
             contestDate = state[1]
 
     if currentOrg == 0:
-        if players[player].resources[1] - int(cost) >= 0 and currentDate < (contestDate - 1): 
+        if players[player].resources[1] - int(cost) >= 0:# and currentDate < (contestDate - 1): 
             states[stateName].organizations[player-1] = 1
             players[player].resources[1] = players[player].resources[1] - int(cost)
             zoomToState(event)
@@ -813,8 +822,8 @@ def endTurn(window, fundraising):
     if player < numPlayers:
         player += 1
     else: 
-        currentDate += 1
         calculateStateOpinions()
+        currentDate += 1
         decideContests()
         player = 1
         eventOfTheWeek = random.randint(0,4)
@@ -851,12 +860,12 @@ def calcEndTurn(fundraising):      #this will calculate the new resources availa
         for district in states[state].districts:
             #expected range for number donating 0-.45 given support from 0-150
             numberDonating = 1 - (1.5 + states[state].organizations[player-1] / 100.0) ** (district.support[player - 1] / -100.0)
-            localFundraising += numberDonating * district.population * 300
+            localFundraising += numberDonating * district.population * 500
             
 
     localFundraising = round(localFundraising)
     resources[1] = resources[1] + fundraising * 4000 + 20000 + localFundraising
-    players[player].momentum = players[player].momentum * 2 ** (-1)
+    players[player].momentum = players[player].momentum /2.0
 
 def calculateStateOpinions():       #this function will calculate the opinion of each player in each state
     global currentDate
@@ -889,7 +898,7 @@ def calculateStateOpinions():       #this function will calculate the opinion of
                     campaingingTime = district.campaigningThisTurn[i]
                     adBuy = district.adsThisTurn[i]
                     adsTotal = sum(district.adsThisTurn)
-                    support = (campaingingTime + org + float(adBuy) / float(adsTotal + 1) * (adsTotal / 100.0) ** (1.1/2.0)) * (1 + float(players[i + 1].momentum) / 100.0) * mult         #the plus 1 is to avoid dividing by 0 when there is no advertising in a state
+                    support = (campaingingTime + org + float(adBuy) / float(adsTotal + 1) * (adsTotal / 100.0) ** (1.1/2.0)) * (1 + float(players[i + 1].momentum) / 50.0) * mult         #the plus 1 is to avoid dividing by 0 when there is no advertising in a state
                     support = round(support)
                     district.setSupport(i, support)
                 states[state].updateSupport()
@@ -907,10 +916,18 @@ def decideContests():
     resultsWindow = Tk()
     scrollBar = Scrollbar(resultsWindow)
     scrollBar.pack(side = RIGHT, fill = Y)
-    resultsBox = Listbox(resultsWindow, yscrollcommand = scrollBar.set)
+    xScroll = Scrollbar(resultsWindow,orient = HORIZONTAL)
+    xScroll.pack(side = BOTTOM, fill = X)
+    #text = Text(resultsWindow, wrap=NONE, xscrollcommand=xScroll.set, yscrollcommand=scrollBar.set)
+    #text.pack()
+    resultsBox = Listbox(resultsWindow, yscrollcommand = scrollBar.set, xscrollcommand = xScroll.set)
     j = 0
     k = 2
     k2 = 0
+    momentums = []
+    for i in range(numPlayers):
+        momentums.append(0)
+    totalMomemtum = 50
     for state in calendarOfContests:
         if state[1] + 1 == currentDate:
             states[state[0]].calculatePollingAverage()     #just in case it isn't up to date 
@@ -952,12 +969,14 @@ def decideContests():
                 resultsBox.insert(END, district.name + " district in " + stateName + " is won by player " + str(winner) + " giving " + str(districtDelegates) + " delegates")
                 k += 1
                 players[winner].delegateCount += districtDelegates
-                players[winner].momentum += 3
+                totalMomemtum += 3
+                momentums[winner - 1] += 3
 
             stateWinner = stateVotes.index(max(stateVotes)) + 1
             stateMostVotes = max(stateVotes)
             players[stateWinner].delegateCount += stateDelegates
-            players[stateWinner].momentum += 10
+            totalMomemtum += 10
+            momentums[winner - 1] += 10
 
             pastElections[stateName] = stateWinner
             print stateName, stateWinner, stateDelegates
@@ -970,10 +989,17 @@ def decideContests():
             for i in range(numPlayers):
                 playerStateVotes = stateVotes[i]
                 votesPercentage = round(float(playerStateVotes) / float(stateVotesTotal) * 100) 
-                votesCounts += 'Player ' + str(i+1) + ' with ' + str(int(round(playerStateVotes/100000.0 , 0))) + ' hundred thousand votes, '
+                votesCounts += 'Player ' + str(i+1) + ' with ' + str(int(votesPercentage)) + ' precent of the vote, \n'
             resultsBox.insert(k2+1, votesCounts)
             k2 += k - 1
             k = 3
+
+    print totalMomemtum, momentums
+    #divy up the base momentum to the players based on how much of the state by state they won
+    for i in range(len(momentums)):
+        players[i+1].momentum += momentums[i] / float(sum(momentums)) * totalMomemtum
+
+    xScroll.config(command = resultsBox.xview)
             
     if j >= 1:
         resultsBox.pack(side = LEFT, fill = BOTH)
@@ -1025,7 +1051,8 @@ def loadGame(window):
     global currentDate
     global players
     global states
-    global pastElections    
+    global pastElections   
+    global numPlayers 
 
     window.destroy()
     root = Tk()
@@ -1039,6 +1066,7 @@ def loadGame(window):
     pastElections = pickle.loads(saveFile[2])
     player = pickle.loads(saveFile[3])
     currentDate = pickle.loads(saveFile[4])
+    numPlayers = len(players)
 
     createNationalMap()
 
