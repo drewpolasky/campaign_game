@@ -1089,8 +1089,7 @@ def saveGameSecond(fileName, window):
     saveFile.append(pickle.dumps(pastElections))
     saveFile.append(pickle.dumps(player))
     saveFile.append(pickle.dumps(currentDate))
-
-    pickle.dump(saveFile, open(os.getcwd() + '\\saveGames\\' + fileName + '.save', 'wb'))
+    pickle.dump(saveFile, open(os.path.join(os.getcwd(), "..\\",'Google Drive\\CampaignSaves\\' + fileName + '.save'), 'wb'))
 
     tkMessageBox.showinfo("Save Succesful", "Save Succesful")
     return
@@ -1106,7 +1105,8 @@ def loadGame(window):
     window.destroy()
     root = Tk()
     root.withdraw()
-    file_path = tkFileDialog.askopenfilename(initialdir = os.getcwd() + '\\saveGames\\',filetypes = [('save games', '.save')])
+    #file_path = tkFileDialog.askopenfilename(initialdir = os.getcwd() + '\\saveGames\\',filetypes = [('save games', '.save')])
+    file_path = tkFileDialog.askopenfilename(initialdir = os.path.join(os.getcwd(), "..\\",'Google Drive\\CampaignSaves\\'),filetypes = [('save games', '.save')])
     saveFile = pickle.load(open(file_path, 'rb'))
     root.destroy()
 
