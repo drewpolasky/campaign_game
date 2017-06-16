@@ -9,15 +9,16 @@ import random
 import time
 import math
 import sys
-import pickle
+import cPickle as pickle
 import sys
 import tkFileDialog
 from time import sleep
 
 sys.setrecursionlimit(5000)
 
-#global variables fro tracking players and turns
+#global variables for tracking players and turns
 player = 1                  #keeps track of whose turn it is. indexed at 1
+numTurns = 10
 numPlayers = 2
 currentDate = 1
 players = {}            #dictionaries of class instances of players and states
@@ -36,9 +37,20 @@ class Player:
         self.positions = []
         self.delegateCount = 0
         self.momentum = 0
+        self.history = {}
 
     def setPositions(self, positions):
         self.positions = positions
+
+    def endTurn(self, turn, fundraisingIncome, localIncome): #, spending):
+        self.history[turn] = {}
+        self.history[turn]['fundraisingIncome'] = fundraisingIncome
+        localIncome = round(localIncome)
+        self.history[turn]['localIncome'] = localIncome
+        #history[endTurn]['spending'] = spending
+
+    def setName(self, name):
+        self.publicName = name
 
 class State:
     def __init__(self, stateName, positions):
@@ -278,8 +290,10 @@ def setUpGame(window):        #this will set up the basic parameters of the game
 
 def setCalendar():
     global calendarOfContests
+    global numTurns
     calendarOfContests = []
-    calendarFile = open('shortSchedule.txt' ,'r')
+    if numTurns == 10:
+        calendarFile = open('shortSchedule.txt' ,'r')
     for line in calendarFile:
         line = line.split(',')
         calendarOfContests.append((line[0],int(line[1])))
@@ -320,14 +334,14 @@ def setUpPlayers(numP, setUpWindow, mode):
     for state in states:
         states[state].updateSupport()
 
-    if mode == 1:
-        for person in players:
-            players[person].setPositions([0,0,0,0,0])
-        calculateStateOpinions()
+    #if mode == 1:
+    #    for person in players:
+    #        players[person].setPositions([0,0,0,0,0])
+    #    calculateStateOpinions()
     else:
-        setUpPlayer()
+        setUpPlayer(mode)
 
-def setUpPlayer():      #this function will create the screen to set up a candidate initially. 
+def setUpPlayer(mode):      #this function will create the screen to set up a candidate initially. 
     setUpPlayerWindow = Tk()
     setUpPlayerWindow.wm_title("Choose Positions for player " + str(player))
     w = 400 # width for the Tk root
@@ -348,36 +362,66 @@ def setUpPlayer():      #this function will create the screen to set up a candid
     issueLowRange = -10
     issueHighRange = 10
 
+    nameLabel = Label(setUpPlayerWindow, text = 'Your Name: ')
+    nameLabel.pack()
+    name = Entry(setUpPlayerWindow)
+    name.pack()
+
     issue1 = Scale(setUpPlayerWindow, from_ = issueLowRange, to_ = issueHighRange, label = "Issue Name 1", orient = HORIZONTAL, length = 300)
     issue2 = Scale(setUpPlayerWindow, from_ = issueLowRange, to_ = issueHighRange, label = "Issue Name 2", orient = HORIZONTAL, length = 300)
     issue3 = Scale(setUpPlayerWindow, from_ = issueLowRange, to_ = issueHighRange, label = "Issue Name 3", orient = HORIZONTAL, length = 300)
     issue4 = Scale(setUpPlayerWindow, from_ = issueLowRange, to_ = issueHighRange, label = "Issue Name 4", orient = HORIZONTAL, length = 300)
     issue5 = Scale(setUpPlayerWindow, from_ = issueLowRange, to_ = issueHighRange, label = "Issue Name 5", orient = HORIZONTAL, length = 300)
 
-    issue1.pack()
-    issue2.pack()
-    issue3.pack()
-    issue4.pack()
-    issue5.pack()
+    if mode == 0:
+        issue1.pack()
+        issue2.pack()
+        issue3.pack()
+        issue4.pack()
+        issue5.pack()
 
-    endChoose = Button(setUpPlayerWindow, text = 'Done Choosing Positions', command = lambda: setPositions(issue1.get(), issue2.get(), issue3.get(), issue4.get(), issue5.get(), setUpPlayerWindow))
+    endChoose = Button(setUpPlayerWindow, text = 'Done With Setup', command = lambda: setPositions(issue1.get(), issue2.get(), issue3.get(), issue4.get(), issue5.get(), name.get(), setUpPlayerWindow, mode))
     endChoose.pack()
     setUpPlayerWindow.mainloop()
 
-def setPositions(issue1, issue2, issue3, issue4, issue5, setUpPlayerWindow):
+def setPositions(issue1, issue2, issue3, issue4, issue5, name, setUpPlayerWindow, mode):
     setUpPlayerWindow.destroy()
     global players
     global numPlayers
     global player
     person = players[player]
     person.setPositions([issue1, issue2, issue3, issue4, issue5])
+    person.setName(name)
     if player < numPlayers:
         player += 1
-        setUpPlayer()
+        setUpPlayer(mode)
     else:
         player = 1
         calculateStateOpinions()
     
+def showStartOfTurnReport():
+    global currentDate
+    global player
+    global players
+
+    report = Tk()
+    reportWindow = PanedWindow(report, orient = VERTICAL)
+
+    #at the top, the week that it is
+    title = Label(reportWindow, text = 'Start of turn report for week ' + str(currentDate), anchor = N)
+    reportWindow.add(title)
+
+    #next, income from both direct fundrasing and small donations
+    fundraisingIncome = players[player].history[currentDate - 1]['fundraisingIncome']
+    localIncome = players[player].history[currentDate - 1]['localIncome']
+    income = Label(reportWindow, text = 'Total income: ' +str(fundraisingIncome + localIncome), anchor = N)
+    incomeParts = Label(reportWindow, text = 'Fundraising Income: ' + str(fundraisingIncome) + ', Local Fundraising Income: ' + str(localIncome))
+    reportWindow.add(income)
+    reportWindow.add(incomeParts)
+
+    reportWindow.pack()
+    center(report)
+
 def paintNationalMap(natMapImage):         #his function will repaint the national map to show who is leading in each state
     global states
     global playerColors
@@ -453,9 +497,10 @@ def createNationalMap():    #creates the main national map screen. This will be 
     mapWindow = PanedWindow(window)
     global eventOfTheWeek
     global issueNames
-
+    global currentDate
     global player
-    window.wm_title("Player " + str(player) + "\'s Turn")
+    global players
+    window.wm_title(players[player].publicName + "\'s Turn")
     fundraising = 0
 
     natMapImage = Image.open("nationalMap.jpg")
@@ -499,7 +544,6 @@ def createNationalMap():    #creates the main national map screen. This will be 
     resourcePane = PanedWindow(mapWindow, orient = VERTICAL)
     mapWindow.add(resourcePane)
 
-    global players
     resources = players[player].resources
     moneyVar = StringVar()
     moneyVar.set('available money: %s' %(resources[1]))
@@ -510,7 +554,7 @@ def createNationalMap():    #creates the main national map screen. This will be 
     for person in players:
         color = playerColors[person - 1]
         color = '#%02x%02x%02x' % color
-        delegateLabel = Label(resourcePane, text = 'Player ' + str(players[person].name) + ' has ' + str(players[person].delegateCount) + ' delegates', bg = color)
+        delegateLabel = Label(resourcePane, text = str(players[person].publicName) + ' has ' + str(players[person].delegateCount) + ' delegates', bg = color)
         resourcePane.add(delegateLabel)
 
     momentumLabel = Label(resourcePane, text = 'Your Current Momentum is: ' + str(round(players[player].momentum, 0)))
@@ -546,8 +590,8 @@ def createNationalMap():    #creates the main national map screen. This will be 
     window.protocol("WM_DELETE_WINDOW", exitGame)
     window.mainloop()
         
-def center(toplevel):           #copied from an answer by user Wayne Werner on stackoverflow
-    toplevel.update_idletasks()
+def center(toplevel):          
+    toplevel.update_idletasks()  #copied from an answer by user Wayne Werner on stackoverflow
     w = toplevel.winfo_screenwidth()
     h = toplevel.winfo_screenheight()
     size = tuple(int(_) for _ in toplevel.geometry().split('+')[0].split('x'))
@@ -612,7 +656,7 @@ def zoomToState(event):  #this will bring up the state window, seperate from the
                 #leftPane.add(opinionLabel)
 
                 for person in range(numPlayers):
-                    supportLabel = Label(leftPane, text = 'Current Polling for Player ' + str(person+1) + ': ' + str(states[stateName].pollingAverage[person]))
+                    supportLabel = Label(leftPane, text = 'Current Polling for ' + players[person+1].publicName + ': ' + str(states[stateName].pollingAverage[person]))
                     leftPane.add(supportLabel)
 
                 districts = open('districts.txt' , 'r')
@@ -628,7 +672,7 @@ def zoomToState(event):  #this will bring up the state window, seperate from the
                     districtDelegatesLabel = Label(leftPane, text = district.name + " District has " + str(int(district.population)) + " delegates")
                     leftPane.add(districtDelegatesLabel)
                     for person in range(numPlayers):
-                        districtSupportLabel = Label(leftPane, text = "Current Polling for player " + str(person + 1) + " in this district: " + str(district.pollingAverage[person]))
+                        districtSupportLabel = Label(leftPane, text = "Current Polling for " + players[person+1].publicName + " in this district: " + str(district.pollingAverage[person]))
                         leftPane.add(districtSupportLabel)
 
                 '''eventOfTheWeekLabel = Label(leftPane, text = 'At the top of the news \n cycle this week: %s' %(issueNames[eventOfTheWeek]))
@@ -816,11 +860,14 @@ def endTurn(window, fundraising):
     global eventOfTheWeek
     global states
     global players
+    global numTurns
 
     calcEndTurn(fundraising)
 
     if player < numPlayers:
         player += 1
+        if currentDate > 1:
+            showStartOfTurnReport()
     else: 
         calculateStateOpinions()
         currentDate += 1
@@ -832,7 +879,8 @@ def endTurn(window, fundraising):
                 for person in players:
                     district.setCampaigningThisTurn(person - 1, 0)
                     district.setAdsThisTurn(person - 1, 0)
-    if currentDate <= 20:
+        showStartOfTurnReport()
+    if currentDate <= numTurns:
         return
     else:
         winner = 0
@@ -841,13 +889,14 @@ def endTurn(window, fundraising):
             if players[person].delegateCount > mostDelegates:
                 winner = person
                 mostDelegates = players[person].delegateCount
-        tkMessageBox.showinfo("Winner", "The Winner is: Player " + str(winner))
+        tkMessageBox.showinfo("Winner", "The Winner is: " + str(players[winner].publicName))
         exit()
 
 def calcEndTurn(fundraising):      #this will calculate the new resources available to the player
     global player
     global playerResources
     global states
+    global currentDate
 
     resources = players[player].resources
 
@@ -861,11 +910,11 @@ def calcEndTurn(fundraising):      #this will calculate the new resources availa
             #expected range for number donating 0-.45 given support from 0-150
             numberDonating = 1 - (1.5 + states[state].organizations[player-1] / 100.0) ** (district.support[player - 1] / -100.0)
             localFundraising += numberDonating * district.population * 500
-            
 
     localFundraising = round(localFundraising)
     resources[1] = resources[1] + fundraising * 4000 + 20000 + localFundraising
     players[player].momentum = players[player].momentum /2.0
+    players[player].endTurn(currentDate, fundraising * 4000 + 20000, localFundraising)
 
 def calculateStateOpinions():       #this function will calculate the opinion of each player in each state
     global currentDate
@@ -966,7 +1015,7 @@ def decideContests():
                 if winner == 0:
                     winner = random.randint(1, numPlayers)
                     stateVotes[winner - 1] += 1
-                resultsBox.insert(END, district.name + " district in " + stateName + " is won by player " + str(winner) + " giving " + str(districtDelegates) + " delegates")
+                resultsBox.insert(END, district.name + " district in " + stateName + " is won by " + str(players[winner].publicName) + " giving " + str(districtDelegates) + " delegates")
                 k += 1
                 players[winner].delegateCount += districtDelegates
                 totalMomemtum += 3
@@ -983,13 +1032,13 @@ def decideContests():
             if k2 != 0:
                 resultsBox.insert(k2, '')
                 k2+=1
-            resultsBox.insert(k2,stateName + " overall is won by player " + str(winner) + " giving " + str(stateDelegates) + " delegates")
+            resultsBox.insert(k2,stateName + " overall is won by " + str(players[winner].publicName) + " giving " + str(stateDelegates) + " delegates")
             votesCounts = ''
             stateVotesTotal = sum(stateVotes)
             for i in range(numPlayers):
                 playerStateVotes = stateVotes[i]
                 votesPercentage = round(float(playerStateVotes) / float(stateVotesTotal) * 100) 
-                votesCounts += 'Player ' + str(i+1) + ' with ' + str(int(votesPercentage)) + ' precent of the vote, \n'
+                votesCounts += str(players[i+1].publicName) + ' with ' + str(int(votesPercentage)) + ' precent of the vote, \n'
             resultsBox.insert(k2+1, votesCounts)
             k2 += k - 1
             k = 3
@@ -997,7 +1046,7 @@ def decideContests():
     print totalMomemtum, momentums
     #divy up the base momentum to the players based on how much of the state by state they won
     for i in range(len(momentums)):
-        players[i+1].momentum += momentums[i] / float(sum(momentums)) * totalMomemtum
+        players[i+1].momentum += momentums[i] / float(sum(momentums)+.01) * totalMomemtum
 
     xScroll.config(command = resultsBox.xview)
             
@@ -1041,7 +1090,7 @@ def saveGameSecond(fileName, window):
     saveFile.append(pickle.dumps(player))
     saveFile.append(pickle.dumps(currentDate))
 
-    pickle.dump(saveFile, open(fileName, 'wb'))
+    pickle.dump(saveFile, open(os.getcwd() + '\\saveGames\\' + fileName + '.save', 'wb'))
 
     tkMessageBox.showinfo("Save Succesful", "Save Succesful")
     return
@@ -1057,7 +1106,7 @@ def loadGame(window):
     window.destroy()
     root = Tk()
     root.withdraw()
-    file_path = tkFileDialog.askopenfilename()
+    file_path = tkFileDialog.askopenfilename(initialdir = os.getcwd() + '\\saveGames\\',filetypes = [('save games', '.save')])
     saveFile = pickle.load(open(file_path, 'rb'))
     root.destroy()
 
