@@ -1,5 +1,7 @@
 #Campaign Game
 #Drew Polasky
+#support calculation is done in calculateStateOpinions
+#money calculation is done in calcEndTurn
 
 from Tkinter import *
 import tkMessageBox
@@ -881,6 +883,7 @@ def endTurn(window, fundraising):
                     district.setAdsThisTurn(person - 1, 0)
         showStartOfTurnReport()
     if currentDate <= numTurns:
+        autoSave()
         return
     else:
         winner = 0
@@ -908,8 +911,8 @@ def calcEndTurn(fundraising):      #this will calculate the new resources availa
         #calculate % of population donating
         for district in states[state].districts:
             #expected range for number donating 0-.45 given support from 0-150
-            numberDonating = 1 - (1.5 + states[state].organizations[player-1] / 100.0) ** (district.support[player - 1] / -100.0)
-            localFundraising += numberDonating * district.population * 500
+            numberDonating = 1 - (1.5 + states[state].organizations[player-1] / 100.0) ** (district.support[player - 1] / -50.0)
+            localFundraising += numberDonating * district.population * 500 * (2 - math.exp(players[player].momentum / -50.0))
 
     localFundraising = round(localFundraising)
     resources[1] = resources[1] + fundraising * 4000 + 20000 + localFundraising
@@ -1018,14 +1021,14 @@ def decideContests():
                 resultsBox.insert(END, district.name + " district in " + stateName + " is won by " + str(players[winner].publicName) + " giving " + str(districtDelegates) + " delegates")
                 k += 1
                 players[winner].delegateCount += districtDelegates
-                totalMomemtum += 3
-                momentums[winner - 1] += 3
+                totalMomemtum += districtDelegates / 4.0
+                momentums[winner - 1] += districtDelegates
 
             stateWinner = stateVotes.index(max(stateVotes)) + 1
             stateMostVotes = max(stateVotes)
             players[stateWinner].delegateCount += stateDelegates
-            totalMomemtum += 10
-            momentums[winner - 1] += 10
+            totalMomemtum += stateDelegates / 2.0
+            momentums[winner - 1] += stateDelegates
 
             pastElections[stateName] = stateWinner
             print stateName, stateWinner, stateDelegates
@@ -1044,6 +1047,7 @@ def decideContests():
             k = 3
 
     print totalMomemtum, momentums
+
     #divy up the base momentum to the players based on how much of the state by state they won
     for i in range(len(momentums)):
         players[i+1].momentum += momentums[i] / float(sum(momentums)+.01) * totalMomemtum
@@ -1059,6 +1063,10 @@ def decideContests():
     else:
         resultsWindow.destroy()
 
+def autoSave():
+    saveGameSecond('autosave', Tk(), True)
+
+
 def saveGame():
     global player
     global currentDate
@@ -1066,17 +1074,18 @@ def saveGame():
     global states
     global pastElections    
 
+    autosave = False
     saveName = Tk()
     saveNameLabel = Label(saveName, text = "Name for the save file: ")
     saveNameLabel.pack()
     saveNameEntry = Entry(saveName)
     saveNameEntry.pack(side= RIGHT)
-    saveButton = Button(saveName, text = "Save Game", command = lambda : saveGameSecond(saveNameEntry.get(), saveName))
+    saveButton = Button(saveName, text = "Save Game", command = lambda : saveGameSecond(saveNameEntry.get(), saveName, autosave))
     saveButton.pack()
     center(saveName)
     saveName.mainLoop()
 
-def saveGameSecond(fileName, window):
+def saveGameSecond(fileName, window, autosave):
     global player
     global currentDate
     global players
@@ -1090,8 +1099,8 @@ def saveGameSecond(fileName, window):
     saveFile.append(pickle.dumps(player))
     saveFile.append(pickle.dumps(currentDate))
     pickle.dump(saveFile, open(os.path.join(os.getcwd(), "..\\",'Google Drive\\CampaignSaves\\' + fileName + '.save'), 'wb'))
-
-    tkMessageBox.showinfo("Save Succesful", "Save Succesful")
+    if not autosave:
+        tkMessageBox.showinfo("Save Succesful", "Save Succesful")
     return
 
 def loadGame(window):

@@ -1,0 +1,47 @@
+Issues:
+13. issues
+19. tutorial
+21. scrollbar on rightpane of zoomToState
+37. simultaneous turns
+43. game play AI
+44. right click menu
+45. tooltips state imformation
+46. county level data/shapefiles/basemap
+
+
+
+
+notes
+
+
+8/4/17
+looking at the local fundraising function, I reset the exponent multiplier to 1/50 from 1/100, and it seems like the values are a bit more reasonable, at least for a 10 week game. possibly still kind of low though. 
+
+added an autosave that saves a game at the start of every turn
+
+it seems like momentum should affect fundraising, maybe particularly local fundraising? */added, also seems to increases the numbers by what I think is a reasonable amount, at least for the ten week game.
+
+momentum needs to be reworked so that a single win on a small day is more influential than a sinle win on a big day. I had already done this, I made it a more pronounced effect. As long as the momentum numbers work in the other equations I think it's in pretty good shape now. The other thing that could be worth thinking about is a time based factor, so Iowa matters more than, say, connecticut, but I don't know if that actually makes sense to do.
+currently a clean sweep of super tuesday gets you about 3 times the momentum of a win in Iowa, which is just slightly more than a win in New Hampshire
+
+
+If I ever add the county level census data, it could be fun to scale fundraising from districts based on average district income
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
