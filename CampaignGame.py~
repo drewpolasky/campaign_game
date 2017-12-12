@@ -1136,7 +1136,7 @@ def calcAImove(agent):       #this will do the AI move, the agent will specify w
             districtValues[0].append(districtValue)
 
         #determine where to build organization here first, based on a fixed threshold
-        buildThreshold = 20
+        buildThreshold = 10
         if (9-timeToElection) * stateDelegates > (states[state].organizations[player-1]+1) * buildThreshold:
             costToBuild = 10000*states[state].organizations[player-1]
             if costToBuild == 0:

@@ -20,7 +20,7 @@ notes
 The AI now works, at least sort of. It can play a full game against itself, I don't think it's very good at this point though. 
 Seems like it should now be playable, hard to tell how good it will be until I play a full game against it
 
-Had some issues with createNationalMap, changed the main map window to a Toplevel from a Tk, which fixed the issue, but makes some extra windows, and the state windows aren't going away properly. I want to see how it runs on my computer before I play around with it any more. 
+Had some issues with createNationalMap, changed the main map window to a Toplevel from a Tk, which fixed the issue, but makes some extra windows, and the state windows aren't going away properly. I want to see how it runs on my computer before I play around iwth it any more. 
 
 
 12/11/17
