@@ -7,12 +7,20 @@ Issues:
 44. right click menu
 45. tooltips state imformation
 46. county level data/shapefiles/basemap
+49. results table rather than scroll pane
+50. topline state results showing wrong winner
+53.
+
 
 
 
 
 notes
 
+11/18/17
+fixed the free money bug -- issue was the preallocated values were being added to the players total resources, but then not subtracted back out if the total post-allocated values were to large and an error was thrown. I now subtract them back if there isn't enough money or time to complete the campaning/advertising.
+
+it now shows the national map again after the end of the game, but only after you close a blank panel that pops up, I'm not sure why. 
 
 8/4/17
 looking at the local fundraising function, I reset the exponent multiplier to 1/50 from 1/100, and it seems like the values are a bit more reasonable, at least for a 10 week game. possibly still kind of low though. 
@@ -28,8 +36,28 @@ currently a clean sweep of super tuesday gets you about 3 times the momentum of 
 If I ever add the county level census data, it could be fun to scale fundraising from districts based on average district income
 
 
+8/5/17
+there appears to be a bug if you don't have enough money for add buys it refunds some of the money and keeps the previous level of add buys present, something that needs to be checked.
 
 
+8/6/17
+the first complete game was mostly a sucess, dada won
+
+I'm guessing the results winner being wrong and the wrong person being painted on the national are from the same source. It looks like its coming from state.support, I should check the generation of that number
+it might be the difference between state.support and state.pollingAverage, which should probably be what's used in the painting.
+that didn't seem to help.
+
+
+8/18/17
+now any left over time at the end of the turn will be put into fundraising
+
+what does the AI need to do?
+    decide where to build org
+    where to buy ads
+    where to campaign
+    how much time to spend fundraising
+
+the overall goal is to maximize delegates
 
 
 
