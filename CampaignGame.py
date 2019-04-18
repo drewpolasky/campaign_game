@@ -3,18 +3,22 @@
 #support calculation is done in calculateStateOpinions
 #money calculation is done in calcEndTurn
 
-from Tkinter import *
-import tkMessageBox
+from __future__ import print_function
+from tkinter import *
 from PIL import Image, ImageTk
 import os
 import random
 import time
 import math
 import sys
-import cPickle as pickle
+import pickle
 import sys
-import tkFileDialog
+from tkinter import messagebox
+from tkinter import filedialog
 from time import sleep
+
+from State import State, District
+from Player import Player
 
 sys.setrecursionlimit(5000)
 
@@ -31,130 +35,6 @@ eventOfTheWeek = 0
 issueNames = ['Immigration', 'Gun Control', 'Jobs', 'Tax Reform', 'Education']
 pastElections = {}          #stores the winner of each elections that's happened
 
-class Player:
-    def __init__(self, player):
-        self.name = player
-        self.isHuman = 'human'       #not a boolean
-        self.publicName = ''
-        self.resources = [80, 100000]
-        self.positions = []
-        self.delegateCount = 0
-        self.momentum = 0
-        self.history = {}
-
-    def setPositions(self, positions):
-        self.positions = positions
-
-    def endTurn(self, turn, fundraisingIncome, localIncome): #, spending):
-        self.history[turn] = {}
-        self.history[turn]['fundraisingIncome'] = fundraisingIncome
-        localIncome = round(localIncome)
-        self.history[turn]['localIncome'] = localIncome
-        #history[endTurn]['spending'] = spending
-
-    def setName(self, name):
-        self.publicName = name
-
-    def setHuman(self, isHuman):
-        self.isHuman = isHuman
-
-class State:
-    def __init__(self, stateName, positions):
-        self.name = stateName
-        self.positions = positions
-        self.opinions = []
-        self.support = []
-        self.organizations = []
-        self.districts = []
-        self.pollingAverage = []
-
-    def updateSupport(self):        
-        newSupport = []
-        global numPlayers
-        for j in range(numPlayers):
-            newSupport.append(0)
-        for i in range(numPlayers): 
-            for district in self.districts:
-                newSupport[i] += district.support[i] * district.population
-        self.support = newSupport
-        self.calculatePollingAverage()
-        return
-
-    def calculatePollingAverage(self):
-        global currentDate
-        global calendarOfContests
-
-        for election in calendarOfContests:
-            if election[0] == self.name:
-                electionDate = election[1]
-        numDecided = 0
-        timeToElection = electionDate - currentDate
-        stateVoteTotals = []
-        for i in range(len(self.support)):
-            stateVoteTotals.append(0)
-        if timeToElection >= 0:
-            for district in self.districts:
-                polling = []
-                for person in range(len(self.support)):
-                    totalSupport = float(sum(district.support))
-                    numDecided = 1 - (2.5 + self.organizations[person] / 80.0) ** (totalSupport / -100.0)
-                    numVoting = numDecided * district.population * 150000
-                    
-                    numVoters = (district.support[person] / (totalSupport + 0.0001)) * numVoting
-                    stateVoteTotals[person] += numVoters
-                    polling.append(round(numVoters / (district.population * 150000.0) * 100, 1))
-                district.pollingAverage = polling
-
-            totalVotes = float(sum(stateVoteTotals))
-            statePolling = []
-            for person in range(len(stateVoteTotals)):
-                statePolling.append(round(stateVoteTotals[person]/ (totalVotes + 1) * 100 , 1))
-            self.pollingAverage = statePolling
-        return
-
-    def setOrganization(self, playerIndex, organizations):
-        try:
-            self.organizations[playerIndex] = organizations
-        except IndexError:
-            self.organizations.append(organizations)
-
-    def setOpinions(self, opinionList):
-        self.opinions = opinionList
-
-    def addDistrict(self, newDistrict):
-        self.districts.append(newDistrict)
-
-class District:
-    def __init__(self, name, pop, parent):
-        self.name = name
-        self.population = int(pop)                     #in terms of congressional delgates
-        self.state = parent
-        self.opinions = []
-        self.support = []
-        self.pollingAverage = []
-        self.campaigningThisTurn = []
-        self.adsThisTurn = []
-
-    def setSupport(self, playerIndex, s):
-        try:
-            self.support[playerIndex] += s
-        except IndexError:
-            self.support.append(s)
-
-    def setOpinions(self, opinionList):
-        self.opinions = opinionList
-
-    def setCampaigningThisTurn(self, playerIndex, campaigningThisTurn):
-        try: 
-            self.campaigningThisTurn[playerIndex] = campaigningThisTurn
-        except IndexError:
-            self.campaigningThisTurn.append(campaigningThisTurn)
-
-    def setAdsThisTurn(self, playerIndex, ads):
-        try:
-            self.adsThisTurn[playerIndex] = ads
-        except IndexError:
-            self.adsThisTurn.append(ads)
 
 def main():
     global players
@@ -165,6 +45,7 @@ def main():
     mainMenu()
     while True:
         if players[player].isHuman == 'human':
+            showStartOfTurnReport()
             createNationalMap()
         else:
             calcAImove(players[player].isHuman)
@@ -344,9 +225,9 @@ def setUpPlayers(numP, setUpWindow, mode):
                 district.setCampaigningThisTurn(i, 0)
                 district.setAdsThisTurn(i, 0)
     for state in states:
-        states[state].updateSupport()
+        states[state].updateSupport(numPlayers, calendarOfContests, currentDate)
 
-    #if mode == 1:
+    #if mode == 1:       #mode 1 is no issues mode, set the players views to 0 for all issues
     #    for person in players:
     #        players[person].setPositions([0,0,0,0,0])
     #    calculateStateOpinions()
@@ -371,8 +252,8 @@ def setUpPlayer(mode):      #this function will create the screen to set up a ca
     # and where it is placed
     setUpPlayerWindow.geometry('%dx%d+%d+%d' % (w, h, x, y))
 
-    issueLowRange = -10
-    issueHighRange = 10
+    issueLowRange = -2
+    issueHighRange = 2
 
     nameLabel = Label(setUpPlayerWindow, text = 'Your Name: ')
     nameLabel.pack()
@@ -384,30 +265,23 @@ def setUpPlayer(mode):      #this function will create the screen to set up a ca
     isHuman = OptionMenu(setUpPlayerWindow, default, 'human','AI')
     isHuman.pack()
 
-    issue1 = Scale(setUpPlayerWindow, from_ = issueLowRange, to_ = issueHighRange, label = "Issue Name 1", orient = HORIZONTAL, length = 300)
-    issue2 = Scale(setUpPlayerWindow, from_ = issueLowRange, to_ = issueHighRange, label = "Issue Name 2", orient = HORIZONTAL, length = 300)
-    issue3 = Scale(setUpPlayerWindow, from_ = issueLowRange, to_ = issueHighRange, label = "Issue Name 3", orient = HORIZONTAL, length = 300)
-    issue4 = Scale(setUpPlayerWindow, from_ = issueLowRange, to_ = issueHighRange, label = "Issue Name 4", orient = HORIZONTAL, length = 300)
-    issue5 = Scale(setUpPlayerWindow, from_ = issueLowRange, to_ = issueHighRange, label = "Issue Name 5", orient = HORIZONTAL, length = 300)
+    issueSliders = []
+    for issue in issueNames:
+        issueSliders.append(Scale(setUpPlayerWindow, from_ = issueLowRange, to_ = issueHighRange, label = issue, orient = HORIZONTAL, length = 300))
 
-    if mode == 0:
-        issue1.pack()
-        issue2.pack()
-        issue3.pack()
-        issue4.pack()
-        issue5.pack()
+    if mode == 2:
+        for issueSlider in issueSliders:
+            issueSlider.pack()
 
-    endChoose = Button(setUpPlayerWindow, text = 'Done With Setup', command = lambda: setPositions(issue1.get(), issue2.get(), issue3.get(), issue4.get(), issue5.get(), name.get(), default.get(), setUpPlayerWindow, mode))
+    endChoose = Button(setUpPlayerWindow, text = 'Done With Setup', command = lambda: setPositions(list(map(lambda x:x.get(),issueSliders)), name.get(), default.get(), setUpPlayerWindow, mode))
     endChoose.pack()
     setUpPlayerWindow.mainloop()
 
-def setPositions(issue1, issue2, issue3, issue4, issue5, name, isHuman, setUpPlayerWindow, mode):
+def setPositions(issues, name, isHuman, setUpPlayerWindow, mode):
     setUpPlayerWindow.destroy()
-    global players
-    global numPlayers
     global player
     person = players[player]
-    person.setPositions([issue1, issue2, issue3, issue4, issue5])
+    person.setPositions(issues)
     person.setHuman(isHuman)
     person.setName(name)
     if player < numPlayers:
@@ -440,6 +314,9 @@ def showStartOfTurnReport():
 
         reportWindow.pack()
         center(report)
+        report.mainloop()
+    else:
+        return
 
 def paintNationalMap(natMapImage):         #his function will repaint the national map to show who is leading in each state
     global states
@@ -515,7 +392,7 @@ def paintStateMap(stateMapImage, stateName):
     return stateMapImage
 
 def createNationalMap():    #creates the main national map screen. This will be the main screen of the game, where the turn starts and ends.
-    window = Toplevel()
+    window = Tk()
     mapWindow = PanedWindow(window)
     global eventOfTheWeek
     global issueNames
@@ -647,7 +524,7 @@ def showStats(event):   #this will bring up a window with a quick overview of th
                 stateWindow.geometry('%dx%d+%d+%d' % (w, h, xLoc, yLoc))
                 stateWindow.mainloop()
             except ValueError:
-                tkMessageBox.showerror("state error","That's not a state")
+                messagebox.showerror("state error","That's not a state")
 
 def zoomToState(event):  #this will bring up the state window, seperate from the main window
     xLoc = event.x
@@ -760,7 +637,6 @@ def zoomToState(event):  #this will bring up the state window, seperate from the
                             
                             campaigningSlider.set(districtAllocatedTime)
                             allocatedTime += districtAllocatedTime
-
                             
                             addBuySlider.set(districtAllocatedMoney)
                             allocatedMoney += districtAllocatedMoney
@@ -803,7 +679,7 @@ def zoomToState(event):  #this will bring up the state window, seperate from the
                 center(stateWindow)
                 stateWindow.mainloop()
             except KeyError:
-                tkMessageBox.showerror("state error","That's not a state")
+                messagebox.showerror("state error","That's not a state")
                 stateWindow.destroy()
 
 def getOnBallot(player, stateName, cost, window, event):
@@ -824,9 +700,9 @@ def getOnBallot(player, stateName, cost, window, event):
             players[player].resources[1] = players[player].resources[1] - int(cost)
             zoomToState(event)
         elif players[player].resources[1] - int(cost) >= 0:
-            tkMessageBox.showerror("Timing Error", "Too late to get on the Ballot here")
+            messagebox.showerror("Timing Error", "Too late to get on the Ballot here")
         elif currentDate < (contestDate - 1):
-            tkMessageBox.showerror("Money Error", "You Don't have enough money to get on the ballot")
+            messagebox.showerror("Money Error", "You Don't have enough money to get on the ballot")
     else:
         if players[player].resources[1] - int(cost) >= 0: 
             states[stateName].organizations[player-1] += 1
@@ -834,9 +710,9 @@ def getOnBallot(player, stateName, cost, window, event):
             zoomToState(event)
         else:
             if currentOrg ==1:
-                tkMessageBox.showerror("Money Error", "You Don't have enough money to build an office here")
+                messagebox.showerror("Money Error", "You Don't have enough money to build an office here")
             if currentOrg > 1:
-                tkMessageBox.showerror("Money Error", "You Don't have enough money to further build your team here")
+                messagebox.showerror("Money Error", "You Don't have enough money to further build your team here")
 
 def backToMap(window, campaingingTime, stateName, allocatedTime, allocatedMoney, addBuys):
     global player
@@ -853,11 +729,11 @@ def backToMap(window, campaingingTime, stateName, allocatedTime, allocatedMoney,
         totalTime += slider.get()
 
     if totalAdCosts > players[player].resources[1]:
-        tkMessageBox.showerror("Money Error", "You don't have enough money for those ad buys")
+        messagebox.showerror("Money Error", "You don't have enough money for those ad buys")
         players[player].resources[1] -= allocatedMoney
         players[player].resources[0] -= allocatedTime
     elif totalTime > players[player].resources[0]:
-        tkMessageBox.showerror("Time Error", "You don't have enough time for all that campaigning")
+        messagebox.showerror("Time Error", "You don't have enough time for all that campaigning")
         players[player].resources[1] -= allocatedMoney
         players[player].resources[0] -= allocatedTime
     else:
@@ -890,7 +766,10 @@ def endTurn(window, fundraising):
     global players
     global numTurns
 
+    #print('hours of fundraising: ', fundraising)
+    players[player].resources[0] -= fundraising     #this and the next line could be combined, but in case I come back later and change things, this should be more clear
     fundraising += players[player].resources[0]     #add any left over hours to the fundraising time
+    #print('hours of fundraising: ', fundraising)
     calcEndTurn(fundraising)
 
     if player < numPlayers:
@@ -907,8 +786,8 @@ def endTurn(window, fundraising):
                     district.setCampaigningThisTurn(person - 1, 0)
                     district.setAdsThisTurn(person - 1, 0)
     if currentDate <= numTurns:
-        showStartOfTurnReport()
-        #autoSave()
+        #showStartOfTurnReport()
+        autoSave()
         return
     else:
         winner = 0
@@ -918,8 +797,9 @@ def endTurn(window, fundraising):
                 winner = person
                 mostDelegates = players[person].delegateCount
         player = 1
-        tkMessageBox.showinfo("Winner", "The Winner is: " + str(players[winner].publicName))
-        createNationalMap()         #show the map one last time to see the final results. 
+
+        createNationalMap()            #show the map one last time to see the final results. 
+        messagebox.showinfo("Winner", "The Winner is: " + str(players[winner].publicName))
         exit()
 
 def calcEndTurn(fundraising):      #this will calculate the new resources available to the player
@@ -953,7 +833,7 @@ def calculateStateOpinions():       #this function will calculate the opinion of
     global calendarOfContests
     
     if currentDate == 0:       #calculate the inital position of the opinions. This is currently not being used, maybe will be useful with issues
-        print 'test'
+        print('test')
         for state in states:
             opinionList = []
             for person in players:
@@ -962,7 +842,7 @@ def calculateStateOpinions():       #this function will calculate the opinion of
                     opinion += int(states[state].positions[i].strip()) * players[person].positions[i]     #the inital opinion is based on the differences on the issues between the state and the candidate.
                     opinionList.append(opinion)
                 states[state].setOpinions(opinionList)
-        print players[1].isHuman
+        print(players[1].isHuman)
         if players[1].isHuman == 'human':
             createNationalMap()
         else:
@@ -976,7 +856,7 @@ def calculateStateOpinions():       #this function will calculate the opinion of
                     for date in calendarOfContests:             #in the 2 weeks before the election campaining is more effective
                         mult = 1
                         if date[0] == state and date[1] == currentDate - 1:
-                            mult = 2
+                            mult = 1.25
                         elif date[0] == state and date[1] == currentDate:
                             mult = 1.5
                     campaingingTime = district.campaigningThisTurn[i]
@@ -985,9 +865,9 @@ def calculateStateOpinions():       #this function will calculate the opinion of
                     support = (campaingingTime + org + float(adBuy) / float(adsTotal + 1) * (adsTotal / 100.0) ** (1.1/2.0)) * (1 + float(players[i + 1].momentum) / 50.0) * mult         #the plus 1 is to avoid dividing by 0 when there is no advertising in a state
                     support = round(support)
                     district.setSupport(i, support)
-                states[state].updateSupport()
+                states[state].updateSupport(numPlayers, calendarOfContests, currentDate)
 
-        #print states["Iowa"].support
+        #print(states["Iowa"].support)
 
 def decideContests():
     global currentDate
@@ -1016,7 +896,7 @@ def decideContests():
     totalMomemtum = 50
     for state in calendarOfContests:
         if state[1] + 1 == currentDate:
-            states[state[0]].calculatePollingAverage()     #just in case it isn't up to date 
+            states[state[0]].calculatePollingAverage(calendarOfContests, currentDate)     #just in case it isn't up to date 
             j += 1
             stateName = state[0]
             orgs = states[stateName].organizations
@@ -1031,7 +911,7 @@ def decideContests():
                 mostVotes = 0
                 totalVotes = 0
                 for i in range(numPlayers):
-                    if orgs[i] > 0:
+                    if orgs[i] > 0:     #checking that player is on the ballot
                         votes = random.gauss(district.pollingAverage[i], 3)
                         votes = votes * district.population * 150000
                         totalVotes += votes
@@ -1067,7 +947,7 @@ def decideContests():
             momentums[winner - 1] += stateDelegates
 
             pastElections[stateName] = stateWinner
-            print stateName, stateWinner, stateDelegates
+            print(stateName, stateWinner, stateDelegates)
 
             if k2 != 0:
                 resultsBox.insert(k2, '')
@@ -1088,7 +968,7 @@ def decideContests():
         weekResultString += players[person].publicName + ' with ' +str(weekDelegates[person]) + ' delegates; '
     resultsBox.insert(0, 'overall results for week ' + str(currentDate) + ' : ' + weekResultString)
 
-    print totalMomemtum, momentums
+    print(totalMomemtum, momentums)
 
     #divy up the base momentum to the players based on how much of the state by state they won
     for i in range(len(momentums)):
@@ -1128,23 +1008,24 @@ def calcAImove(agent):       #this will do the AI move, the agent will specify w
             stateDelegates += district.population - districtDelegates        #note, state delgates here is just the delgates awarded to the overall state winner. 
             closeness = max(district.support[:(player-1)] + district.support[(player):]) - district.support[player-1]
             closeness = 10*max(district.support[:(player-1)] + district.support[(player):]) / float(abs(closeness)+1)   
-            print 'closeness: ', closeness         
+            #print('closeness: ', closeness)     
             districtValue = timeToElection + districtDelegates + closeness
-            print 'district value: ', districtValue
+            #print('district value: ', districtValue)
             #and the value for each district
-            districtValues[1].append(district)
-            districtValues[0].append(districtValue)
+            if timeToElection >=0:      #don't invest where the election has already passed
+                districtValues[1].append(district)
+                districtValues[0].append(districtValue)
 
         #determine where to build organization here first, based on a fixed threshold
         buildThreshold = 20
-        if (9-timeToElection) * stateDelegates > (states[state].organizations[player-1]+1) * buildThreshold:
+        if (9-timeToElection) * stateDelegates**1.2 > (states[state].organizations[player-1]+1) * buildThreshold:
             costToBuild = 10000*states[state].organizations[player-1]
             if costToBuild == 0:
                 costToBuild = 10000
             if players[player].resources[1] > costToBuild:
                 players[player].resources[1] -= costToBuild
                 states[state].organizations[player-1] += 1
-                
+                print(state, 'build org', states[state].organizations[player-1])
 
         stateValue =  timeToElection + stateDelegates + stateCloseness
         stateValues[0].append(states[state].name)
@@ -1160,19 +1041,21 @@ def calcAImove(agent):       #this will do the AI move, the agent will specify w
         players[player].resources[1] -= 1000
         addBuyValue = district.adsThisTurn[player-1] + 1000
         district.setAdsThisTurn(player-1, addBuyValue)
+        #print(district.name, 'add buy')
 
         districtValues[0][-1] -= 2
         districtValues = [list(t) for t in zip(*sorted(zip(districtValues[0], districtValues[1])))]        #as long as this resorting isn't super slow, these seems like a reasonable way to iterate through the districts. 
             
 
     while players[player].resources[0] > 0:        #then determine where to spend time
-        district = districtValues[1][0]
+        district = districtValues[1][-1]
 
         if districtValues[0][-1] > 20:       #setting some value for switching to fundraising instead of campaining. Should possibly change over time (weight fundraising more heavily early in the game)
             players[player].resources[0] -= 1
             addBuyValue = district.campaigningThisTurn[player-1] + 1
             district.setCampaigningThisTurn(player-1, addBuyValue)
             districtValues[0][-1] -= 2
+            #print(district.name, 'time spent')
             districtValues = [list(t) for t in zip(*sorted(zip(districtValues[0], districtValues[1])))]
         else:
             calcEndTurn(players[player].resources[0])
@@ -1194,7 +1077,7 @@ def calcAImove(agent):       #this will do the AI move, the agent will specify w
                     district.setCampaigningThisTurn(person - 1, 0)
                     district.setAdsThisTurn(person - 1, 0)
     if currentDate <= numTurns:
-        showStartOfTurnReport()
+        #showStartOfTurnReport()
         #autoSave()
         return
     else:
@@ -1205,12 +1088,24 @@ def calcAImove(agent):       #this will do the AI move, the agent will specify w
                 winner = person
                 mostDelegates = players[person].delegateCount
         player = 1
-        tkMessageBox.showinfo("Winner", "The Winner is: " + str(players[winner].publicName))
         createNationalMap()         #show the map one last time to see the final results. 
+        messagebox.showinfo("Winner", "The Winner is: " + str(players[winner].publicName))
         exit()
 
 def autoSave():
-    saveGameSecond('autosave', Tk(), True)
+    #save in the oldest of 3 autosave files
+    autosaveFiles = ['autosave','autosave2','autosave3']
+    for fileName in autosaveFiles:
+        if not os.path.isfile(fileName):
+            saveGameSecond(fileName, Tk(), True)
+            return
+    else:
+        ages = []
+        for autosave in autosaveFiles:
+            ages.append(os.stat(autosave).st_mtime)
+        filename = autosave[ages.index(min(ages))]
+        saveGameSecond(filename, Tk(), True)
+    return
 
 def saveGame():
     global player
@@ -1246,9 +1141,9 @@ def saveGameSecond(fileName, window, autosave):
     try:
         pickle.dump(saveFile, open(os.path.join(os.getcwd(), "..\\",'Google Drive\\CampaignSaves\\' + fileName + '.save'), 'wb'))
     except:
-        tkMessageBox.showinfo("Save Failed", "Save Failed")
+        messagebox.showinfo("Save Failed", "Save Failed")
     if not autosave:
-        tkMessageBox.showinfo("Save Succesful", "Save Succesful")
+        messagebox.showinfo("Save Succesful", "Save Succesful")
     return
 
 def loadGame(window):
@@ -1262,8 +1157,8 @@ def loadGame(window):
     window.destroy()
     root = Tk()
     root.withdraw()
-    #file_path = tkFileDialog.askopenfilename(initialdir = os.getcwd() + '\\saveGames\\',filetypes = [('save games', '.save')])
-    file_path = tkFileDialog.askopenfilename(initialdir = os.path.join(os.getcwd(), "..\\",'Google Drive\\CampaignSaves\\'),filetypes = [('save games', '.save')])
+    #file_path = filedialog.askopenfilename(initialdir = os.getcwd() + '\\saveGames\\',filetypes = [('save games', '.save')])
+    file_path = filedialog.askopenfilename(initialdir = os.path.join(os.getcwd(), "..\\",'Google Drive\\CampaignSaves\\'),filetypes = [('save games', '.save')])
     saveFile = pickle.load(open(file_path, 'rb'))
     root.destroy()
 
@@ -1285,7 +1180,7 @@ def returnColor(event):
     natMapImage = Image.open("nationalMap.png")
     mapPix = natMapImage.load()
 
-    print mapPix[event.x, event.y]
+    print(mapPix[event.x, event.y])
 
 #this only was used for game set up (creating the pixel list). It won't be used in normal game function.
 def defineState(event):     #when a state is clicked on all this should find all the pixels contigous(no black lines) to the one clicked, then prompt for the state's name, and create a database assigning each pixel to a state. 

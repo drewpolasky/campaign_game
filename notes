@@ -8,13 +8,38 @@ Issues:
 46. county level data/shapefiles/basemap
 49. results table rather than scroll pane
 50. topline state results showing wrong winner
-53.
-
+53. Montana not painted
+55. Elections appear to be decided incorecctly - support after doesn't match results page
+56. Oregon outer district not being painted
+57. redo results panel, have display at the start of each payers turn
+58. add start turn button to start of turn report
+59. add random events (i.e. debate gaffes)
 
 
 
 
 notes
+
+11/27/18
+fundraising bug fixed - hours that were actively put to fundraising were being double counte
+
+issues ideas:
+    should be set at district, not state level
+    number and names should be easy to adjust
+    inital testing can be done with a random assignment to each district
+    each district should have a importance and position (as should each candidate) for each issue
+    issue importance will change 
+
+along with issues, there could be more "charecter" custimization - i.e. you could be a better speaker, or a better fundraiser, or be more prone to gaffes or something. could be on a point system. 
+
+11/24/18
+Some notes from playing a complete game with dad:
+the bot is really bad, though it did manage to win 12 delegates on the final week
+Going to the 20 week calendar might be good, to allow for some more strategic movements. 
+I think that the amount of money should be reduced. Currently you are able to go everywhere to an extent, I kind of want it to be more restricted. 
+
+reduced the increase in effectivness of campaigning in the weeks before the election to 1.25/1.5
+
 
 12/12/17
 The AI now works, at least sort of. It can play a full game against itself, I don't think it's very good at this point though. 

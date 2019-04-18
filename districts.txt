@@ -44,7 +44,7 @@ Massachusetts, Southeast Massachusetts ,3
 Massachusetts, Western Massachusetts ,3
 Michigan, Detroit ,5
 Michigan, Southwest Michigan ,4
-Michigan, Michigan's Rust Belt ,4
+Michigan, Central Michigan ,4
 Michigan, Northern Michigan ,1
 Minnesota, Twin Cities ,4
 Minnesota, Southern Minnesota ,2
