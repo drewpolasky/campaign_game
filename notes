@@ -1,5 +1,4 @@
 Issues:
-13. issues
 19. tutorial
 21. scrollbar on rightpane of zoomToState
 37. simultaneous turns
@@ -14,11 +13,25 @@ Issues:
 57. redo results panel, have display at the start of each payers turn
 58. add start turn button to start of turn report
 59. add random events (i.e. debate gaffes)
-
+60. add district postions on issues that match reality
 
 
 
 notes
+
+12/25/19
+fixed issue with autosave not using the 3 different file names, should be working now
+fixed issue where montana was not accessible on unix based systems, because the file name was not capatilized
+changed the effect of increased total advertising to  only cause the impact of advertising to decrease, not org or campaigning time
+added issue multipler to the calculating district opinions
+added tooltip showing player positions to delegate label on national map
+added tooltip to rightbar district info on state map
+issues should now be working
+
+ideas from playthrough:
+buff orgs
+alter local fundrasing to not gove as much late
+shorten calendar, maybe to 8 weeks
 
 11/27/18
 fundraising bug fixed - hours that were actively put to fundraising were being double counte

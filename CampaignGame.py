@@ -19,6 +19,7 @@ from time import sleep
 
 from State import State, District
 from Player import Player
+from tooltip import CreateToolTip
 
 sys.setrecursionlimit(5000)
 
@@ -31,10 +32,13 @@ players = {}            #dictionaries of class instances of players and states
 states = {}
 calendarOfContests = [('Iowa' , 4),('New Hampshire' , 5) ,('Nevada',7), ('South Carolina',8),('Minnesota',9),('Alabama' , 9), ('Arkansas', 9), ('Colorado', 9), ('Georgia', 9), ('Massachusetts', 9), ('North Dakota', 9), ('Oklahoma', 9), ('Tennessee', 9), ('Texas', 9), ('Vermont', 9), ('Virginia', 9), ('Kansas', 10), ('Kentucky', 10), ('Louisiana', 10), ('Maine', 10), ('Nebraska', 10), ('Hawaii', 10), ('Michigan', 10), ('Mississippi', 10), ('Wyoming', 11), ('Florida', 11), ('Illinois' , 11), ('Missouri', 11), ('North Carolina', 11), ('Ohio', 11), ('Arizona', 12), ('Idaho', 12), ('Utah', 12),('Alaska', 13), ('Washington', 13), ('Wisconsin', 14), ('New Jersey', 15), ('New York', 15), ('Connecticut', 15), ('Delaware', 15), ('Maryland', 15), ('Pennsylvania', 15), ('Rhode Island', 15), ('Indiana', 16), ('West Virginia', 16), ('Oregon', 17), ('California', 19), ('Montana', 19), ('New Mexico', 19), ('South Dakota', 19)]#, ('DC', 20)]
 playerColors = [(255,0,0), (0,0,255), (0,255,0), (128,0,128)]
-eventOfTheWeek = 0
-issueNames = ['Immigration', 'Gun Control', 'Jobs', 'Tax Reform', 'Education']
+issueNames = ['Climate Change','Immigration', 'Gun Control', 'Health Care', 'Tax Level', 'Regulation', 'Trade']
+eventOfTheWeek = random.randint(0,len(issueNames))
 pastElections = {}          #stores the winner of each elections that's happened
-
+issuesMode = False
+issueLowRange = -1
+issueHighRange = 1
+randomPositions = True
 
 def main():
     global players
@@ -214,6 +218,11 @@ def setUpPlayers(numP, setUpWindow, mode):
     global numPlayers
     global players
     global states
+    global issuesMode
+
+    if mode == 2:
+        issuesMode = True
+
     numPlayers = numP
     for i in range(numPlayers):
         newPlayer = Player(i + 1)
@@ -238,7 +247,7 @@ def setUpPlayer(mode):      #this function will create the screen to set up a ca
     setUpPlayerWindow = Tk()
     setUpPlayerWindow.wm_title("Choose Positions for player " + str(player))
     w = 400 # width for the Tk root
-    h = 400 # height for the Tk root
+    h = 600 # height for the Tk root
 
     # get screen width and height
     ws = setUpPlayerWindow.winfo_screenwidth() # width of the screen
@@ -251,9 +260,6 @@ def setUpPlayer(mode):      #this function will create the screen to set up a ca
     # set the dimensions of the screen 
     # and where it is placed
     setUpPlayerWindow.geometry('%dx%d+%d+%d' % (w, h, x, y))
-
-    issueLowRange = -2
-    issueHighRange = 2
 
     nameLabel = Label(setUpPlayerWindow, text = 'Your Name: ')
     nameLabel.pack()
@@ -289,6 +295,17 @@ def setPositions(issues, name, isHuman, setUpPlayerWindow, mode):
         setUpPlayer(mode)
     else:
         player = 1
+        for state in states:
+            for district in states[state].districts:
+                if issuesMode: #set the district level positions on the issues, if issues mode is on, otherwise all netural
+                    if randomPositions:
+                        district.setPositions([random.randint(issueLowRange, issueHighRange) for i in range(len(issueNames))])
+                    else:
+                        print('not yet implemented')
+                        exit()
+                else:
+                    district.setPositions([0 for i in range(len(issueNames))])
+
         calculateStateOpinions()
     
 def showStartOfTurnReport():
@@ -455,6 +472,10 @@ def createNationalMap():    #creates the main national map screen. This will be 
         color = '#%02x%02x%02x' % color
         delegateLabel = Label(resourcePane, text = str(players[person].publicName) + ' has ' + str(players[person].delegateCount) + ' delegates', bg = color)
         resourcePane.add(delegateLabel)
+        issueStrings = []
+        for issue in range(len(issueNames)):
+            issueStrings.append(issueNames[issue] + ' ' + str(players[person].positions[issue]))
+        player_ttp = CreateToolTip(delegateLabel, ('\n').join(issueStrings))
 
     momentumLabel = Label(resourcePane, text = 'Your Current Momentum is: ' + str(round(players[player].momentum, 0)))
     resourcePane.add(momentumLabel)
@@ -569,6 +590,12 @@ def zoomToState(event):  #this will bring up the state window, seperate from the
 
                 for district in states[stateName].districts:
                     districtDelegatesLabel = Label(leftPane, text = district.name + " District has " + str(int(district.population)) + " delegates")
+
+                    issueStrings = []
+                    for issue in range(len(issueNames)):
+                        issueStrings.append(issueNames[issue] + ' ' + str(district.positions[issue]))
+                    delegatesLabel_ttp = CreateToolTip(districtDelegatesLabel, '\n'.join(issueStrings) )
+
                     leftPane.add(districtDelegatesLabel)
                     for person in range(numPlayers):
                         districtSupportLabel = Label(leftPane, text = "Current Polling for " + players[person+1].publicName + " in this district: " + str(district.pollingAverage[person]))
@@ -779,7 +806,7 @@ def endTurn(window, fundraising):
         currentDate += 1
         decideContests()
         player = 1
-        eventOfTheWeek = random.randint(0,4)
+        eventOfTheWeek = random.randint(0,len(issueNames))
         for state in states:
             for district in states[state].districts:
                 for person in players:
@@ -832,17 +859,7 @@ def calculateStateOpinions():       #this function will calculate the opinion of
     global players
     global calendarOfContests
     
-    if currentDate == 0:       #calculate the inital position of the opinions. This is currently not being used, maybe will be useful with issues
-        print('test')
-        for state in states:
-            opinionList = []
-            for person in players:
-                opinion = 0
-                for i in range(len(states[state].positions)):
-                    opinion += int(states[state].positions[i].strip()) * players[person].positions[i]     #the inital opinion is based on the differences on the issues between the state and the candidate.
-                    opinionList.append(opinion)
-                states[state].setOpinions(opinionList)
-        print(players[1].isHuman)
+    if currentDate == 0:       
         if players[1].isHuman == 'human':
             createNationalMap()
         else:
@@ -856,13 +873,31 @@ def calculateStateOpinions():       #this function will calculate the opinion of
                     for date in calendarOfContests:             #in the 2 weeks before the election campaining is more effective
                         mult = 1
                         if date[0] == state and date[1] == currentDate - 1:
-                            mult = 1.25
+                            mult = 1.12
                         elif date[0] == state and date[1] == currentDate:
-                            mult = 1.5
+                            mult = 1.25
                     campaingingTime = district.campaigningThisTurn[i]
                     adBuy = district.adsThisTurn[i]
                     adsTotal = sum(district.adsThisTurn)
-                    support = (campaingingTime + org + float(adBuy) / float(adsTotal + 1) * (adsTotal / 100.0) ** (1.1/2.0)) * (1 + float(players[i + 1].momentum) / 50.0) * mult         #the plus 1 is to avoid dividing by 0 when there is no advertising in a state
+                    mult = (1 + float(players[i + 1].momentum) / 50.0) * mult
+
+                    issueMult = 1
+                    #for issue in range(len(issues)):       #only the issue in the news that week matters 
+                    #print(eventOfTheWeek, district.positions[eventOfTheWeek], players[i+1].positions[eventOfTheWeek])
+                    if district.positions[eventOfTheWeek] == 0:
+                        pass
+
+                    elif players[i+1].positions[eventOfTheWeek] == district.positions[eventOfTheWeek]:
+                        issueMult += 0.33
+
+                    else:
+                        issueMult -= 0.16 * abs(players[i+1].positions[eventOfTheWeek] - district.positions[eventOfTheWeek])
+
+                    if issueMult <= 0.25:       #shouldn't matter since only one issues is up at a time, so this shouldn't come into play, but just in case
+                        issueMult = 0.25
+                    mult = issueMult * mult 
+                    support = ((campaingingTime + org) + float(adBuy) / float(adsTotal + 1) * (adsTotal / 100.0) ** (1.1/2.0)) *mult
+                    #support = (campaingingTime + org + float(adBuy) / float(adsTotal + 1) * (adsTotal / 100.0) ** (1.1/2.0)) *mult          #the plus 1 is to avoid dividing by 0 when there is no advertising in a state
                     support = round(support)
                     district.setSupport(i, support)
                 states[state].updateSupport(numPlayers, calendarOfContests, currentDate)
@@ -1070,7 +1105,7 @@ def calcAImove(agent):       #this will do the AI move, the agent will specify w
         currentDate += 1
         decideContests()
         player = 1
-        eventOfTheWeek = random.randint(0,4)
+        eventOfTheWeek = random.randint(0,len(issueNames))
         for state in states:
             for district in states[state].districts:
                 for person in players:
@@ -1095,16 +1130,19 @@ def calcAImove(agent):       #this will do the AI move, the agent will specify w
 def autoSave():
     #save in the oldest of 3 autosave files
     autosaveFiles = ['autosave','autosave2','autosave3']
-    for fileName in autosaveFiles:
+    filePaths = []
+    for filename in autosaveFiles:
+        filePaths.append(os.getcwd()+'/CampaignSaves/'+filename+'.save')
+    for fileName in filePaths:
         if not os.path.isfile(fileName):
             saveGameSecond(fileName, Tk(), True)
             return
-    else:
-        ages = []
-        for autosave in autosaveFiles:
-            ages.append(os.stat(autosave).st_mtime)
-        filename = autosave[ages.index(min(ages))]
-        saveGameSecond(filename, Tk(), True)
+    
+    ages = []
+    for fileName in filePaths:
+        ages.append(os.stat(fileName).st_mtime)
+    filename = autosaveFiles[ages.index(min(ages))]
+    saveGameSecond(filename, Tk(), True)
     return
 
 def saveGame():
@@ -1138,12 +1176,12 @@ def saveGameSecond(fileName, window, autosave):
     saveFile.append(pickle.dumps(pastElections))
     saveFile.append(pickle.dumps(player))
     saveFile.append(pickle.dumps(currentDate))
-    try:
-        pickle.dump(saveFile, open(os.path.join(os.getcwd(), "..\\",'Google Drive\\CampaignSaves\\' + fileName + '.save'), 'wb'))
-    except:
-        messagebox.showinfo("Save Failed", "Save Failed")
+    #try:
+    pickle.dump(saveFile, open(os.getcwd()+ '/CampaignSaves/' + fileName + '.save', 'wb'))
     if not autosave:
-        messagebox.showinfo("Save Succesful", "Save Succesful")
+            messagebox.showinfo("Save Succesful", "Save Succesful")
+    #except:
+    #    messagebox.showinfo("Save Failed", "Save Failed")
     return
 
 def loadGame(window):

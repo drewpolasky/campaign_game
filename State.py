@@ -65,7 +65,7 @@ class District:
         self.name = name
         self.population = int(pop)                     #in terms of congressional delgates
         self.state = parent
-        self.opinions = []
+        self.positions = []
         self.support = []
         self.pollingAverage = []
         self.campaigningThisTurn = []
@@ -77,8 +77,8 @@ class District:
         except IndexError:
             self.support.append(s)
 
-    def setOpinions(self, opinionList):
-        self.opinions = opinionList
+    def setPositions(self, opinionList):
+        self.positions = opinionList
 
     def setCampaigningThisTurn(self, playerIndex, campaigningThisTurn):
         try: 
