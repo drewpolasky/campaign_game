@@ -32,13 +32,14 @@ players = {}            #dictionaries of class instances of players and states
 states = {}
 calendarOfContests = [('Iowa' , 4),('New Hampshire' , 5) ,('Nevada',7), ('South Carolina',8),('Minnesota',9),('Alabama' , 9), ('Arkansas', 9), ('Colorado', 9), ('Georgia', 9), ('Massachusetts', 9), ('North Dakota', 9), ('Oklahoma', 9), ('Tennessee', 9), ('Texas', 9), ('Vermont', 9), ('Virginia', 9), ('Kansas', 10), ('Kentucky', 10), ('Louisiana', 10), ('Maine', 10), ('Nebraska', 10), ('Hawaii', 10), ('Michigan', 10), ('Mississippi', 10), ('Wyoming', 11), ('Florida', 11), ('Illinois' , 11), ('Missouri', 11), ('North Carolina', 11), ('Ohio', 11), ('Arizona', 12), ('Idaho', 12), ('Utah', 12),('Alaska', 13), ('Washington', 13), ('Wisconsin', 14), ('New Jersey', 15), ('New York', 15), ('Connecticut', 15), ('Delaware', 15), ('Maryland', 15), ('Pennsylvania', 15), ('Rhode Island', 15), ('Indiana', 16), ('West Virginia', 16), ('Oregon', 17), ('California', 19), ('Montana', 19), ('New Mexico', 19), ('South Dakota', 19)]#, ('DC', 20)]
 playerColors = [(255,0,0), (0,0,255), (0,255,0), (128,0,128)]
-issueNames = ['Climate Change','Immigration', 'Gun Control', 'Health Care', 'Tax Level', 'Regulation', 'Trade']
-eventOfTheWeek = random.randint(0,len(issueNames))
+issueNames = ['Climate Change']#,'Immigration', 'Gun Control', 'Health Care', 'Tax Level', 'Regulation', 'Trade']
+eventOfTheWeek = random.randint(0,len(issueNames)-1)
 pastElections = {}          #stores the winner of each elections that's happened
 issuesMode = False
 issueLowRange = -1
 issueHighRange = 1
 randomPositions = True
+exit_status = False
 
 def main():
     global players
@@ -806,7 +807,7 @@ def endTurn(window, fundraising):
         currentDate += 1
         decideContests()
         player = 1
-        eventOfTheWeek = random.randint(0,len(issueNames))
+        eventOfTheWeek = random.randint(0,len(issueNames)-1)
         for state in states:
             for district in states[state].districts:
                 for person in players:
@@ -814,8 +815,21 @@ def endTurn(window, fundraising):
                     district.setAdsThisTurn(person - 1, 0)
     if currentDate <= numTurns:
         #showStartOfTurnReport()
+        top = Tk()
+        global exit_status
+        top.title("")
+        msg = Message(top, text = 'Save and quit, or continue to {}\'s turn'.format(players[player].name))
+        msg.pack()
+        saveQuit = Button(top, text = 'Save', command = lambda:save_and_quit())
+        saveQuit.pack()
+        nextPlayer = Button(top, text = 'Continue to next player', command = lambda:next_player_button(top))
+        nextPlayer.pack()
+        top.mainloop()
         autoSave()
-        return
+        print(exit_status)
+        if exit:
+            exit()
+        exit_status = False
     else:
         winner = 0
         mostDelegates = 0
@@ -828,6 +842,12 @@ def endTurn(window, fundraising):
         createNationalMap()            #show the map one last time to see the final results. 
         messagebox.showinfo("Winner", "The Winner is: " + str(players[winner].publicName))
         exit()
+
+def next_player_button(top):
+    #destroy the next turn Tk, and go on as usual
+    top.quit()
+    top.destroy()
+    return
 
 def calcEndTurn(fundraising):      #this will calculate the new resources available to the player
     global player
@@ -1105,7 +1125,7 @@ def calcAImove(agent):       #this will do the AI move, the agent will specify w
         currentDate += 1
         decideContests()
         player = 1
-        eventOfTheWeek = random.randint(0,len(issueNames))
+        eventOfTheWeek = random.randint(0,len(issueNames)-1)
         for state in states:
             for district in states[state].districts:
                 for person in players:
@@ -1126,6 +1146,12 @@ def calcAImove(agent):       #this will do the AI move, the agent will specify w
         createNationalMap()         #show the map one last time to see the final results. 
         messagebox.showinfo("Winner", "The Winner is: " + str(players[winner].publicName))
         exit()
+
+def save_and_quit():
+    global exit_status
+    exit_status = True
+    saveGame()
+    return 
 
 def autoSave():
     #save in the oldest of 3 autosave files
@@ -1162,6 +1188,7 @@ def saveGame():
     saveButton.pack()
     center(saveName)
     saveName.mainLoop()
+    return
 
 def saveGameSecond(fileName, window, autosave):
     global player
