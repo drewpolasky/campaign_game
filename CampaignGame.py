@@ -25,7 +25,7 @@ sys.setrecursionlimit(5000)
 
 #global variables for tracking players and turns
 player = 1                  #keeps track of whose turn it is. indexed at 1
-numTurns = 10
+numTurns = 8
 numPlayers = 2
 currentDate = 1
 players = {}            #dictionaries of class instances of players and states
@@ -46,7 +46,6 @@ def main():
     global player
 
     setUpStates()
-    setCalendar()
     mainMenu()
     while True:
         if players[player].isHuman == 'human':
@@ -179,19 +178,28 @@ def setUpGame(window):        #this will set up the basic parameters of the game
     issueMode = Radiobutton(setUpWindow, text = "Issues Mode", variable = mode, value = 2)
     issueMode.pack()
 
-    startGame = Button(setUpWindow, text = 'Start Game', command = lambda:setUpPlayers(numP.get(), setUpWindow, mode.get()))
+    turnChoices = [8,10,20]
+    numTurnsVar = IntVar(value=turnChoices[0])
+    turnsLabel = Label(setUpWindow, text = 'Number of Turns')
+    gameLength = OptionMenu(setUpWindow, numTurnsVar, *turnChoices)
+
+    startGame = Button(setUpWindow, text = 'Start Game', command = lambda:setUpPlayers(numP.get(), setUpWindow, mode.get(), numTurnsVar.get()))
     numP = Scale(setUpWindow, label = 'Number of Players', orient = HORIZONTAL, from_= 2, to_ = 10)
 
-    startGame.pack()
     numP.pack()
+    turnsLabel.pack()
+    gameLength.pack()
+    startGame.pack()
     setUpWindow.mainloop()
 
-def setCalendar():
+def setCalendar(numTurns):
     global calendarOfContests
-    global numTurns
+    print(numTurns)
     calendarOfContests = []
     if numTurns == 10:
         calendarFile = open('shortSchedule.txt' ,'r')
+    elif numTurns == 8:
+        calendarFile = open('8weekSchedule.txt' ,'r')
     for line in calendarFile:
         line = line.split(',')
         calendarOfContests.append((line[0],int(line[1])))
@@ -214,12 +222,14 @@ def setUpStates():
         currentState = states[currentStateName]
         currentState.addDistrict(newDistrict)
 
-def setUpPlayers(numP, setUpWindow, mode):
+def setUpPlayers(numP, setUpWindow, mode, numTurns):
     setUpWindow.destroy()
     global numPlayers
     global players
     global states
     global issuesMode
+
+    setCalendar(numTurns)
 
     if mode == 2:
         issuesMode = True
@@ -315,26 +325,54 @@ def showStartOfTurnReport():
     global players
 
     if currentDate > 1 and players[player].isHuman == 'human':
-        report = Tk()
-        reportWindow = PanedWindow(report, orient = VERTICAL)
+        reportWindow = Tk()
+        #reportWindow = PanedWindow(report, orient = VERTICAL)
 
         #at the top, the week that it is
         title = Label(reportWindow, text = 'Start of turn report for week ' + str(currentDate), anchor = N)
-        reportWindow.add(title)
+        #reportWindow.add(title)
 
         #next, income from both direct fundrasing and small donations
         fundraisingIncome = players[player].history[currentDate - 1]['fundraisingIncome']
         localIncome = players[player].history[currentDate - 1]['localIncome']
-        income = Label(reportWindow, text = 'Total income: ' +str(fundraisingIncome + localIncome), anchor = N)
-        incomeParts = Label(reportWindow, text = 'Fundraising Income: ' + str(fundraisingIncome) + ', Local Fundraising Income: ' + str(localIncome))
-        reportWindow.add(income)
-        reportWindow.add(incomeParts)
+        income = Label(reportWindow, text = 'Total income: ' +str(fundraisingIncome + localIncome), anchor = N).grid(row=0, columnspan = 4)
+        incomeParts = Label(reportWindow, text = 'Fundraising Income: ' + str(fundraisingIncome) + ', Local Fundraising Income: ' + str(localIncome)).grid(row=1, columnspan = 4)
+        #reportWindow.add(income)
+        #reportWindow.add(incomeParts)
 
-        reportWindow.pack()
-        center(report)
-        report.mainloop()
+        #report the results for the previous week
+        resultsLabel = Label(reportWindow, text = 'Results: ').grid(row=2, columnspan = 4)
+        labelrow = 3
+        playerLabel = Label(reportWindow, text = 'Player').grid(row=labelrow, column =0)
+        delegateLabel = Label(reportWindow, text = 'Delegates Won').grid(row = labelrow, column=1)
+        statesLabel = Label(reportWindow, text = 'States Won').grid(row = labelrow, column = 2)
+        districtsLabel = Label(reportWindow, text = 'Districts Won').grid(row=labelrow, column = 3)
+        labelrow += 1
+        for person in weekResults:
+            Label(reportWindow, text = players[person].publicName).grid(row=labelrow, column = 0)
+            j = 1
+            for resultType in weekResults[person].keys():
+                if type(weekResults[person][resultType]) == int or type(weekResults[person][resultType]) == float:
+                    resultsList = [str(weekResults[person][resultType])]
+                else:
+                    resultsList = weekResults[person][resultType]
+                Label(reportWindow, text=' '.join(resultsList)).grid(row=labelrow, column = j, rowspan = 2)
+                j += 1
+            labelrow += 2
+
+        doneButton = Button(reportWindow, text = 'Done', command = lambda : startTurn(reportWindow)).grid(row = labelrow+1, columnspan = 4)
+
+
+        #reportWindow.pack()
+        center(reportWindow)
+        reportWindow.mainloop()
+        return
     else:
         return
+
+def startTurn(window):
+    window.destroy()
+    return
 
 def paintNationalMap(natMapImage):         #his function will repaint the national map to show who is leading in each state
     global states
@@ -815,6 +853,7 @@ def endTurn(window, fundraising):
                     district.setAdsThisTurn(person - 1, 0)
     if currentDate <= numTurns:
         #showStartOfTurnReport()
+        autoSave()
         top = Tk()
         global exit_status
         top.title("")
@@ -824,10 +863,10 @@ def endTurn(window, fundraising):
         saveQuit.pack()
         nextPlayer = Button(top, text = 'Continue to next player', command = lambda:next_player_button(top))
         nextPlayer.pack()
+        center(top)
         top.mainloop()
-        autoSave()
         print(exit_status)
-        if exit:
+        if exit_status:
             exit()
         exit_status = False
     else:
@@ -931,28 +970,20 @@ def decideContests():
     global numPlayers
     global players
     global pastElections
+    global weekResults
 
-    resultsWindow = Tk()
-    scrollBar = Scrollbar(resultsWindow)
-    scrollBar.pack(side = RIGHT, fill = Y)
-    xScroll = Scrollbar(resultsWindow,orient = HORIZONTAL)
-    xScroll.pack(side = BOTTOM, fill = X)
-    #text = Text(resultsWindow, wrap=NONE, xscrollcommand=xScroll.set, yscrollcommand=scrollBar.set)
-    #text.pack()
-    resultsBox = Listbox(resultsWindow, yscrollcommand = scrollBar.set, xscrollcommand = xScroll.set)
-    j = 0
-    k = 2
-    k2 = 0
     momentums = []
     weekDelegates = {}
+    weekResults = {}
     for i in range(numPlayers):
         momentums.append(0)
         weekDelegates[i+1] = 0
+        weekResults[i+1] = {'delegates':0, 'states':[],'districts':[]}
     totalMomemtum = 50
     for state in calendarOfContests:
         if state[1] + 1 == currentDate:
             states[state[0]].calculatePollingAverage(calendarOfContests, currentDate)     #just in case it isn't up to date 
-            j += 1
+
             stateName = state[0]
             orgs = states[stateName].organizations
             stateDelegates = 0
@@ -987,58 +1018,49 @@ def decideContests():
                 if winner == 0:
                     winner = random.randint(1, numPlayers)
                     stateVotes[winner - 1] += 1
-                resultsBox.insert(END, district.name + " district in " + stateName + " is won by " + str(players[winner].publicName) + " giving " + str(districtDelegates) + " delegates")
-                k += 1
+
                 players[winner].delegateCount += districtDelegates
-                weekDelegates[winner]+=districtDelegates
+                weekDelegates[winner] += districtDelegates
+
+                weekResults[winner]['delegates'] += districtDelegates
+                weekResults[winner]['districts'].append(district.name)
+
                 totalMomemtum += districtDelegates / 4.0
                 momentums[winner - 1] += districtDelegates
 
             stateWinner = stateVotes.index(max(stateVotes)) + 1
             stateMostVotes = max(stateVotes)
+
             players[stateWinner].delegateCount += stateDelegates
             weekDelegates[stateWinner] += stateDelegates
+
+            weekResults[winner]['delegates'] += stateDelegates
+            weekResults[winner]['states'].append(stateName)
+
             totalMomemtum += stateDelegates / 2.0
             momentums[winner - 1] += stateDelegates
 
             pastElections[stateName] = stateWinner
             print(stateName, stateWinner, stateDelegates)
 
-            if k2 != 0:
-                resultsBox.insert(k2, '')
-                k2+=1
-            resultsBox.insert(k2,stateName + " overall is won by " + str(players[winner].publicName) + " giving " + str(stateDelegates) + " delegates")
+
             votesCounts = ''
             stateVotesTotal = sum(stateVotes)
             for i in range(numPlayers):
                 playerStateVotes = stateVotes[i]
                 votesPercentage = round(float(playerStateVotes) / float(stateVotesTotal) * 100) 
                 votesCounts += str(players[i+1].publicName) + ' wins ' + str(int(votesPercentage)) + ' precent of the vote, \n'
-            resultsBox.insert(k2+1, votesCounts)
-            k2 += k - 1
-            k = 3
+            
 
     weekResultString = ''
     for person in weekDelegates:
         weekResultString += players[person].publicName + ' with ' +str(weekDelegates[person]) + ' delegates; '
-    resultsBox.insert(0, 'overall results for week ' + str(currentDate) + ' : ' + weekResultString)
 
-    print(totalMomemtum, momentums)
 
     #divy up the base momentum to the players based on how much of the state by state they won
     for i in range(len(momentums)):
         players[i+1].momentum += momentums[i] / float(sum(momentums)+.01) * totalMomemtum
-
-    xScroll.config(command = resultsBox.xview)
-            
-    if j >= 1:
-        resultsBox.pack(side = LEFT, fill = BOTH)
-        scrollBar.config(command = resultsBox.yview)
-        resultsBox.config(width = 80)
-        center(resultsWindow)
-        resultsWindow.mainloop()
-    else:
-        resultsWindow.destroy()
+    return
 
 def calcAImove(agent):       #this will do the AI move, the agent will specify which AI to use, if I make more than one.
     global player
@@ -1157,18 +1179,18 @@ def autoSave():
     #save in the oldest of 3 autosave files
     autosaveFiles = ['autosave','autosave2','autosave3']
     filePaths = []
-    for filename in autosaveFiles:
-        filePaths.append(os.getcwd()+'/CampaignSaves/'+filename+'.save')
-    for fileName in filePaths:
-        if not os.path.isfile(fileName):
+    for fileName in autosaveFiles:
+        filePath = os.getcwd()+'/CampaignSaves/'+fileName+'.save'
+        filePaths.append(filePath)
+        if not os.path.isfile(filePath):
             saveGameSecond(fileName, Tk(), True)
             return
     
     ages = []
     for fileName in filePaths:
         ages.append(os.stat(fileName).st_mtime)
-    filename = autosaveFiles[ages.index(min(ages))]
-    saveGameSecond(filename, Tk(), True)
+    fileName = autosaveFiles[ages.index(min(ages))]
+    saveGameSecond(fileName, Tk(), True)
     return
 
 def saveGame():
@@ -1203,8 +1225,10 @@ def saveGameSecond(fileName, window, autosave):
     saveFile.append(pickle.dumps(pastElections))
     saveFile.append(pickle.dumps(player))
     saveFile.append(pickle.dumps(currentDate))
+    saveFile.append(pickle.dumps(weekResults))
     #try:
     pickle.dump(saveFile, open(os.getcwd()+ '/CampaignSaves/' + fileName + '.save', 'wb'))
+    print(fileName)
     if not autosave:
             messagebox.showinfo("Save Succesful", "Save Succesful")
     #except:
@@ -1217,7 +1241,8 @@ def loadGame(window):
     global players
     global states
     global pastElections   
-    global numPlayers 
+    global numPlayers
+    global weekResults 
 
     window.destroy()
     root = Tk()
@@ -1232,8 +1257,10 @@ def loadGame(window):
     pastElections = pickle.loads(saveFile[2])
     player = pickle.loads(saveFile[3])
     currentDate = pickle.loads(saveFile[4])
+    weekResults = pickle.loads(saveFile[5])
     numPlayers = len(players)
 
+    showStartOfTurnReport()
     createNationalMap()
 
 def exitGame():
