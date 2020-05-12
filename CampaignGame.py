@@ -35,6 +35,7 @@ playerColors = [(255,0,0), (0,0,255), (0,255,0), (128,0,128)]
 issueNames = ['Climate Change']#,'Immigration', 'Gun Control', 'Health Care', 'Tax Level', 'Regulation', 'Trade']
 eventOfTheWeek = random.randint(0,len(issueNames)-1)
 pastElections = {}          #stores the winner of each elections that's happened
+weekResults = {}
 issuesMode = False
 issueLowRange = -1
 issueHighRange = 1
@@ -222,12 +223,14 @@ def setUpStates():
         currentState = states[currentStateName]
         currentState.addDistrict(newDistrict)
 
-def setUpPlayers(numP, setUpWindow, mode, numTurns):
+def setUpPlayers(numP, setUpWindow, mode, numTurn_menu):
     setUpWindow.destroy()
     global numPlayers
     global players
     global states
     global issuesMode
+    global numTurns
+    numTurns = numTurn_menu
 
     setCalendar(numTurns)
 
@@ -1226,6 +1229,7 @@ def saveGameSecond(fileName, window, autosave):
     saveFile.append(pickle.dumps(player))
     saveFile.append(pickle.dumps(currentDate))
     saveFile.append(pickle.dumps(weekResults))
+    saveFile.append(pickle.dumps(numTurns))
     #try:
     pickle.dump(saveFile, open(os.getcwd()+ '/CampaignSaves/' + fileName + '.save', 'wb'))
     print(fileName)
@@ -1243,6 +1247,7 @@ def loadGame(window):
     global pastElections   
     global numPlayers
     global weekResults 
+    global numTurns
 
     window.destroy()
     root = Tk()
@@ -1258,6 +1263,12 @@ def loadGame(window):
     player = pickle.loads(saveFile[3])
     currentDate = pickle.loads(saveFile[4])
     weekResults = pickle.loads(saveFile[5])
+    try:
+        numTurns = pickle.loads(saveFile[6])
+    except IndexError:
+        numTurns = 8
+    
+    setCalendar(numTurns)
     numPlayers = len(players)
 
     showStartOfTurnReport()
