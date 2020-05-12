@@ -35,6 +35,7 @@ playerColors = [(255,0,0), (0,0,255), (0,255,0), (128,0,128)]
 issueNames = ['Climate Change']#,'Immigration', 'Gun Control', 'Health Care', 'Tax Level', 'Regulation', 'Trade']
 eventOfTheWeek = random.randint(0,len(issueNames)-1)
 pastElections = {}          #stores the winner of each elections that's happened
+weekResults = {}
 issuesMode = False
 issueLowRange = -1
 issueHighRange = 1

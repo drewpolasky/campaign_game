@@ -1,2 +1,4 @@
 *~
 CampaignSaves/*
+__pycache__/*
+build/*
