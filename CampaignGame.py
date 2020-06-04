@@ -937,9 +937,9 @@ def calculateStateOpinions():       #this function will calculate the opinion of
                     for date in calendarOfContests:             #in the 2 weeks before the election campaining is more effective
                         mult = 1
                         if date[0] == state and date[1] == currentDate - 1:
-                            mult = 1.12
+                            mult = 1.1
                         elif date[0] == state and date[1] == currentDate:
-                            mult = 1.25
+                            mult = 1.2
                     campaingingTime = district.campaigningThisTurn[i]
                     adBuy = district.adsThisTurn[i]
                     adsTotal = sum(district.adsThisTurn)
@@ -960,7 +960,7 @@ def calculateStateOpinions():       #this function will calculate the opinion of
                     if issueMult <= 0.25:       #shouldn't matter since only one issues is up at a time, so this shouldn't come into play, but just in case
                         issueMult = 0.25
                     mult = issueMult * mult 
-                    support = ((campaingingTime + org) + float(adBuy) / float(adsTotal + 1) * (adsTotal / 100.0) ** (1.1/2.0)) *mult
+                    support = ((campaingingTime*1.5 + org*2) + float(adBuy) / float(adsTotal + 1) * (adsTotal / 100.0) ** (1.1/2.0)) *mult
                     #support = (campaingingTime + org + float(adBuy) / float(adsTotal + 1) * (adsTotal / 100.0) ** (1.1/2.0)) *mult          #the plus 1 is to avoid dividing by 0 when there is no advertising in a state
                     support = round(support)
                     district.setSupport(i, support)
