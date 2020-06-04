@@ -124,7 +124,7 @@ def tutorialMap(window):            #my idea is to have an annotated map, first 
 def tutorialMapSecondMessage(message, mapWindow):
     message.destroy()
     message = Tk()         #this message will explain the colors on the map, and will have a button for the player to advance through the tutorial
-    messageLabel = Label(message, text = 'If you look now to the left of the screen, you will see the campaign calendar. At the top you can see what week it is right now (in this case, its week 11). Below that you can see the upcoming elections. Elections take place at the end of the turn, so Wyoming, Florida, and the other states that vote on week eleven will hold their elections after the last player ends their turn this week. Timing your campaining in states is important, you have to get your name on the ballot at least two weeks before the state votes, and, in the two weeks before the election, your campaining will be more effective, as people start to pay more attention to politics.', wraplength = 400, justify = LEFT)
+    messageLabel = Label(message, text = 'If you look now to the left of the screen, you will see the campaign calendar. At the top you can see what week it is right now (in this case, its week 11). Below that you can see the upcoming elections. Elections take place at the end of the turn, so Wyoming, Florida, and the other states that vote on week eleven will hold their elections after the last player ends their turn this week. Timing your campaining in states is important, in the two weeks before the election, your campaining will be more effective, as people start to pay more attention to politics.', wraplength = 400, justify = LEFT)
     nextStepButton = Button(message, text = "Onwards", command = lambda:tutorialMapThirdMessage(message, mapWindow))
     messageLabel.pack()
     nextStepButton.pack()
@@ -352,14 +352,14 @@ def showStartOfTurnReport():
         districtsLabel = Label(reportWindow, text = 'Districts Won').grid(row=labelrow, column = 3)
         labelrow += 1
         for person in weekResults:
-            Label(reportWindow, text = players[person].publicName).grid(row=labelrow, column = 0)
+            Label(reportWindow, text = players[person].publicName).grid(row=labelrow, column = 0, rowspan = 2)
             j = 1
             for resultType in weekResults[person].keys():
                 if type(weekResults[person][resultType]) == int or type(weekResults[person][resultType]) == float:
                     resultsList = [str(weekResults[person][resultType])]
                 else:
                     resultsList = weekResults[person][resultType]
-                Label(reportWindow, text=' '.join(resultsList)).grid(row=labelrow, column = j, rowspan = 2)
+                Label(reportWindow, text=' '.join(resultsList), wraplength=500).grid(row=labelrow, column = j, rowspan = 2)
                 j += 1
             labelrow += 2
 
@@ -433,6 +433,7 @@ def paintStateMap(stateMapImage, stateName):
             support = district.support
             if max(support) > 0:
                 districtLeaders[district.name] = support.index(max(support))
+            print(district.name, support.index(max(support)), support)
     except KeyError:
         pass
     for line in pixelList:
@@ -881,6 +882,7 @@ def endTurn(window, fundraising):
                 mostDelegates = players[person].delegateCount
         player = 1
 
+        showStartOfTurnReport()
         createNationalMap()            #show the map one last time to see the final results. 
         messagebox.showinfo("Winner", "The Winner is: " + str(players[winner].publicName))
         exit()
@@ -907,7 +909,7 @@ def calcEndTurn(fundraising):      #this will calculate the new resources availa
         #calculate % of population donating
         for district in states[state].districts:
             #expected range for number donating 0-.45 given support from 0-150
-            numberDonating = 1 - (1.5 + states[state].organizations[player-1] / 100.0) ** (district.support[player - 1] / -50.0)
+            numberDonating = 1 - (1.5 + states[state].organizations[player-1] / 10.0) ** (district.support[player - 1] / -50.0)
             localFundraising += numberDonating * district.population * 500 * (2 - math.exp(players[player].momentum / -50.0))
 
     localFundraising = round(localFundraising)

@@ -14,7 +14,8 @@ Issues:
 58. add start turn button to start of turn report
 59. add random events (i.e. debate gaffes)
 60. add district postions on issues that match reality
-
+61. slack api for turn notifications?
+62. schrounous turns
 
 
 notes
@@ -31,8 +32,8 @@ added tooltip to rightbar district info on state map
 issues should now be working
 
 ideas from playthrough:
-buff orgs
-alter local fundrasing to not gove as much late
+buff org
+alter local fundrasing to not give as much late
 shorten calendar, maybe to 8 weeks
 
 11/27/18

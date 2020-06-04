@@ -1,8 +1,8 @@
-Alaska, 1st 
+Alaska, At-Large 
 Arizona, Phoenix 
 Arizona, Southern Arizona 
 Arizona, Northern Arizona 
-Arkansas, 1st 
+Arkansas, At-Large 
 California, San Diego 
 California, Orange County and the Inland Empire 
 California, Los Angeles 
@@ -23,17 +23,17 @@ Florida2, Southwest Florida
 Georgia, Atlanta 
 Georgia, Northern Georgia 
 Georgia, Southern Georgia 
-Hawaii, 1st 
-Idaho, 1st 
+Hawaii, At-Large 
+Idaho, At-Large 
 Illinois, Chicago 
 Illinois, Chicago Suburbs 
 Illinois, Southern Illinois 
 Illinois, Northern Illinois 
-Iowa, 1st 
-Kansas, 1st 
+Iowa, At-Large 
+Kansas, At-Large 
 Kentucky, Louisville and Lexington 
 Kentucky, Southern Kentucky 
-Delaware, 1st 
+Delaware, At-Large 
 Louisiana, North and Western Louisiana 
 Louisiana, New Orleans 
 Maryland, Balitmore 
@@ -49,18 +49,18 @@ Michigan, Northern Michigan
 Minnesota, Twin Cities 
 Minnesota, Southern Minnesota 
 Minnesota, Northern Minnesota 
-Mississippi, 1st 
+Mississippi, At-Large 
 Missouri, Kansas City and Northern Missouri 
 Missouri, Southern Missouri 
 Missouri, St. Louis 
-montana, 1st 
-Nebraska, 1st 
-Nevada, 1st 
-New Hampshire, 1st 
+montana, At-Large 
+Nebraska, At-Large 
+Nevada, At-Large 
+New Hampshire, At-Large 
 New Jersey, Newark 
 New Jersey, Cental New Jersey 
 New Jersey, Southern New Jersey 
-New Mexico, 1st 
+New Mexico, At-Large 
 New York, New York 
 New York, Long Island 
 New York, Hudson Valley 
@@ -70,7 +70,7 @@ North Carolina, Western North Carolina
 North Carolina, Raleigh-Durham 
 North Carolina, Charlotte 
 North Carolina, The Coast 
-North Dakota, 1st 
+North Dakota, At-Large 
 Ohio, Toledo and the Northwest 
 Ohio, Cleveland and the Northeast 
 Ohio, Columbus and the Southeast 
@@ -79,23 +79,23 @@ Pennsylvania, Central Pennsylvania
 Pennsylvania, Philadelphia 
 Pennsylvania, Pittsburg 
 Pennsylvania, Northeast Pennsylvania 
-Rhode Island, 1st 
+Rhode Island, At-Large 
 South Carolina, Inland South Carolina 
 South Carolina, Coastal South Carolina 
-South Dakota, 1st 
+South Dakota, At-Large 
 Texas, West Texas 
 Texas, South Texas 
 Texas, East Texas 
 Texas, Houston 
 Texas, Dallas-Fort Worth 
 Texas, San Antonio and Austin 
-Utah, 1st 
-Vermont, 1st 
+Utah, At-Large 
+Vermont, At-Large 
 Virginia, DC Suburbs 
 Virginia, Virginia Coast 
 Virginia, Western Virginia 
-West Virginia, 1st 
+West Virginia, At-Large 
 Wisconsin, Milwaukee 
 Wisconsin, Northern Wisconsin 
 Wisconsin, Central Wisconsin 
-Wyoming, 1st 
+Wyoming, At-Large 
