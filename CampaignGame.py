@@ -43,9 +43,6 @@ randomPositions = True
 exit_status = False
 
 def main():
-    global players
-    global player
-
     setUpStates()
     mainMenu()
     while True:
@@ -57,14 +54,13 @@ def main():
 
 def mainMenu():         #this will be the intial menu of the game, with options to start a new game, load a game, or run the tutorial
     mainMenuWindow = Tk()
-
     startGameButton = Button(mainMenuWindow, text = 'Start a New Game', command = lambda:setUpGame(mainMenuWindow))
     loadGameButton = Button(mainMenuWindow, text = 'Load Game', command = lambda:loadGame(mainMenuWindow))
-    tutorialButton = Button(mainMenuWindow, text = 'Launch the Tutorial', command = lambda:tutorial(mainMenuWindow))
+    #tutorialButton = Button(mainMenuWindow, text = 'Launch the Tutorial', command = lambda:tutorial(mainMenuWindow))
 
     startGameButton.pack()
     loadGameButton.pack()
-    tutorialButton.pack()
+    #tutorialButton.pack()
 
     w = 400
     h = 300
@@ -207,7 +203,6 @@ def setCalendar(numTurns):
 
 def setUpStates(): 
     statesList = open('statesPositions.txt', 'r')
-    global states
     for line in statesList:
         l = line.split(',')
         if l[0] != "State Name":
@@ -226,8 +221,6 @@ def setUpStates():
 def setUpPlayers(numP, setUpWindow, mode, numTurn_menu):
     setUpWindow.destroy()
     global numPlayers
-    global players
-    global states
     global issuesMode
     global numTurns
     numTurns = numTurn_menu
@@ -894,11 +887,6 @@ def next_player_button(top):
     return
 
 def calcEndTurn(fundraising):      #this will calculate the new resources available to the player
-    global player
-    global playerResources
-    global states
-    global currentDate
-
     resources = players[player].resources
 
     #time
@@ -918,11 +906,6 @@ def calcEndTurn(fundraising):      #this will calculate the new resources availa
     players[player].endTurn(currentDate, fundraising * 4000 + 20000, localFundraising)
 
 def calculateStateOpinions():       #this function will calculate the opinion of each player in each state
-    global currentDate
-    global states
-    global players
-    global calendarOfContests
-    
     if currentDate == 0:       
         if players[1].isHuman == 'human':
             createNationalMap()
@@ -960,8 +943,10 @@ def calculateStateOpinions():       #this function will calculate the opinion of
                     if issueMult <= 0.25:       #shouldn't matter since only one issues is up at a time, so this shouldn't come into play, but just in case
                         issueMult = 0.25
                     mult = issueMult * mult 
-                    support = ((campaingingTime*1.5 + org*2) + float(adBuy) / float(adsTotal + 1) * (adsTotal / 100.0) ** (1.1/2.0)) *mult
-                    #support = (campaingingTime + org + float(adBuy) / float(adsTotal + 1) * (adsTotal / 100.0) ** (1.1/2.0)) *mult          #the plus 1 is to avoid dividing by 0 when there is no advertising in a state
+                    support = campaingingTime*1.5 + org*2
+                    support += float(adBuy) / float(adsTotal + 1) * (adsTotal / 100.0) ** (1.1/2.0)     #adbuy/add total - percentage of adds support player gets, second part is the amount of support created by the adds
+                    support = support*mult
+                    #the plus 1 is to avoid dividing by 0 when there is no advertising in a state
                     support = round(support)
                     district.setSupport(i, support)
                 states[state].updateSupport(numPlayers, calendarOfContests, currentDate)
@@ -969,14 +954,8 @@ def calculateStateOpinions():       #this function will calculate the opinion of
         #print(states["Iowa"].support)
 
 def decideContests():
-    global currentDate
-    global calendarOfContests
-    global states
-    global numPlayers
-    global players
     global pastElections
     global weekResults
-
     momentums = []
     weekDelegates = {}
     weekResults = {}
