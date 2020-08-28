@@ -32,14 +32,15 @@ players = {}            #dictionaries of class instances of players and states
 states = {}
 calendarOfContests = [('Iowa' , 4),('New Hampshire' , 5) ,('Nevada',7), ('South Carolina',8),('Minnesota',9),('Alabama' , 9), ('Arkansas', 9), ('Colorado', 9), ('Georgia', 9), ('Massachusetts', 9), ('North Dakota', 9), ('Oklahoma', 9), ('Tennessee', 9), ('Texas', 9), ('Vermont', 9), ('Virginia', 9), ('Kansas', 10), ('Kentucky', 10), ('Louisiana', 10), ('Maine', 10), ('Nebraska', 10), ('Hawaii', 10), ('Michigan', 10), ('Mississippi', 10), ('Wyoming', 11), ('Florida', 11), ('Illinois' , 11), ('Missouri', 11), ('North Carolina', 11), ('Ohio', 11), ('Arizona', 12), ('Idaho', 12), ('Utah', 12),('Alaska', 13), ('Washington', 13), ('Wisconsin', 14), ('New Jersey', 15), ('New York', 15), ('Connecticut', 15), ('Delaware', 15), ('Maryland', 15), ('Pennsylvania', 15), ('Rhode Island', 15), ('Indiana', 16), ('West Virginia', 16), ('Oregon', 17), ('California', 19), ('Montana', 19), ('New Mexico', 19), ('South Dakota', 19)]#, ('DC', 20)]
 playerColors = [(255,0,0), (0,0,255), (0,255,0), (128,0,128)]
-issueNames = ['Climate Change']#,'Immigration', 'Gun Control', 'Health Care', 'Tax Level', 'Regulation', 'Trade']
+issueNames = ['Climate Change', 'Abortion','Taxes-Government Spending']#,'Immigration', 'Gun Control', 'Health Care', 'Tax Level', 'Regulation', 'Trade']
 eventOfTheWeek = random.randint(0,len(issueNames)-1)
 pastElections = {}          #stores the winner of each elections that's happened
 weekResults = {}
 issuesMode = False
 issueLowRange = -1
 issueHighRange = 1
-randomPositions = True
+randomPositions = False
+issues_filename = 'issues.csv'
 exit_status = False
 
 def main():
@@ -302,15 +303,29 @@ def setPositions(issues, name, isHuman, setUpPlayerWindow, mode):
         setUpPlayer(mode)
     else:
         player = 1
-        for state in states:
-            for district in states[state].districts:
-                if issuesMode: #set the district level positions on the issues, if issues mode is on, otherwise all netural
-                    if randomPositions:
+        if issuesMode: #set the district level positions on the issues, if issues mode is on, otherwise all netural
+            if randomPositions:
+                for state in states:
+                    for district in states[state].districts:
                         district.setPositions([random.randint(issueLowRange, issueHighRange) for i in range(len(issueNames))])
-                    else:
-                        print('not yet implemented')
-                        exit()
-                else:
+            else:
+                issuesFile = open(issues_filename, 'r')
+                header = issuesFile.readline()
+                header = [x.strip() for x in header.split(',')]
+                positionLocations = [header.index(issue) for issue in issueNames]
+                for line in issuesFile.readlines():
+                    try:
+                        line = [x.strip() for x in line.split(',')]
+                        state = states[line[0]]
+                        for district in state.districts:
+                            if district.name == line[1]:
+                                positions = [float(line[i]) for i in positionLocations]
+                                district.setPositions(positions)
+                    except KeyError:
+                        pass
+        else:
+            for state in states:
+                 for district in states[state].districts:
                     district.setPositions([0 for i in range(len(issueNames))])
 
         calculateStateOpinions()
