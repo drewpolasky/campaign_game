@@ -23,6 +23,41 @@ from tooltip import CreateToolTip
 
 sys.setrecursionlimit(5000)
 
+# Helper function for cross-platform mouse wheel support
+def _bound_to_mousewheel(event, canvas):
+    canvas.bind_all("<MouseWheel>", lambda e: _on_mousewheel(e, canvas))
+    canvas.bind_all("<Button-4>", lambda e: _on_mousewheel(e, canvas))
+    canvas.bind_all("<Button-5>", lambda e: _on_mousewheel(e, canvas))
+
+def _unbound_to_mousewheel(event, canvas):
+    canvas.unbind_all("<MouseWheel>")
+    canvas.unbind_all("<Button-4>")
+    canvas.unbind_all("<Button-5>")
+
+def _on_mousewheel(event, canvas):
+    # Handle both Windows (event.delta) and Mac/Linux (event.num)
+    if hasattr(event, 'delta') and event.delta:
+        canvas.yview_scroll(int(-1*(event.delta/120)), "units")
+    elif hasattr(event, 'num'):
+        if event.num == 4:
+            canvas.yview_scroll(-1, "units")
+        elif event.num == 5:
+            canvas.yview_scroll(1, "units")
+
+def _get_district_leader_color(district):
+    """Return a muted background color based on who is leading in a district."""
+    global playerColors
+    if not district.pollingAverage or all(p == 0 for p in district.pollingAverage):
+        return '#e8e8e8'  # neutral gray if no polling
+    leader = district.pollingAverage.index(max(district.pollingAverage))
+    # Create a very muted/pastel version of the player's color
+    r, g, b = playerColors[leader]
+    # Blend heavily toward white (80% white, 20% color)
+    mr = int(r * 0.20 + 255 * 0.80)
+    mg = int(g * 0.20 + 255 * 0.80)
+    mb = int(b * 0.20 + 255 * 0.80)
+    return '#%02x%02x%02x' % (mr, mg, mb)
+
 #global variables for tracking players and turns
 player = 1                  #keeps track of whose turn it is. indexed at 1
 numTurns = 8
@@ -193,6 +228,10 @@ def setUpGame(window):        #this will set up the basic parameters of the game
 def setCalendar(numTurns):
     global calendarOfContests
     print(numTurns)
+    if numTurns == 20:
+        # Use the default full calendar already defined globally
+        calendarOfContests = [('Iowa' , 4),('New Hampshire' , 5) ,('Nevada',7), ('South Carolina',8),('Minnesota',9),('Alabama' , 9), ('Arkansas', 9), ('Colorado', 9), ('Georgia', 9), ('Massachusetts', 9), ('North Dakota', 9), ('Oklahoma', 9), ('Tennessee', 9), ('Texas', 9), ('Vermont', 9), ('Virginia', 9), ('Kansas', 10), ('Kentucky', 10), ('Louisiana', 10), ('Maine', 10), ('Nebraska', 10), ('Hawaii', 10), ('Michigan', 10), ('Mississippi', 10), ('Wyoming', 11), ('Florida', 11), ('Illinois' , 11), ('Missouri', 11), ('North Carolina', 11), ('Ohio', 11), ('Arizona', 12), ('Idaho', 12), ('Utah', 12),('Alaska', 13), ('Washington', 13), ('Wisconsin', 14), ('New Jersey', 15), ('New York', 15), ('Connecticut', 15), ('Delaware', 15), ('Maryland', 15), ('Pennsylvania', 15), ('Rhode Island', 15), ('Indiana', 16), ('West Virginia', 16), ('Oregon', 17), ('California', 19), ('Montana', 19), ('New Mexico', 19), ('South Dakota', 19)]
+        return
     calendarOfContests = []
     if numTurns == 10:
         calendarFile = open('shortSchedule.txt' ,'r')
@@ -385,6 +424,14 @@ def startTurn(window):
     window.destroy()
     return
 
+def _muted_map_color(color, saturation=0.75):
+    """Blend a player color toward white to produce a muted map color.
+    saturation=1.0 is full color, 0.0 is pure white."""
+    r = int(color[0] * saturation + 255 * (1 - saturation))
+    g = int(color[1] * saturation + 255 * (1 - saturation))
+    b = int(color[2] * saturation + 255 * (1 - saturation))
+    return (r, g, b)
+
 def paintNationalMap(natMapImage):         #his function will repaint the national map to show who is leading in each state
     global states
     global playerColors
@@ -414,8 +461,11 @@ def paintNationalMap(natMapImage):         #his function will repaint the nation
         state = l[2].strip()
         try:
             leader = stateLeaders[state][0]
-            color = playerColors[leader] 
-            newColor = (int(color[0] * stateLeaders[state][1]), int(color[1] * stateLeaders[state][1]), int(color[2] * stateLeaders[state][1]))
+            color = playerColors[leader]
+            factor = stateLeaders[state][1]  # 0.8 for past elections, 1.0 for leading
+            # Past elections: more saturated (0.70); leading future states: lighter (0.50)
+            saturation = 0.70 if factor < 1.0 else 0.50
+            newColor = _muted_map_color(color, saturation)
             pixels[(x,y)] = newColor
         except KeyError:
             pass
@@ -454,7 +504,7 @@ def paintStateMap(stateMapImage, stateName):
             try:
                 leader = districtLeaders[districtName]
                 color = playerColors[leader]
-                pixels[(x,y)] = color
+                pixels[(x,y)] = _muted_map_color(color, 0.50)
             except:
                 pass
     return stateMapImage
@@ -481,76 +531,118 @@ def createNationalMap():    #creates the main national map screen. This will be 
     menuBar.add_cascade(label = 'Main Menu' , menu = mainMenu)
     window.config(menu = menuBar)
 
-    calendarPane = PanedWindow(mapWindow, orient = VERTICAL)
-    mapWindow.add(calendarPane)
-    calendarTitle = Label(calendarPane, text = "Calendar of Primaries:", anchor = N)
-    current = Label(calendarPane, text = 'Week of the campaign number ' + str(currentDate), anchor = N)
+    # Create scrollable calendar panel
+    calendarFrame = Frame(mapWindow, width=250)
+    calendarCanvas = Canvas(calendarFrame, width=250, highlightthickness=0)
+    calendarScrollbar = Scrollbar(calendarFrame, orient="vertical", command=calendarCanvas.yview)
+    calendarScrollableFrame = Frame(calendarCanvas)
     
-    calendarPane.add(calendarTitle)
-    calendarPane.add(current)
+    calendarScrollableFrame.bind(
+        "<Configure>",
+        lambda e: calendarCanvas.configure(scrollregion=calendarCanvas.bbox("all"))
+    )
+    
+    calendarCanvas.create_window((0, 0), window=calendarScrollableFrame, anchor="nw")
+    calendarCanvas.configure(yscrollcommand=calendarScrollbar.set)
+    
+    calendarCanvas.pack(side="left", fill="both", expand=True)
+    calendarScrollbar.pack(side="right", fill="y")
+    
+    mapWindow.add(calendarFrame)
+    
+    calendarTitle = Label(calendarScrollableFrame, text = "Calendar of Primaries:", anchor = N)
+    current = Label(calendarScrollableFrame, text = 'Week of the campaign number ' + str(currentDate), anchor = N)
+    
+    calendarTitle.pack(anchor="n", fill="x")
+    current.pack(anchor="n", fill="x")
+    
+    # Add mouse wheel support for calendar panel
+    calendarCanvas.bind("<Enter>", lambda e: _bound_to_mousewheel(e, calendarCanvas))
+    calendarCanvas.bind("<Leave>", lambda e: _unbound_to_mousewheel(e, calendarCanvas))
 
     k = 0
     j=0
-    while k <= 22 and j < len(calendarOfContests):     #display the next 22 contests to fill the left bar
+    while j < len(calendarOfContests):     #display all contests in the scrollable left bar
         nextContest = calendarOfContests[j]
         name = nextContest[0]
         date = nextContest[1]
-        if date >= currentDate:
-            nextContestLabel = Label(calendarPane, text = name + " on week " + str(date))
-            calendarPane.add(nextContestLabel)
-            k += 1
-            j+=1
+        if date < currentDate:
+            # Past contests shown grayed out
+            nextContestLabel = Label(calendarScrollableFrame, text = name + " - week " + str(date), fg='#999999')
         else:
-            j+=1
-    placeHolderLabel4 = Label(calendarPane, anchor = N)
-    calendarPane.add(placeHolderLabel4)
+            nextContestLabel = Label(calendarScrollableFrame, text = name + " - week " + str(date))
+        nextContestLabel.pack(anchor="n", fill="x")
+        j+=1
+    placeHolderLabel4 = Label(calendarScrollableFrame, anchor = N)
+    placeHolderLabel4.pack(anchor="n", fill="x")
 
     natMap = Label(mapWindow, image = natMapImg)
     mapWindow.add(natMap)   
 
-    resourcePane = PanedWindow(mapWindow, orient = VERTICAL)
-    mapWindow.add(resourcePane)
+    # Create scrollable resource panel
+    resourceFrame = Frame(mapWindow, width=300)
+    resourceCanvas = Canvas(resourceFrame, width=300, highlightthickness=0)
+    resourceScrollbar = Scrollbar(resourceFrame, orient="vertical", command=resourceCanvas.yview)
+    resourceScrollableFrame = Frame(resourceCanvas)
+    
+    resourceScrollableFrame.bind(
+        "<Configure>",
+        lambda e: resourceCanvas.configure(scrollregion=resourceCanvas.bbox("all"))
+    )
+    
+    resourceCanvas.create_window((0, 0), window=resourceScrollableFrame, anchor="nw")
+    resourceCanvas.configure(yscrollcommand=resourceScrollbar.set)
+    
+    resourceCanvas.pack(side="left", fill="both", expand=True)
+    resourceScrollbar.pack(side="right", fill="y")
+    
+    mapWindow.add(resourceFrame)
+    
+    # Add mouse wheel support for resource panel
+    resourceCanvas.bind("<Enter>", lambda e: _bound_to_mousewheel(e, resourceCanvas))
+    resourceCanvas.bind("<Leave>", lambda e: _unbound_to_mousewheel(e, resourceCanvas))
 
     resources = players[player].resources
     moneyVar = StringVar()
     moneyVar.set('available money: %s' %(resources[1]))
-    timeLabel = Label(resourcePane, text = "available candidate time: " + str(resources[0]), anchor = N)
-    moneyLabel = Label(resourcePane, textvariable = moneyVar, anchor = N)
+    timeLabel = Label(resourceScrollableFrame, text = "available candidate time: " + str(resources[0]), anchor = N)
+    moneyLabel = Label(resourceScrollableFrame, textvariable = moneyVar, anchor = N)
+    
+    timeLabel.pack(anchor="n", fill="x")
+    moneyLabel.pack(anchor="n", fill="x")
 
     global playerColors
     for person in players:
-        color = playerColors[person - 1]
+        color = _muted_map_color(playerColors[person - 1], 0.70)
         color = '#%02x%02x%02x' % color
-        delegateLabel = Label(resourcePane, text = str(players[person].publicName) + ' has ' + str(players[person].delegateCount) + ' delegates', bg = color)
-        resourcePane.add(delegateLabel)
+        delegateLabel = Label(resourceScrollableFrame, text = str(players[person].publicName) + ' has ' + str(players[person].delegateCount) + ' delegates', bg = color)
+        delegateLabel.pack(anchor="n", fill="x")
         issueStrings = []
         for issue in range(len(issueNames)):
             issueStrings.append(issueNames[issue] + ' ' + str(players[person].positions[issue]))
         player_ttp = CreateToolTip(delegateLabel, ('\n').join(issueStrings))
 
-    momentumLabel = Label(resourcePane, text = 'Your Current Momentum is: ' + str(round(players[player].momentum, 0)))
-    resourcePane.add(momentumLabel)
+    momentumLabel = Label(resourceScrollableFrame, text = 'Your Current Momentum is: ' + str(round(players[player].momentum, 0)))
+    momentumLabel.pack(anchor="n", fill="x")
 
-    placeHolderLabel3 = Label(resourcePane, anchor = S)
-    resourcePane.add(placeHolderLabel3)
+    placeHolderLabel3 = Label(resourceScrollableFrame, anchor = S)
+    placeHolderLabel3.pack(anchor="n", fill="x")
 
-    placeHolderLabel = Label(resourcePane, anchor = S)  
-    placeHolderLabel2 = Label(resourcePane, anchor = S)
-    endTurnButton = Button(resourcePane, text = 'End Turn', command = lambda : endTurn(window, fundraisingScale.get()), anchor = S)
+    eventOfTheWeekLabel = Label(resourceScrollableFrame, text = 'At the top of the news \n cycle this week: %s' %(issueNames[eventOfTheWeek]))
+    eventOfTheWeekLabel.pack(anchor="n", fill="x")
 
-    fundraisingLabel = Label(resourcePane, text = 'How much time do you want \n to spend fundraising this week?')
-    fundraisingScale = Scale(resourcePane, orient = HORIZONTAL, from_ = 0, to = resources[0], variable = fundraising)
+    placeHolderLabel = Label(resourceScrollableFrame, anchor = S)  
+    placeHolderLabel.pack(anchor="n", fill="x")
+    placeHolderLabel2 = Label(resourceScrollableFrame, anchor = S)
+    placeHolderLabel2.pack(anchor="n", fill="x")
 
-    eventOfTheWeekLabel = Label(resourcePane, text = 'At the top of the news \n cycle this week: %s' %(issueNames[eventOfTheWeek]))
-
-    resourcePane.add(timeLabel)
-    resourcePane.add(moneyLabel)
-    resourcePane.add(placeHolderLabel)
-    resourcePane.add(eventOfTheWeekLabel)
-    resourcePane.add(placeHolderLabel2)
-    resourcePane.add(fundraisingLabel)
-    resourcePane.add(fundraisingScale)
-    resourcePane.add(endTurnButton)
+    fundraisingLabel = Label(resourceScrollableFrame, text = 'How much time do you want \n to spend fundraising this week?')
+    fundraisingLabel.pack(anchor="n", fill="x")
+    fundraisingScale = Scale(resourceScrollableFrame, orient = HORIZONTAL, from_ = 0, to = resources[0], variable = fundraising)
+    fundraisingScale.pack(anchor="n", fill="x")
+    
+    endTurnButton = Button(resourceScrollableFrame, text = 'End Turn', command = lambda : endTurn(window, fundraisingScale.get()), anchor = S)
+    endTurnButton.pack(anchor="n", fill="x")
 
     natMap.image = natMapImage
     mapWindow.pack()
@@ -619,16 +711,40 @@ def zoomToState(event):  #this will bring up the state window, seperate from the
                 stateWindow = Toplevel()
                 path = os.getcwd()
                 statePane = PanedWindow(stateWindow, orient = HORIZONTAL)
-                leftPane = PanedWindow(statePane, orient = VERTICAL)
+                
+                # Create scrollable left panel
+                leftPanelWidth = 400
+                leftFrame = Frame(statePane, width=leftPanelWidth)
+                leftCanvas = Canvas(leftFrame, width=leftPanelWidth, highlightthickness=0)
+                leftScrollbar = Scrollbar(leftFrame, orient="vertical", command=leftCanvas.yview)
+                leftScrollableFrame = Frame(leftCanvas, width=leftPanelWidth)
+                
+                leftScrollableFrame.bind(
+                    "<Configure>",
+                    lambda e: leftCanvas.configure(scrollregion=leftCanvas.bbox("all"))
+                )
+                
+                leftCanvas.create_window((0, 0), window=leftScrollableFrame, anchor="nw")
+                leftCanvas.configure(yscrollcommand=leftScrollbar.set)
+                
+                leftCanvas.pack(side="left", fill="both", expand=True)
+                leftScrollbar.pack(side="right", fill="y")
+                
+                statePane.add(leftFrame)
+                
+                # Add mouse wheel support for left panel
+                leftCanvas.bind("<Enter>", lambda e: _bound_to_mousewheel(e, leftCanvas))
+                leftCanvas.bind("<Leave>", lambda e: _unbound_to_mousewheel(e, leftCanvas))
+                
                 stateWindow.wm_title(stateName)
                 stats = states[stateName].positions
                 #opinion = states[stateName].opinions[player - 1]
-                #opinionLabel = Label(leftPane, text = "Opinion of you: " + str(opinion))
-                #leftPane.add(opinionLabel)
+                #opinionLabel = Label(leftScrollableFrame, text = "Opinion of you: " + str(opinion))
+                #opinionLabel.pack(anchor="n", fill="x")
 
                 for person in range(numPlayers):
-                    supportLabel = Label(leftPane, text = 'Current Polling for ' + players[person+1].publicName + ': ' + str(states[stateName].pollingAverage[person]))
-                    leftPane.add(supportLabel)
+                    supportLabel = Label(leftScrollableFrame, text = 'Current Polling for ' + players[person+1].publicName + ': ' + str(states[stateName].pollingAverage[person]), wraplength=leftPanelWidth-20, justify=LEFT)
+                    supportLabel.pack(anchor="n", fill="x")
 
                 districts = open('districts.txt' , 'r')
                 delegates = 0
@@ -636,30 +752,33 @@ def zoomToState(event):  #this will bring up the state window, seperate from the
                     l = line.split(',')
                     if l[0].strip() == stateName:
                         delegates += int(l[2].strip()) * 3
-                delegatesLabel = Label(leftPane, text = 'This State has ' + str(delegates) + " delegates")
-                leftPane.add(delegatesLabel)
+                delegatesLabel = Label(leftScrollableFrame, text = 'This State has ' + str(delegates) + " delegates")
+                delegatesLabel.pack(anchor="n", fill="x")
 
-                for district in states[stateName].districts:
-                    districtDelegatesLabel = Label(leftPane, text = district.name + " District has " + str(int(district.population)) + " delegates")
+                for di, district in enumerate(states[stateName].districts):
+                    dBg = _get_district_leader_color(district)
+                    # Separator line between districts
+                    sep = Frame(leftScrollableFrame, height=2, bd=1, relief=SUNKEN)
+                    sep.pack(fill="x", padx=5, pady=4)
+                    districtDelegatesLabel = Label(leftScrollableFrame, text = district.name + " District - " + str(int(district.population)) + " delegates", bg=dBg, font=('TkDefaultFont', 9, 'bold'), wraplength=leftPanelWidth-20, justify=LEFT)
 
                     issueStrings = []
                     for issue in range(len(issueNames)):
                         issueStrings.append(issueNames[issue] + ' ' + str(district.positions[issue]))
                     delegatesLabel_ttp = CreateToolTip(districtDelegatesLabel, '\n'.join(issueStrings) )
 
-                    leftPane.add(districtDelegatesLabel)
+                    districtDelegatesLabel.pack(anchor="n", fill="x")
                     for person in range(numPlayers):
-                        districtSupportLabel = Label(leftPane, text = "Current Polling for " + players[person+1].publicName + " in this district: " + str(district.pollingAverage[person]))
-                        leftPane.add(districtSupportLabel)
+                        districtSupportLabel = Label(leftScrollableFrame, text = players[person+1].publicName + ': ' + str(district.pollingAverage[person]) + '%', bg=dBg, wraplength=leftPanelWidth-20, justify=LEFT)
+                        districtSupportLabel.pack(anchor="n", fill="x")
 
-                '''eventOfTheWeekLabel = Label(leftPane, text = 'At the top of the news \n cycle this week: %s' %(issueNames[eventOfTheWeek]))
-                leftPane.add(eventOfTheWeekLabel)
+                '''eventOfTheWeekLabel = Label(leftScrollableFrame, text = 'At the top of the news \n cycle this week: %s' %(issueNames[eventOfTheWeek]))
+                eventOfTheWeekLabel.pack(anchor="n", fill="x")
                 for i in range(len(stats)):
-                    issue = Label(leftPane, text = "Position on " + issueNames[i] + ": " + str(stats[i]), anchor = N)
-                    leftPane.add(issue)'''
-                placeHolderLabel = Label(leftPane)
-                leftPane.add(placeHolderLabel)
-                statePane.add(leftPane)
+                    issue = Label(leftScrollableFrame, text = "Position on " + issueNames[i] + ": " + str(stats[i]), anchor = N)
+                    issue.pack(anchor="n", fill="x")'''
+                placeHolderLabel = Label(leftScrollableFrame)
+                placeHolderLabel.pack(anchor="n", fill="x")
                 try:
                     stateImage = Image.open(path + '\\stateDistricts\\' + stateName + '.jpeg')
                 except IOError:        #for linux/mac paths
@@ -672,32 +791,52 @@ def zoomToState(event):  #this will bring up the state window, seperate from the
 
                 currentOrg = states[stateName].organizations[player-1]
 
-                rightPane = PanedWindow(stateWindow, orient = VERTICAL)
-                moreRightPane = PanedWindow(stateWindow, orient = VERTICAL)
+                # Create scrollable right panel
+                rightFrame = Frame(stateWindow, width=350)
+                rightCanvas = Canvas(rightFrame, width=350, highlightthickness=0)
+                rightScrollbar = Scrollbar(rightFrame, orient="vertical", command=rightCanvas.yview)
+                rightScrollableFrame = Frame(rightCanvas)
+                
+                rightScrollableFrame.bind(
+                    "<Configure>",
+                    lambda e: rightCanvas.configure(scrollregion=rightCanvas.bbox("all"))
+                )
+                
+                rightCanvas.create_window((0, 0), window=rightScrollableFrame, anchor="nw")
+                rightCanvas.configure(yscrollcommand=rightScrollbar.set)
+                
+                rightCanvas.pack(side="left", fill="both", expand=True)
+                rightScrollbar.pack(side="right", fill="y")
+                
+                statePane.add(rightFrame)
+                
+                # Add mouse wheel support for right panel
+                rightCanvas.bind("<Enter>", lambda e: _bound_to_mousewheel(e, rightCanvas))
+                rightCanvas.bind("<Leave>", lambda e: _unbound_to_mousewheel(e, rightCanvas))
+                
                 if currentOrg == 0:      #if the player has not yet on the ballot in the state
-                    ballotLabel = Label(rightPane, text = 'Cost to get on the ballot ' + stateName + ': $10,000')
-                    ballotButton = Button(rightPane, text = 'Get on the Ballot', command = lambda : getOnBallot(player, stateName, 10000, stateWindow, event))
-                    rightPane.add(ballotLabel)
-                    rightPane.add(ballotButton)
+                    ballotLabel = Label(rightScrollableFrame, text = 'Cost to get on the ballot ' + stateName + ': $10,000')
+                    ballotButton = Button(rightScrollableFrame, text = 'Get on the Ballot', command = lambda : getOnBallot(player, stateName, 10000, stateWindow, event))
+                    ballotLabel.pack(anchor="n", fill="x")
+                    ballotButton.pack(anchor="n", fill="x")
 
                 if currentOrg == 1: #to establish a field office in the state
-                    establishLabel = Label(rightPane, text = 'Cost to establish a field office in ' + stateName + ': $10,000')
-                    establishButton = Button(rightPane, text = 'Build field office', command = lambda : getOnBallot(player, stateName, 10000, stateWindow, event))
-                    rightPane.add(establishLabel)
-                    rightPane.add(establishButton)
+                    establishLabel = Label(rightScrollableFrame, text = 'Cost to establish a field office in ' + stateName + ': $10,000')
+                    establishButton = Button(rightScrollableFrame, text = 'Build field office', command = lambda : getOnBallot(player, stateName, 10000, stateWindow, event))
+                    establishLabel.pack(anchor="n", fill="x")
+                    establishButton.pack(anchor="n", fill="x")
 
                 if currentOrg > 1:
-                    buildLabel = Label(rightPane, text = 'Cost to further develop your organization in ' + stateName + ':' + str(10000 * currentOrg))
-                    buildButton = Button(rightPane, text = 'Build More Organization', command = lambda : getOnBallot(player, stateName, 10000 * currentOrg, stateWindow, event))
-                    rightPane.add(buildLabel)
-                    rightPane.add(buildButton)
-
-                orgLabel = Label(rightPane, text = 'Your current organization level in this state: ' + str(currentOrg), anchor = N)
-                rightPane.add(orgLabel)
+                    buildLabel = Label(rightScrollableFrame, text = 'Cost to further develop your organization in ' + stateName + ':' + str(10000 * currentOrg))
+                    buildButton = Button(rightScrollableFrame, text = 'Build More Organization', command = lambda : getOnBallot(player, stateName, 10000 * currentOrg, stateWindow, event))
+                    buildLabel.pack(anchor="n", fill="x")
+                    buildButton.pack(anchor="n", fill="x")
+                orgLabel = Label(rightScrollableFrame, text = 'Your current organization level in this state: ' + str(currentOrg), anchor = N)
+                orgLabel.pack(anchor="n", fill="x")
 
                 districts = open("districts.txt", 'r')
-                districtTitleLabel = Label(rightPane, text = "State Districts: ")
-                rightPane.add(districtTitleLabel)
+                districtTitleLabel = Label(rightScrollableFrame, text = "State Districts: ")
+                districtTitleLabel.pack(anchor="n", fill="x")
                 addBuys = []
                 campaingingTime = []
                 allocatedTime = 0
@@ -706,52 +845,32 @@ def zoomToState(event):  #this will bring up the state window, seperate from the
                 for line in districts:
                     l = line.split(',')
                     if l[0] == stateName:
-                        if j < 4:
-                            districtLabel = Label(rightPane, text = l[1].strip())
-                            districtAllocatedTime = states[stateName].districts[j].campaigningThisTurn[player - 1]
-                            districtAllocatedMoney = states[stateName].districts[j].adsThisTurn[player - 1]
-                            addBuySlider = Scale(rightPane, label = "Add buys for this district", from_ = 0, to = resources[1] + districtAllocatedMoney, resolution = 1000, orient = HORIZONTAL)
-                            campaigningSlider = Scale(rightPane, label = "Time Campaigning in this District", from_ = 0, to = resources[0] + districtAllocatedTime, orient = HORIZONTAL)
-                            
-                            campaigningSlider.set(districtAllocatedTime)
-                            allocatedTime += districtAllocatedTime
-                            
-                            addBuySlider.set(districtAllocatedMoney)
-                            allocatedMoney += districtAllocatedMoney
+                        dBg = _get_district_leader_color(states[stateName].districts[j])
+                        # Separator line between districts
+                        sep = Frame(rightScrollableFrame, height=2, bd=1, relief=SUNKEN)
+                        sep.pack(fill="x", padx=5, pady=4)
+                        districtLabel = Label(rightScrollableFrame, text = l[1].strip(), bg=dBg, font=('TkDefaultFont', 9, 'bold'))
+                        districtAllocatedTime = states[stateName].districts[j].campaigningThisTurn[player - 1]
+                        districtAllocatedMoney = states[stateName].districts[j].adsThisTurn[player - 1]
+                        addBuySlider = Scale(rightScrollableFrame, label = "Ad buys", from_ = 0, to = resources[1] + districtAllocatedMoney, resolution = 1000, orient = HORIZONTAL, bg=dBg)
+                        campaigningSlider = Scale(rightScrollableFrame, label = "Campaigning time", from_ = 0, to = resources[0] + districtAllocatedTime, orient = HORIZONTAL, bg=dBg)
+                        
+                        campaigningSlider.set(districtAllocatedTime)
+                        allocatedTime += districtAllocatedTime
+                        
+                        addBuySlider.set(districtAllocatedMoney)
+                        allocatedMoney += districtAllocatedMoney
 
-                            j += 1
-                            addBuys.append(addBuySlider)
-                            campaingingTime.append(campaigningSlider)
-                            rightPane.add(districtLabel)
-                            rightPane.add(campaigningSlider)
-                            rightPane.add(addBuySlider)
-                        else: 
-                            districtLabel = Label(moreRightPane, text = l[1].strip())
-                            districtAllocatedTime = states[stateName].districts[j].campaigningThisTurn[player - 1]
-                            districtAllocatedMoney = states[stateName].districts[j].adsThisTurn[player - 1]
-                            addBuySlider = Scale(moreRightPane, label = "Add buys for this district", from_ = 0, to = resources[1]+ districtAllocatedMoney, resolution = 1000, orient = HORIZONTAL)
-                            campaigningSlider = Scale(moreRightPane, label = "Time Campaigning in this District", from_ = 0, to = resources[0] + districtAllocatedTime, orient = HORIZONTAL)
-                            districtAllocatedTime = states[stateName].districts[j].campaigningThisTurn[player - 1]
-                            
-                            campaigningSlider.set(districtAllocatedTime)
-                            allocatedTime += districtAllocatedTime
-                            districtAllocatedMoney = states[stateName].districts[j].adsThisTurn[player - 1]
-                            addBuySlider.set(districtAllocatedMoney)
-                            allocatedMoney += districtAllocatedMoney
+                        j += 1
+                        addBuys.append(addBuySlider)
+                        campaingingTime.append(campaigningSlider)
+                        districtLabel.pack(anchor="n", fill="x")
+                        campaigningSlider.pack(anchor="n", fill="x")
+                        addBuySlider.pack(anchor="n", fill="x")
 
-                            j += 1
-                            addBuys.append(addBuySlider)
-                            campaingingTime.append(campaigningSlider)
-                            moreRightPane.add(districtLabel)
-                            moreRightPane.add(campaigningSlider)
-                            moreRightPane.add(addBuySlider)
+                doneButton = Button(rightScrollableFrame, text = "Done with State", command = lambda : backToMap(event.widget.winfo_toplevel(), campaingingTime, stateName, allocatedTime, allocatedMoney, addBuys), anchor = S)
+                doneButton.pack(anchor="n", fill="x")
 
-                doneButton = Button(rightPane, text = "Done with State", command = lambda : backToMap(event.widget.winfo_toplevel(), campaingingTime, stateName, allocatedTime, allocatedMoney, addBuys), anchor = S)
-                rightPane.add(doneButton)
-
-                statePane.add(rightPane)
-                if j > 4:
-                    statePane.add(moreRightPane)
                 statePane.pack()
 
                 center(stateWindow)
@@ -1250,8 +1369,20 @@ def loadGame(window):
     root.withdraw()
     #file_path = filedialog.askopenfilename(initialdir = os.getcwd() + '\\saveGames\\',filetypes = [('save games', '.save')])
     file_path = filedialog.askopenfilename(initialdir = os.path.join(os.getcwd(), "..\\",'Google Drive\\CampaignSaves\\'),filetypes = [('save games', '.save')])
-    saveFile = pickle.load(open(file_path, 'rb'))
     root.destroy()
+    
+    # Check if user cancelled the dialog
+    if not file_path or file_path == "":
+        # Return to main menu if no file was selected
+        mainMenu()
+        return
+    
+    try:
+        saveFile = pickle.load(open(file_path, 'rb'))
+    except (FileNotFoundError, pickle.UnpicklingError, TypeError) as e:
+        messagebox.showerror("Load Error", f"Failed to load save file: {str(e)}")
+        mainMenu()
+        return
 
     players = pickle.loads(saveFile[0])
     states = pickle.loads(saveFile[1])
