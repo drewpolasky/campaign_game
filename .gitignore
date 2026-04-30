@@ -3,3 +3,5 @@ CampaignSaves/*
 __pycache__/*
 build/*
 stateDistricts/disrictList.txt
+.remote_config.json
+remote_config.json
