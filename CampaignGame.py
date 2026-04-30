@@ -1662,9 +1662,17 @@ def get_state_name_from_pixel(xLoc, yLoc):
     return get_pixel_lookup().get((xLoc, yLoc), None)
 
 
+def _is_all_ai_game():
+    return bool(players) and all(players[p].isHuman != 'human' for p in players)
+
+
 def start_active_turn_flow(show_report=True):
     if currentDate > numTurns:
         show_final_results()
+        return
+
+    if _is_all_ai_game():
+        run_one_ai_week()
         return
 
     while currentDate <= numTurns and players[player].isHuman != 'human':
@@ -1676,6 +1684,71 @@ def start_active_turn_flow(show_report=True):
         showStartOfTurnReport()
     else:
         createNationalMap()
+
+
+def run_one_ai_week():
+    """Run AI moves until the week rolls over, then show a spectator screen."""
+    start_date = currentDate
+    while currentDate == start_date and currentDate <= numTurns and _is_all_ai_game():
+        calcAImove(players[player].isHuman)
+    if currentDate > numTurns:
+        show_final_results()
+        return
+    show_ai_week_screen()
+
+
+def show_ai_week_screen():
+    """All-AI mode: show last week's results plus the national map, with a Next Week button."""
+    root, body = build_screen('Week {} - AI Match'.format(currentDate),
+                              'All candidates are AI controlled. Review last week, then continue.')
+
+    shell = Frame(body, bg='#f3efe2')
+    shell.pack(fill='both', expand=True)
+    left = Frame(shell, bg='#f3efe2', width=380)
+    left.pack(side='left', fill='y', padx=(0, 12))
+    left.pack_propagate(False)
+    right = Frame(shell, bg='#f3efe2')
+    right.pack(side='left', fill='both', expand=True)
+
+    standings = make_card(left, 'Standings')
+    standings.pack(fill='x', pady=(0, 12))
+    for person in players:
+        line = '{}: {} delegates, momentum {:.0f}'.format(
+            players[person].publicName or 'Player {}'.format(person),
+            players[person].delegateCount,
+            players[person].momentum)
+        Label(standings, text=line, bg='white', justify=LEFT, wraplength=340).pack(anchor='w', padx=12, pady=2)
+
+    results_card = make_card(left, 'Last Week Results')
+    results_card.pack(fill='both', expand=True, pady=(0, 12))
+    if not weekResults:
+        Label(results_card, text='No contests were resolved last week.', bg='white', justify=LEFT, wraplength=340).pack(anchor='w', padx=12, pady=(0, 12))
+    else:
+        for person in weekResults:
+            person_frame = Frame(results_card, bg='white', bd=1, relief='solid', padx=10, pady=6)
+            person_frame.pack(fill='x', padx=12, pady=4)
+            Label(person_frame, text=players[person].publicName or 'Player {}'.format(person),
+                  bg='white', font=('TkDefaultFont', 10, 'bold')).pack(anchor='w')
+            for resultType, value in weekResults[person].items():
+                if isinstance(value, (int, float)):
+                    display = str(value)
+                else:
+                    display = ', '.join(value) if value else '(none)'
+                Label(person_frame, text='{}: {}'.format(resultType, display),
+                      bg='white', justify=LEFT, wraplength=320).pack(anchor='w', pady=1)
+
+    Button(left, text='Run Next Week' if currentDate <= numTurns else 'See Final Results',
+           command=run_one_ai_week, padx=14).pack(anchor='w', pady=(8, 0))
+
+    map_card = make_card(right, 'National Map')
+    map_card.pack(fill='both', expand=True)
+    natMapImage = Image.open('nationalMap.jpg')
+    natMapImage = paintNationalMap(natMapImage)
+    natMapImg = ImageTk.PhotoImage(natMapImage)
+    ui_state['map_photo'] = natMapImg
+    map_label = Label(map_card, image=natMapImg, bg='white')
+    map_label.pack(padx=12, pady=(0, 8))
+    attach_state_tooltip(map_label)
 
 
 def has_game_in_progress():
