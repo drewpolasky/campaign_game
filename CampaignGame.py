@@ -21,6 +21,7 @@ from State import State, District
 from Player import Player
 from tooltip import CreateToolTip
 import RemoteSaveLoad
+import state_issues
 
 sys.setrecursionlimit(5000)
 
@@ -68,8 +69,36 @@ players = {}            #dictionaries of class instances of players and states
 states = {}
 calendarOfContests = [('Iowa' , 4),('New Hampshire' , 5) ,('Nevada',7), ('South Carolina',8),('Minnesota',9),('Alabama' , 9), ('Arkansas', 9), ('Colorado', 9), ('Georgia', 9), ('Massachusetts', 9), ('North Dakota', 9), ('Oklahoma', 9), ('Tennessee', 9), ('Texas', 9), ('Vermont', 9), ('Virginia', 9), ('Kansas', 10), ('Kentucky', 10), ('Louisiana', 10), ('Maine', 10), ('Nebraska', 10), ('Hawaii', 10), ('Michigan', 10), ('Mississippi', 10), ('Wyoming', 11), ('Florida', 11), ('Illinois' , 11), ('Missouri', 11), ('North Carolina', 11), ('Ohio', 11), ('Arizona', 12), ('Idaho', 12), ('Utah', 12),('Alaska', 13), ('Washington', 13), ('Wisconsin', 14), ('New Jersey', 15), ('New York', 15), ('Connecticut', 15), ('Delaware', 15), ('Maryland', 15), ('Pennsylvania', 15), ('Rhode Island', 15), ('Indiana', 16), ('West Virginia', 16), ('Oregon', 17), ('California', 19), ('Montana', 19), ('New Mexico', 19), ('South Dakota', 19)]#, ('DC', 20)]
 playerColors = [(255,0,0), (0,0,255), (0,255,0), (128,0,128)]
-issueNames = ['Climate Change', 'Abortion','Taxes-Government Spending']#,'Immigration', 'Gun Control', 'Health Care', 'Tax Level', 'Regulation', 'Trade']
+issueNames = list(state_issues.ISSUE_NAMES)
 eventOfTheWeek = random.randint(0,len(issueNames)-1)
+headlineOfTheWeek = ''
+
+
+def _refresh_headline():
+    """Pick a flavor headline for the current eventOfTheWeek issue."""
+    global headlineOfTheWeek
+    issue = issueNames[eventOfTheWeek] if 0 <= eventOfTheWeek < len(issueNames) else ''
+    pool = state_issues.ISSUE_HEADLINES.get(issue, [])
+    if pool:
+        headlineOfTheWeek = random.choice(pool)
+    else:
+        headlineOfTheWeek = 'Issue of the week: {}'.format(issue) if issue else ''
+
+
+def _format_position(p):
+    """Friendly label for an issue position in {-1, 0, 1}."""
+    try:
+        v = int(round(float(p)))
+    except (TypeError, ValueError):
+        return 'Neutral'
+    if v > 0:
+        return 'Support (+1)'
+    if v < 0:
+        return 'Oppose (-1)'
+    return 'Neutral (0)'
+
+
+_refresh_headline()
 pastElections = {}          #stores the winner of each elections that's happened
 weekResults = {}
 issuesMode = False
@@ -262,6 +291,10 @@ def setUpStates():
         newDistrict = District(l[1].strip(), int(l[2].strip()) * 3, l[0])
         currentState = states[currentStateName]
         currentState.addDistrict(newDistrict)
+
+    # Apply real-world calibrated state-level positions on each issue.
+    for stateName, st in states.items():
+        st.positions = state_issues.get_state_positions(stateName)
 
 def setUpPlayers(numP, setUpWindow, mode, numTurn_menu):
     setUpWindow.destroy()
@@ -979,6 +1012,7 @@ def endTurn(window, fundraising):
         decideContests()
         player = 1
         eventOfTheWeek = random.randint(0,len(issueNames)-1)
+        _refresh_headline()
         for state in states:
             for district in states[state].districts:
                 for person in players:
@@ -1063,18 +1097,27 @@ def calculateStateOpinions():       #this function will calculate the opinion of
                     adsTotal = sum(district.adsThisTurn)
                     mult = (1 + float(players[i + 1].momentum) / 50.0) * mult
 
+                    # Issue-of-the-week alignment uses the STATE's position
+                    # (one position per state for now). If the player's stance
+                    # matches the state, building support is easier this week;
+                    # if it clashes, harder. Disabled in non-issues mode.
                     issueMult = 1
-                    #for issue in range(len(issues)):       #only the issue in the news that week matters
-                    if district.positions[eventOfTheWeek] == 0:
-                        pass
-
-                    elif players[i+1].positions[eventOfTheWeek] == district.positions[eventOfTheWeek]:
+                    state_pos = 0
+                    if issuesMode:
+                        try:
+                            state_pos = states[state].positions[eventOfTheWeek]
+                        except (IndexError, AttributeError, TypeError):
+                            state_pos = 0
+                    pp_list = players[i + 1].positions or []
+                    player_pos = pp_list[eventOfTheWeek] if 0 <= eventOfTheWeek < len(pp_list) else 0
+                    if state_pos == 0:
+                        pass  # state has no strong stance, no bonus or penalty
+                    elif player_pos == state_pos:
                         issueMult += 0.33
-
                     else:
-                        issueMult -= 0.16 * abs(players[i+1].positions[eventOfTheWeek] - district.positions[eventOfTheWeek])
+                        issueMult -= 0.16 * abs(player_pos - state_pos)
 
-                    if issueMult <= 0.25:       #shouldn't matter since only one issues is up at a time, so this shouldn't come into play, but just in case
+                    if issueMult <= 0.25:
                         issueMult = 0.25
                     mult = issueMult * mult 
                     support = campaingingTime*1.5 + org*2
@@ -1710,6 +1753,15 @@ def show_ai_week_screen():
     right = Frame(shell, bg='#f3efe2')
     right.pack(side='left', fill='both', expand=True)
 
+    headline_card = make_card(left, 'In the News')
+    headline_card.pack(fill='x', pady=(0, 12))
+    issue_label = issueNames[eventOfTheWeek] if 0 <= eventOfTheWeek < len(issueNames) else ''
+    Label(headline_card, text=headlineOfTheWeek or issue_label,
+          bg='white', font=('TkDefaultFont', 11, 'bold'),
+          justify=LEFT, wraplength=340).pack(anchor='w', padx=12, pady=(0, 4))
+    Label(headline_card, text='Issue of the week: {}'.format(issue_label),
+          bg='white', justify=LEFT, wraplength=340).pack(anchor='w', padx=12, pady=(0, 8))
+
     standings = make_card(left, 'Standings')
     standings.pack(fill='x', pady=(0, 12))
     for person in players:
@@ -1843,7 +1895,9 @@ def update_resource_summary():
     resources = players[player].resources
     labels['resources'].set('Time: {}    Money: ${:,}'.format(resources[0], int(resources[1])))
     labels['momentum'].set('Momentum: {}'.format(round(players[player].momentum, 1)))
-    labels['issue'].set('Issue of the week: {}'.format(issueNames[eventOfTheWeek]))
+    issue_label = issueNames[eventOfTheWeek]
+    your_pos = _format_position(players[player].positions[eventOfTheWeek] if players[player].positions else 0)
+    labels['issue'].set('Headline: {}\nIssue: {}  -  You: {}'.format(headlineOfTheWeek or issue_label, issue_label, your_pos))
     standings = []
     for person in players:
         standings.append('{}: {} delegates'.format(players[person].publicName, players[person].delegateCount))
@@ -2027,30 +2081,17 @@ def setPositions(issues, name, isHuman, setUpPlayerWindow, mode):
         setUpPlayer(mode)
     else:
         player = 1
-        if issuesMode:
-            if randomPositions:
-                for state in states:
-                    for district in states[state].districts:
-                        district.setPositions([random.randint(issueLowRange, issueHighRange) for i in range(len(issueNames))])
-            else:
-                issuesFile = open(issues_filename, 'r')
-                header = issuesFile.readline()
-                header = [x.strip() for x in header.split(',')]
-                positionLocations = [header.index(issue) for issue in issueNames]
-                for line in issuesFile.readlines():
-                    try:
-                        line = [x.strip() for x in line.split(',')]
-                        state = states[line[0]]
-                        for district in state.districts:
-                            if district.name == line[1]:
-                                positions = [float(line[i]) for i in positionLocations]
-                                district.setPositions(positions)
-                    except KeyError:
-                        pass
-        else:
+        # State-level positions are loaded once in setUpStates() from
+        # state_issues.STATE_POSITIONS. If issues mode is off, blank them out
+        # so no issue alignment math triggers. District-level positions are
+        # initialized to zeros (district-level positions may be reintroduced
+        # later, but for now only state positions drive gameplay).
+        if not issuesMode:
             for state in states:
-                for district in states[state].districts:
-                    district.setPositions([0 for i in range(len(issueNames))])
+                states[state].positions = [0 for _ in range(len(issueNames))]
+        for state in states:
+            for district in states[state].districts:
+                district.setPositions([0 for _ in range(len(issueNames))])
 
         calculateStateOpinions()
         start_active_turn_flow(False)
@@ -2086,6 +2127,24 @@ def render_selected_state(stateName):
     for person in range(numPlayers):
         polling_lines.append('{} polling: {}'.format(players[person + 1].publicName, currentState.pollingAverage[person]))
     Label(state_card, text='\n'.join(polling_lines), bg='white', justify=LEFT, wraplength=360).pack(anchor='w', padx=12, pady=(0, 10))
+
+    # Issue-of-the-week alignment summary for this state.
+    try:
+        state_pos = currentState.positions[eventOfTheWeek]
+    except (IndexError, AttributeError, TypeError):
+        state_pos = 0
+    your_pos = players[player].positions[eventOfTheWeek] if players[player].positions else 0
+    if state_pos == 0:
+        align_text = "{} has no strong stance - no bonus or penalty this week.".format(stateName)
+    elif your_pos == state_pos:
+        align_text = "Your stance matches {} - support builds faster here this week.".format(stateName)
+    else:
+        align_text = "Your stance clashes with {} - support builds slower here this week.".format(stateName)
+    Label(state_card,
+          text='Issue of the week: {}\n  Your stance: {}    {} stance: {}\n  {}'.format(
+              issueNames[eventOfTheWeek], _format_position(your_pos),
+              stateName, _format_position(state_pos), align_text),
+          bg='white', justify=LEFT, wraplength=360).pack(anchor='w', padx=12, pady=(0, 10))
 
     if currentOrg == 0:
         Button(state_card, text='Get on the ballot ($10,000)', command=lambda: getOnBallot(player, stateName, 10000, None, None)).pack(anchor='w', padx=12, pady=(0, 8))
@@ -2189,6 +2248,17 @@ def showStartOfTurnReport():
     fundraisingIncome = players[player].history[currentDate - 1]['fundraisingIncome']
     localIncome = players[player].history[currentDate - 1]['localIncome']
 
+    headline_card = make_card(body, 'In the News This Week')
+    headline_card.pack(fill='x', pady=(0, 16))
+    issue_label = issueNames[eventOfTheWeek] if 0 <= eventOfTheWeek < len(issueNames) else ''
+    Label(headline_card, text=headlineOfTheWeek or issue_label,
+          bg='white', font=('TkDefaultFont', 13, 'bold'),
+          justify=LEFT, wraplength=900).pack(anchor='w', padx=12, pady=(0, 4))
+    Label(headline_card, text='Issue: {}  -  Your stance: {}'.format(
+              issue_label,
+              _format_position(players[player].positions[eventOfTheWeek] if players[player].positions else 0)),
+          bg='white', justify=LEFT, wraplength=900).pack(anchor='w', padx=12, pady=(0, 10))
+
     summary = make_card(body, 'At a Glance')
     summary.pack(fill='x', pady=(0, 16))
     summary_lines = [
@@ -2261,6 +2331,12 @@ def format_state_tooltip(stateName):
             lines.append('  {}: {:.1f}%'.format(name, pct))
     else:
         lines.append('No polling data yet')
+    if issuesMode:
+        try:
+            state_pos = st.positions[eventOfTheWeek]
+        except (IndexError, AttributeError, TypeError):
+            state_pos = 0
+        lines.append('{} on {}: {}'.format(stateName, issueNames[eventOfTheWeek], _format_position(state_pos)))
     return '\n'.join(lines)
 
 
@@ -2575,6 +2651,7 @@ def endTurn(window, fundraising):
         decideContests()
         player = 1
         eventOfTheWeek = random.randint(0, len(issueNames) - 1)
+        _refresh_headline()
         for state in states:
             for district in states[state].districts:
                 for person in players:
