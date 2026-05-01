@@ -85,8 +85,15 @@ def _refresh_headline():
         headlineOfTheWeek = 'Issue of the week: {}'.format(issue) if issue else ''
 
 
-def _format_position(p):
-    """Friendly label for an issue position in {-1, 0, 1}."""
+def _format_position(p, issue_index=None):
+    """Friendly label for an issue position in {-1, 0, 1}.
+
+    If issue_index is provided, use the issue-specific side labels
+    (e.g. 'Pro-Choice' / 'Pro-Life'). Otherwise fall back to generic
+    Support / Oppose / Neutral.
+    """
+    if issue_index is not None:
+        return state_issues.side_label(issue_index, p)
     try:
         v = int(round(float(p)))
     except (TypeError, ValueError):
@@ -1220,10 +1227,29 @@ def decideContests():
         players[i+1].momentum += momentums[i] / float(sum(momentums)+.01) * totalMomemtum
     return
 
-def _score_district(district, timeToElection, stateDelegates, ai_idx):
+def _ai_personality(player_number):
+    """Return a stable, per-AI personality dict. Same player always gets the
+    same personality; different AIs get different priorities."""
+    rng = random.Random(0xC0FFEE + player_number * 31)
+    return {
+        'urgency': rng.uniform(0.85, 1.35),       # how much they chase imminent contests
+        'closeness': rng.uniform(0.75, 1.35),     # how much they fight for swing districts
+        'delegates': rng.uniform(0.75, 1.30),     # how much they value big-state delegates
+        'fundraise_cutoff': rng.uniform(9.0, 16.0),   # below this score, fundraise instead
+        'org_threshold': rng.uniform(13.0, 24.0),     # tolerance for building orgs
+        'noise': rng.uniform(0.18, 0.32),         # per-district random spread
+    }
+
+
+def _score_district(district, timeToElection, stateDelegates, ai_idx, personality, rng):
     """Score how valuable spending one more unit of resource on this district is.
     Higher is better. Designed to favor close races, near-term elections,
-    delegate-rich states, and districts where we already have a base of support."""
+    delegate-rich states, and districts where we already have a base of support.
+    A small per-call random factor plus the AI's personality weights make
+    each AI play a bit differently from week to week."""
+    if timeToElection < 0:
+        return 0.0  # contest already happened — never spend here
+
     support = district.support
     my_support = support[ai_idx]
     others = support[:ai_idx] + support[ai_idx+1:]
@@ -1231,20 +1257,19 @@ def _score_district(district, timeToElection, stateDelegates, ai_idx):
 
     # Margin: positive means we are behind by that much, negative means ahead.
     margin = top_other - my_support
-    # Closeness factor: highest when we are within striking distance.
     closeness = 100.0 / (1.0 + abs(margin) ** 1.2)
 
-    # Time urgency: elections this week or next are most valuable; far away decays.
-    if timeToElection < 0:
-        urgency = 0.0
-    elif timeToElection <= 1:
-        urgency = 1.6
+    # Sharpened urgency curve: this week's contests dominate the planner.
+    if timeToElection == 0:
+        urgency = 2.4
+    elif timeToElection == 1:
+        urgency = 1.7
     elif timeToElection <= 3:
-        urgency = 1.2
+        urgency = 1.1
     elif timeToElection <= 6:
-        urgency = 0.8
+        urgency = 0.6
     else:
-        urgency = 0.4
+        urgency = 0.3
 
     delegates = (district.population / 3.0) + (stateDelegates / 6.0)
 
@@ -1256,7 +1281,16 @@ def _score_district(district, timeToElection, stateDelegates, ai_idx):
     else:
         runaway_penalty = 1.0
 
-    return urgency * (closeness + delegates) * runaway_penalty
+    base = (
+        personality['urgency'] * urgency *
+        (personality['closeness'] * closeness + personality['delegates'] * delegates)
+        * runaway_penalty
+    )
+    # Stochastic kick: jitter scores so two AIs don't always converge on the
+    # same district even with identical state. Multiplier centered on 1.0.
+    spread = personality['noise']
+    jitter = rng.uniform(1.0 - spread, 1.0 + spread)
+    return base * jitter
 
 
 def calcAImove(agent):
@@ -1272,15 +1306,23 @@ def calcAImove(agent):
     global numPlayers
 
     ai_idx = player - 1
+    personality = _ai_personality(player)
+    # Per-turn RNG: stable jitter with a seed mixing player + week so every
+    # AI gets fresh random kicks each turn but two AIs in the same week still
+    # diverge from each other.
+    rng = random.Random(0xBEEF * player + currentDate * 7919)
 
-    # Build per-state info (delegates, time to election).
+    # Build per-state info (delegates, time to election). Skip states whose
+    # contest has already happened so the AI never wastes resources there.
     state_info = {}
     for state_name, state in states.items():
-        time_to_election = 99
+        time_to_election = None
         for contest in calendarOfContests:
             if contest[0] == state_name:
                 time_to_election = contest[1] - currentDate
                 break
+        if time_to_election is None or time_to_election < 0:
+            continue  # no upcoming contest -> ignore entirely
         state_delegates = 0
         for district in state.districts:
             state_delegates += district.population - (district.population * 2) / 3
@@ -1293,14 +1335,15 @@ def calcAImove(agent):
     # 1) Build organizations where the upside is high enough.
     for state_name, info in state_info.items():
         time_to_election = info['time']
-        if time_to_election < 0 or time_to_election > 8:
+        if time_to_election > 8:
             continue
         state = info['state']
         org_level = state.organizations[ai_idx]
         cost = max(10000, 10000 * org_level)
         # Value of an org tick: scales with delegates and how soon we vote.
         org_value = info['delegates'] * (1.0 + max(0, 6 - time_to_election))
-        if org_value > (org_level + 1) * 18 and players[player].resources[1] >= cost:
+        threshold = (org_level + 1) * personality['org_threshold']
+        if org_value > threshold and players[player].resources[1] >= cost:
             players[player].resources[1] -= cost
             state.organizations[ai_idx] += 1
 
@@ -1308,11 +1351,8 @@ def calcAImove(agent):
     # numeric tie-breaker (id) so we never compare District objects directly.
     scored = []  # list of [score, tie, district, state_name]
     for state_name, info in state_info.items():
-        time_to_election = info['time']
-        if time_to_election < 0:
-            continue  # election already happened, no upside
         for district in info['state'].districts:
-            score = _score_district(district, time_to_election, info['delegates'], ai_idx)
+            score = _score_district(district, info['time'], info['delegates'], ai_idx, personality, rng)
             scored.append([score, id(district), district, state_name])
 
     if not scored:
@@ -1335,24 +1375,27 @@ def calcAImove(agent):
             break
         district.setAdsThisTurn(ai_idx, district.adsThisTurn[ai_idx] + AD_CHUNK)
         players[player].resources[1] -= AD_CHUNK
-        scored[i][0] = score * 0.85  # diminishing returns on this district
+        # Diminishing returns plus a small fresh jitter on each chunk.
+        scored[i][0] = score * 0.85 * rng.uniform(0.95, 1.05)
 
     # 4) Spend time. Campaigning vs fundraising decision is per-hour:
-    # if no district has score above the fundraising threshold, fundraise the rest.
-    FUNDRAISE_CUTOFF = 12.0
+    # if no district has score above this AI's personality fundraise cutoff,
+    # fundraise the rest.
+    fundraise_cutoff = personality['fundraise_cutoff']
     fundraising_hours = 0
     while players[player].resources[0] > 0:
         i = best()
         score = scored[i][0]
-        if score < FUNDRAISE_CUTOFF:
-            # Pour remaining hours into fundraising.
+        if score < fundraise_cutoff:
             fundraising_hours += players[player].resources[0]
             players[player].resources[0] = 0
             break
         district = scored[i][2]
         district.setCampaigningThisTurn(ai_idx, district.campaigningThisTurn[ai_idx] + 1)
         players[player].resources[0] -= 1
-        scored[i][0] = score * 0.9  # diminishing returns per hour
+        # Diminishing returns per hour, plus a small fresh jitter so the
+        # planner doesn't lock onto one district forever.
+        scored[i][0] = score * 0.9 * rng.uniform(0.95, 1.05)
 
     # 5) End turn (handles fundraising income and resource refresh).
     calcEndTurn(fundraising_hours)
@@ -1896,8 +1939,8 @@ def update_resource_summary():
     labels['resources'].set('Time: {}    Money: ${:,}'.format(resources[0], int(resources[1])))
     labels['momentum'].set('Momentum: {}'.format(round(players[player].momentum, 1)))
     issue_label = issueNames[eventOfTheWeek]
-    your_pos = _format_position(players[player].positions[eventOfTheWeek] if players[player].positions else 0)
-    labels['issue'].set('Headline: {}\nIssue: {}  -  You: {}'.format(headlineOfTheWeek or issue_label, issue_label, your_pos))
+    your_pos = _format_position(players[player].positions[eventOfTheWeek] if players[player].positions else 0, eventOfTheWeek)
+    labels['issue'].set('Headline:\n  {}\nIssue: {}\nYour stance: {}'.format(headlineOfTheWeek or issue_label, issue_label, your_pos))
     standings = []
     for person in players:
         standings.append('{}: {} delegates'.format(players[person].publicName, players[person].delegateCount))
@@ -2058,16 +2101,38 @@ def setUpPlayer(mode):
     Label(setup_card, text='Controller', bg='white').pack(anchor='w', padx=12)
     OptionMenu(setup_card, isHuman, 'human', 'AI').pack(anchor='w', padx=12, pady=(0, 10))
 
-    issueSliders = []
+    issueVars = []
     if mode == 2:
+        # Delegate-weighted balance per side, computed from the actual loaded
+        # state delegate counts so the player can see the trade-offs.
+        delegate_totals = {name: sum(d.population for d in st.districts)
+                           for name, st in states.items()}
+        balance = state_issues.compute_balance(delegate_totals)
+
         issue_card = make_card(body, 'Issue Positions')
         issue_card.pack(fill='x', pady=(16, 0))
-        for issue in issueNames:
-            slider = Scale(issue_card, from_=issueLowRange, to_=issueHighRange, label=issue, orient=HORIZONTAL, length=380, bg='white')
-            slider.pack(anchor='w', padx=12, pady=2)
-            issueSliders.append(slider)
+        Label(issue_card, text='Pick a stance for each issue. Aligning with a state grants a campaign bonus when that issue is in the news. Numbers show total delegates whose state takes that side.',
+              bg='white', justify=LEFT, wraplength=620).pack(anchor='w', padx=12, pady=(0, 8))
+        for idx, issue in enumerate(state_issues.ISSUES):
+            issue_balance = balance.get(issue['name'], {'support': 0, 'oppose': 0, 'neutral': 0})
+            row = Frame(issue_card, bg='white')
+            row.pack(fill='x', padx=12, pady=4)
+            Label(row, text=issue['name'], bg='white', font=('TkDefaultFont', 10, 'bold'), width=18, anchor='w').pack(side='left')
+            var = IntVar(value=0)
+            issueVars.append(var)
+            side_counts = {
+                'con': issue_balance['oppose'],
+                'mid': issue_balance['neutral'],
+                'pro': issue_balance['support'],
+            }
+            for value, key in [(-1, 'con'), (0, 'mid'), (1, 'pro')]:
+                Radiobutton(row,
+                            text='{} ({} del)'.format(issue[key], int(side_counts[key])),
+                            variable=var, value=value, bg='white').pack(side='left', padx=4)
 
-    Button(body, text='Save Player and Continue', command=lambda: setPositions([slider.get() for slider in issueSliders], name.get(), isHuman.get(), None, mode), padx=14).pack(anchor='w', pady=(16, 0))
+    Button(body, text='Save Player and Continue',
+           command=lambda: setPositions([v.get() for v in issueVars], name.get(), isHuman.get(), None, mode),
+           padx=14).pack(anchor='w', pady=(16, 0))
 
 
 def setPositions(issues, name, isHuman, setUpPlayerWindow, mode):
@@ -2142,8 +2207,8 @@ def render_selected_state(stateName):
         align_text = "Your stance clashes with {} - support builds slower here this week.".format(stateName)
     Label(state_card,
           text='Issue of the week: {}\n  Your stance: {}    {} stance: {}\n  {}'.format(
-              issueNames[eventOfTheWeek], _format_position(your_pos),
-              stateName, _format_position(state_pos), align_text),
+              issueNames[eventOfTheWeek], _format_position(your_pos, eventOfTheWeek),
+              stateName, _format_position(state_pos, eventOfTheWeek), align_text),
           bg='white', justify=LEFT, wraplength=360).pack(anchor='w', padx=12, pady=(0, 10))
 
     if currentOrg == 0:
@@ -2256,7 +2321,7 @@ def showStartOfTurnReport():
           justify=LEFT, wraplength=900).pack(anchor='w', padx=12, pady=(0, 4))
     Label(headline_card, text='Issue: {}  -  Your stance: {}'.format(
               issue_label,
-              _format_position(players[player].positions[eventOfTheWeek] if players[player].positions else 0)),
+              _format_position(players[player].positions[eventOfTheWeek] if players[player].positions else 0, eventOfTheWeek)),
           bg='white', justify=LEFT, wraplength=900).pack(anchor='w', padx=12, pady=(0, 10))
 
     summary = make_card(body, 'At a Glance')
@@ -2295,6 +2360,132 @@ def showStartOfTurnReport():
 
 
 _pixel_state_cache = None
+_pixel_district_cache = {}  # state_name -> {(x,y): district_name}
+
+
+def get_pixel_district_map(stateName):
+    """Lazy-load the (x, y) -> district name dict for one state."""
+    if stateName in _pixel_district_cache:
+        return _pixel_district_cache[stateName]
+    mapping = {}
+    for ext in ('txt',):
+        path = os.path.join(os.getcwd(), 'stateDistricts', stateName + '.' + ext)
+        if os.path.isfile(path):
+            try:
+                with open(path, 'r') as f:
+                    for line in f:
+                        parts = line.split(',')
+                        if len(parts) >= 4:
+                            try:
+                                x = int(parts[0])
+                                y = int(parts[1])
+                            except ValueError:
+                                continue
+                            mapping[(x, y)] = parts[3].strip()
+            except IOError:
+                pass
+            break
+    _pixel_district_cache[stateName] = mapping
+    return mapping
+
+
+def format_district_tooltip(stateName, districtName):
+    if stateName not in states:
+        return '{} - {}'.format(stateName, districtName)
+    state = states[stateName]
+    district = None
+    for d in state.districts:
+        if d.name.strip().lower() == districtName.strip().lower():
+            district = d
+            break
+    if district is None:
+        return '{}\n(no data)'.format(districtName)
+    lines = ['{} - {} delegates'.format(district.name, int(district.population))]
+    support = district.support if district.support else []
+    polling = district.pollingAverage if district.pollingAverage else []
+    if support and any(s != 0 for s in support):
+        total = float(sum(support)) or 1.0
+        leader_idx = support.index(max(support))
+        lines.append('Leader: {}'.format(players[leader_idx + 1].publicName or 'Player ' + str(leader_idx + 1)))
+        for i, s in enumerate(support):
+            name = players[i + 1].publicName or 'Player ' + str(i + 1)
+            pct = 100.0 * s / total
+            poll_str = ''
+            if i < len(polling):
+                poll_str = '  (polling {}%)'.format(polling[i])
+            lines.append('  {}: {:.1f}% support{}'.format(name, pct, poll_str))
+    else:
+        lines.append('No support yet')
+    return '\n'.join(lines)
+
+
+def attach_district_tooltip(widget, stateName, scale):
+    """Bind hover tooltips to the zoomed state map widget.
+
+    scale: ratio of displayed image size to original (e.g. 0.6 if downscaled).
+    Used to translate event.x/y back to original-image coords for the lookup.
+    """
+    state_tt = {'tw': None, 'last': None}
+
+    def hide():
+        if state_tt['tw'] is not None:
+            try:
+                state_tt['tw'].destroy()
+            except Exception:
+                pass
+            state_tt['tw'] = None
+        state_tt['last'] = None
+
+    def show(districtName, x_root, y_root):
+        hide()
+        tw = Toplevel(widget)
+        tw.wm_overrideredirect(True)
+        tw.wm_geometry('+{}+{}'.format(x_root + 15, y_root + 15))
+        Label(tw, text=format_district_tooltip(stateName, districtName), justify='left',
+              background='#ffffe0', relief='solid', borderwidth=1,
+              font=('TkDefaultFont', 9)).pack(ipadx=3, ipady=2)
+        state_tt['tw'] = tw
+        state_tt['last'] = districtName
+
+    def on_motion(event):
+        pixmap = get_pixel_district_map(stateName)
+        if not pixmap:
+            return
+        # Translate widget coords -> original image coords.
+        img = ui_state.get('map_photo')
+        img_w = img.width() if img is not None else widget.winfo_width()
+        img_h = img.height() if img is not None else widget.winfo_height()
+        off_x = max(0, (widget.winfo_width() - img_w) // 2)
+        off_y = max(0, (widget.winfo_height() - img_h) // 2)
+        local_x = event.x - off_x
+        local_y = event.y - off_y
+        if scale and scale > 0:
+            ox = int(round(local_x / scale))
+            oy = int(round(local_y / scale))
+        else:
+            ox = local_x
+            oy = local_y
+        districtName = pixmap.get((ox, oy))
+        if districtName is None:
+            # Try a small radius in case rounding lands on a line pixel.
+            for dx in (-1, 0, 1):
+                for dy in (-1, 0, 1):
+                    districtName = pixmap.get((ox + dx, oy + dy))
+                    if districtName is not None:
+                        break
+                if districtName is not None:
+                    break
+        if districtName is None:
+            hide()
+            return
+        if districtName != state_tt['last']:
+            show(districtName, event.x_root, event.y_root)
+        elif state_tt['tw'] is not None:
+            state_tt['tw'].wm_geometry('+{}+{}'.format(event.x_root + 15, event.y_root + 15))
+
+    widget.bind('<Motion>', on_motion)
+    widget.bind('<Leave>', lambda e: hide())
+
 
 def get_pixel_state_map():
     global _pixel_state_cache
@@ -2336,7 +2527,7 @@ def format_state_tooltip(stateName):
             state_pos = st.positions[eventOfTheWeek]
         except (IndexError, AttributeError, TypeError):
             state_pos = 0
-        lines.append('{} on {}: {}'.format(stateName, issueNames[eventOfTheWeek], _format_position(state_pos)))
+        lines.append('{} on {}: {}'.format(stateName, issueNames[eventOfTheWeek], _format_position(state_pos, eventOfTheWeek)))
     return '\n'.join(lines)
 
 
@@ -2473,11 +2664,14 @@ def createNationalMap(selected_state=None):
         iw, ih = centerImage.size
         scale = min(max_w / float(iw), max_h / float(ih), 1.0)
         if scale < 1.0:
-            centerImage = centerImage.resize((int(iw * scale), int(ih * scale)))
+            # Use NEAREST so painted district pixels stay crisp and don't blur
+            # into adjacent uncolored / line pixels during downscale.
+            centerImage = centerImage.resize((int(iw * scale), int(ih * scale)), Image.NEAREST)
         centerImg = ImageTk.PhotoImage(centerImage)
         ui_state['map_photo'] = centerImg
         map_label = Label(map_card, image=centerImg, bg='white')
         map_label.pack(padx=12, pady=(0, 8))
+        attach_district_tooltip(map_label, selected_state, scale)
         back_bar = Frame(map_card, bg='white')
         back_bar.pack(fill='x', padx=12, pady=(0, 8))
         Button(back_bar, text='Back to National Map', command=createNationalMap).pack(side='left')
@@ -2508,11 +2702,11 @@ def createNationalMap(selected_state=None):
             'issue': issueVar,
             'standings': standingsVar,
         }
-        Label(dashboard, textvariable=resourceVar, bg='white', justify=LEFT, wraplength=360).pack(anchor='w', padx=12, pady=2)
-        Label(dashboard, textvariable=momentumVar, bg='white', justify=LEFT, wraplength=360).pack(anchor='w', padx=12, pady=2)
-        Label(dashboard, textvariable=issueVar, bg='white', justify=LEFT, wraplength=360).pack(anchor='w', padx=12, pady=2)
+        Label(dashboard, textvariable=resourceVar, bg='white', justify=LEFT, wraplength=240).pack(anchor='w', padx=12, pady=2)
+        Label(dashboard, textvariable=momentumVar, bg='white', justify=LEFT, wraplength=240).pack(anchor='w', padx=12, pady=2)
+        Label(dashboard, textvariable=issueVar, bg='white', justify=LEFT, wraplength=240).pack(anchor='w', padx=12, pady=2)
         Label(dashboard, text='Standings', bg='white', font=('TkDefaultFont', 10, 'bold')).pack(anchor='w', padx=12, pady=(8, 0))
-        Label(dashboard, textvariable=standingsVar, bg='white', justify=LEFT, wraplength=360).pack(anchor='w', padx=12, pady=(0, 8))
+        Label(dashboard, textvariable=standingsVar, bg='white', justify=LEFT, wraplength=240).pack(anchor='w', padx=12, pady=(0, 8))
 
         fundraisingVar = IntVar(value=0)
         ui_state['fundraising_var'] = fundraisingVar
@@ -2627,7 +2821,8 @@ def backToMap(window, campaingingTime, stateName, allocatedTime, allocatedMoney,
         district.setAdsThisTurn(player - 1, addBuys[index].get())
         district.setCampaigningThisTurn(player - 1, campaingingTime[index].get())
 
-    createNationalMap(stateName)
+    # Return to the national overview after saving the state's plan.
+    createNationalMap()
 
 
 def endTurn(window, fundraising):

@@ -12,21 +12,82 @@ Issues (must match issueNames order in CampaignGame.py):
     Gun Control, Healthcare, Regulation, Trade
 """
 
-ISSUE_NAMES = [
-    'Climate Change',
-    'Abortion',
-    'Taxes-Government Spending',
-    'Gun Control',
-    'Healthcare',
-    'Regulation',
-    'Trade',
+# Each issue has a short name plus labels for the +1/0/-1 sides so the UI
+# can describe a stance in plain English rather than "Support" / "Oppose".
+# The order here is the canonical issue order; positions in STATE_POSITIONS
+# and Player.positions follow this order.
+ISSUES = [
+    {
+        'name': 'Climate Action',
+        'pro': 'Aggressive Action',     # +1
+        'mid': 'Incremental Steps',     #  0
+        'con': 'Industry First',        # -1
+    },
+    {
+        'name': 'Abortion',
+        'pro': 'Pro-Choice',
+        'mid': 'Compromise',
+        'con': 'Pro-Life',
+    },
+    {
+        'name': 'Taxes & Spending',
+        'pro': 'Tax & Invest',
+        'mid': 'Balanced Budget',
+        'con': 'Cut Taxes',
+    },
+    {
+        'name': 'Gun Policy',
+        'pro': 'Stricter Laws',
+        'mid': 'Status Quo',
+        'con': 'Gun Rights',
+    },
+    {
+        'name': 'Healthcare',
+        'pro': 'Public Option',
+        'mid': 'Mixed System',
+        'con': 'Free Market',
+    },
+    {
+        'name': 'Regulation',
+        'pro': 'More Oversight',
+        'mid': 'Targeted Rules',
+        'con': 'Deregulation',
+    },
+    {
+        'name': 'Trade',
+        'pro': 'Free Trade',
+        'mid': 'Balanced',
+        'con': 'Protectionism',
+    },
 ]
+
+ISSUE_NAMES = [issue['name'] for issue in ISSUES]
+
+
+def side_label(issue_index, position):
+    """Return the human label for a position on an issue.
+
+    issue_index: index into ISSUES.
+    position: -1, 0, or 1 (or float close to one of those).
+    """
+    if not (0 <= issue_index < len(ISSUES)):
+        return 'Neutral'
+    issue = ISSUES[issue_index]
+    try:
+        v = int(round(float(position)))
+    except (TypeError, ValueError):
+        v = 0
+    if v > 0:
+        return issue['pro']
+    if v < 0:
+        return issue['con']
+    return issue['mid']
 
 # Headlines pool, indexed by issue then position-of-the-news. The "news angle"
 # for the week is randomized to add flavor; the underlying issue index is what
 # drives gameplay alignment.
 ISSUE_HEADLINES = {
-    'Climate Change': [
+    'Climate Action': [
         'Devastating wildfires reignite climate debate',
         'New study warns of accelerating sea level rise',
         'Industry groups push back on emissions rules',
@@ -38,13 +99,13 @@ ISSUE_HEADLINES = {
         'Massive rallies on both sides over reproductive rights',
         'Polls show abortion stays a top voter concern',
     ],
-    'Taxes-Government Spending': [
+    'Taxes & Spending': [
         'Congress fights over sweeping budget proposal',
         'CBO releases new deficit projections',
         'Debate flares over tax breaks for the wealthy',
         'Cities push for more federal spending on infrastructure',
     ],
-    'Gun Control': [
+    'Gun Policy': [
         'Latest mass shooting renews calls for new gun laws',
         'Supreme Court weighs Second Amendment challenge',
         'Governors split on universal background checks',
