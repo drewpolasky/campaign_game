@@ -48,7 +48,7 @@ def _make_request(url, api_key, method='GET', data=None):
 
 
 def list_remote_saves(server_url, api_key):
-    url = "{}/saves".format(server_url.rstrip('/'))
+    url = "{}/campaign_saves".format(server_url.rstrip('/'))
     data, _ = _make_request(url, api_key)
     return json.loads(data)
 
@@ -56,7 +56,7 @@ def list_remote_saves(server_url, api_key):
 def upload_save(server_url, api_key, save_name, file_data):
     if not save_name.endswith(SAVE_EXT):
         save_name += SAVE_EXT
-    url = "{}/saves/{}".format(server_url.rstrip('/'), urllib.request.quote(save_name))
+    url = "{}/campaign_saves/{}".format(server_url.rstrip('/'), urllib.request.quote(save_name))
     data, _ = _make_request(url, api_key, method='POST', data=file_data)
     return json.loads(data)
 
@@ -64,7 +64,7 @@ def upload_save(server_url, api_key, save_name, file_data):
 def download_save(server_url, api_key, save_name):
     if not save_name.endswith(SAVE_EXT):
         save_name += SAVE_EXT
-    url = "{}/saves/{}".format(server_url.rstrip('/'), urllib.request.quote(save_name))
+    url = "{}/campaign_saves/{}".format(server_url.rstrip('/'), urllib.request.quote(save_name))
     data, _ = _make_request(url, api_key)
     return data
 
@@ -72,7 +72,7 @@ def download_save(server_url, api_key, save_name):
 def delete_remote_save(server_url, api_key, save_name):
     if not save_name.endswith(SAVE_EXT):
         save_name += SAVE_EXT
-    url = "{}/saves/{}".format(server_url.rstrip('/'), urllib.request.quote(save_name))
+    url = "{}/campaign_saves/{}".format(server_url.rstrip('/'), urllib.request.quote(save_name))
     data, _ = _make_request(url, api_key, method='DELETE')
     return json.loads(data)
 
