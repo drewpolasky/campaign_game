@@ -151,87 +151,204 @@ def mainMenu():         #this will be the intial menu of the game, with options 
 
     mainMenuWindow.mainloop()
 
-def tutorial(window):      
-    window.destroy()
+_TUTORIAL_PAGES = [
+    {
+        'title': 'Welcome to Campaign',
+        'image': None,
+        'body': (
+            "You're running for president. The goal is simple: win more delegates than any other candidate by the end of the campaign calendar.\n\n"
+            "Each week:\n"
+            "  * Every candidate takes a turn deciding where to spend time and money.\n"
+            "  * Whatever contests are scheduled for that week are decided at the end of the week.\n"
+            "  * The campaign rolls forward and a new issue takes over the news cycle.\n\n"
+            "This tutorial walks through the map, your resources, how support works, the issue system, and a few tips. Click 'Next' to move on, or 'Back to Main Menu' to skip out at any time."
+        ),
+    },
+    {
+        'title': 'The National Map',
+        'image': 'tutorialNationalMap.jpg',
+        'body': (
+            "The center of every turn is the national map. Each state is shaded by who is currently leading in the polls there, or by who won if the contest has already taken place. White states are ones where no candidate has any support yet.\n\n"
+            "Hover your mouse over a state to see a tooltip with:\n"
+            "  * The state name and how many delegates it's worth.\n"
+            "  * When it votes (this week, in N weeks, or already voted).\n"
+            "  * The current leader and each player's polling percentage.\n"
+            "  * The state's stance on whatever issue is in the news this week.\n\n"
+            "Click a state to zoom into its district map and open the state focus panel on the right."
+        ),
+    },
+    {
+        'title': 'The Calendar (Left Sidebar)',
+        'image': 'tutorialSidebar.png',
+        'body': (
+            "The left sidebar lists every contest in chronological order:\n"
+            "  * 'Iowa - wk 4 (12 del)' shows the state, the week it votes, and the delegates at stake.\n"
+            "  * Rows where you're already on the ballot are highlighted green and prefixed with '*'.\n"
+            "  * Past contests are grayed out as '[Done]'.\n\n"
+            "Each row also has a quick-action button on the right:\n"
+            "  * 'Ballot $10k' if you're not on the ballot yet.\n"
+            "  * 'Office $10k' to grow from level 1 to level 2.\n"
+            "  * 'Build $20k' (or higher) to keep building your organization.\n\n"
+            "There's also a 'Jump to State' search box at the top so you can find a state by name without scrolling."
+        ),
+    },
+    {
+        'title': 'Your Resources',
+        'image': 'tutorialDashboard.png',
+        'body': (
+            "You start each week with 80 hours of candidate time and your remaining money (everyone starts with $100,000).\n\n"
+            "Time gets spent on either:\n"
+            "  * Campaigning - direct in-district support gain.\n"
+            "  * Fundraising - converted to cash at $4,000 per hour, plus a $20,000 baseline each week.\n\n"
+            "Money pays for two things:\n"
+            "  * Ad buys in specific districts.\n"
+            "  * Building organization in a state.\n\n"
+            "Momentum is shown on the dashboard. You earn it by winning contests; bigger wins on quieter weeks (e.g. Iowa) give more momentum than wins on super-Tuesday-style weeks. Momentum boosts both your support gains and your local fundraising, but it fades fast if you stop winning."
+        ),
+    },
+    {
+        'title': 'Building Support in a State',
+        'image': 'tutorialStateZoom.jpg',
+        'body': (
+            "Click into a state and the right panel becomes the State Focus. From there each district has two sliders: campaigning time and ad buys.\n\n"
+            "Each turn, the support you gain in a district is roughly:\n"
+            "    (organization tier x 2) + (campaign hours x 1.5) + share-of-ad-spend bonus\n"
+            "  ...all multiplied by some bonuses:\n"
+            "  * +10% the week before the election, +20% on election week.\n"
+            "  * Momentum amplifies everything (+x% scales with your current momentum).\n"
+            "  * Issue alignment with the state on the issue of the week: +33% if you match, smaller penalty if you clash.\n\n"
+            "When you're done planning, hit 'Save Ad Buys & Campaign Time'. That commits the spend and bounces you back to the national overview."
+        ),
+    },
+    {
+        'title': 'Organization (Getting on the Ballot)',
+        'image': None,
+        'body': (
+            "Before you can earn any support in a state, you need to be on the ballot there. That's organization tier 1, which costs $10,000.\n\n"
+            "Each tier above 1 also costs $10,000 x current tier (so $10k for the office, $20k for the next, $30k after that, etc). Higher tiers:\n"
+            "  * Multiply support gained from organization directly (each tier adds 2 baseline support per district per turn).\n"
+            "  * Boost local donations from supporters.\n"
+            "  * Improve voter turnout for you on election night.\n\n"
+            "You can build organization until the contest is over - the deadline is the end of voting week, not before. Past that the 'Ballot' button is hidden because it's too late."
+        ),
+    },
+    {
+        'title': 'Issues and the Issue of the Week',
+        'image': None,
+        'body': (
+            "If you start the game in Issues Mode, each candidate picks a stance on 7 issues during setup: Climate Action, Abortion, Taxes & Spending, Gun Policy, Healthcare, Regulation, and Trade. The setup screen shows how many delegates worth of states currently take each side, so you can see the tradeoffs.\n\n"
+            "Every week the news cycle picks one issue to dominate. You can see it on the Campaign Dashboard with a flavor headline. While that issue is in the news:\n"
+            "  * If your stance matches the state's, support builds 33% faster there.\n"
+            "  * If you clash with the state, support builds slower (worse the further apart you are).\n"
+            "  * If the state is neutral on that issue, no bonus or penalty.\n\n"
+            "State stances are calibrated to real-world political leanings and roughly balanced across all states - meaning each side of an issue covers a similar number of total delegates."
+        ),
+    },
+    {
+        'title': 'Ending Your Turn',
+        'image': None,
+        'body': (
+            "On the dashboard, set the 'Fundraising time allocation' slider to whatever portion of your remaining hours should go to fundraising. The rest goes unused (only allocated campaign hours actually count).\n\n"
+            "Hit 'End Turn' and play passes to the next candidate. Once everyone has gone:\n"
+            "  * The week's contests are decided. Delegates are awarded based on the polling average plus a small random factor at election time, scaled by population and turnout.\n"
+            "  * Wins give momentum to the winners and reset some district allocations.\n"
+            "  * The week ticks forward, a new issue takes over the news, and play returns to the first candidate.\n\n"
+            "If all candidates are AI you'll see a per-week recap screen so you can step through the campaign without skipping straight to the final results."
+        ),
+    },
+    {
+        'title': 'Saving and Loading',
+        'image': None,
+        'body': (
+            "From the main menu you can:\n"
+            "  * 'Start a New Game' or 'Resume Current Game' if a save is in progress.\n"
+            "  * 'Load Game' from a local save file.\n"
+            "  * 'Load from Server' to grab a save from the configured remote server.\n"
+            "  * 'Sync Saves with Server' to push and pull the local Saves folder to/from the server. Newer file wins.\n\n"
+            "During gameplay there's also a Save button on the top header. The game autosaves into rotating slots (autosave / autosave2 / autosave3) at the end of each week."
+        ),
+    },
+    {
+        'title': 'Strategy Tips',
+        'image': None,
+        'body': (
+            "A few things that aren't obvious from the rules:\n\n"
+            "  * Imminent contests pay off the most. Spending in week 9 on a state voting in week 11 is more efficient than spending it in week 4.\n"
+            "  * Closeness matters. Pouring resources into a state you're already winning by 30 has diminishing returns; the closeness penalty goes the other way too.\n"
+            "  * Get on the ballot early in big states. You don't earn any support until you're at organization tier 1.\n"
+            "  * Hold cash for the final wave. Money compounds via fundraising hours and momentum, so a big late push often beats steady spending.\n"
+            "  * Match issues to your map. If you're targeting blue/red states heavily, pick stances that match. The setup screen's delegate counts per side are your guide.\n\n"
+            "When you're ready, hit 'Back to Main Menu' below and 'Start a New Game'. Good luck on the trail."
+        ),
+    },
+]
 
-    tutorialWindow = Tk()
 
-    welcomeLabel = Label(tutorialWindow, text = "Welcome to the Campaign! This tutorial will take you through the bascis of how the game is played, and get you ready to win the election" , wraplength = 400, justify = LEFT)
-    introLabel = Label(tutorialWindow, text = "The goal of campaign is to win the election by amassing the most delegates. Delegates are won by winning state and district elections. State and district elections are won by having more people vote for you than your opponents. click the button below to get started, and see how you get people to vote for, rather than against you.", wraplength = 400, justify = LEFT)
-    nextStepButton = Button(tutorialWindow, text = "Onwards", command = lambda:tutorialMap(tutorialWindow))
+def _show_tutorial_page(index):
+    index = max(0, min(index, len(_TUTORIAL_PAGES) - 1))
+    page = _TUTORIAL_PAGES[index]
+    root, body = build_screen(
+        'Tutorial - {}/{}: {}'.format(index + 1, len(_TUTORIAL_PAGES), page['title']),
+        'A walk through the rules of Campaign. You can leave at any time.')
 
-    w = 400
-    h = 300
-    ws = tutorialWindow.winfo_screenwidth() # width of the screen
-    hs = tutorialWindow.winfo_screenheight() # height of the screen
-    # calculate x and y coordinates for the Tk root window
-    x = (ws/2) - (w/2)
-    y = (hs/2) - (h/2)
-    tutorialWindow.geometry('%dx%d+%d+%d' % (w, h, x, y))
+    outer = Frame(body, bg='#f3efe2')
+    outer.pack(fill='both', expand=True)
+    canvas = Canvas(outer, bg='#f3efe2', highlightthickness=0)
+    scroll = Scrollbar(outer, orient='vertical', command=canvas.yview)
+    inner = Frame(canvas, bg='#f3efe2')
+    inner.bind('<Configure>', lambda e: canvas.configure(scrollregion=canvas.bbox('all')))
+    canvas.create_window((0, 0), window=inner, anchor='nw')
+    canvas.configure(yscrollcommand=scroll.set)
+    canvas.pack(side='left', fill='both', expand=True)
+    scroll.pack(side='right', fill='y')
+    canvas.bind('<Enter>', lambda e: _bound_to_mousewheel(e, canvas))
+    canvas.bind('<Leave>', lambda e: _unbound_to_mousewheel(e, canvas))
 
-    welcomeLabel.pack()
-    introLabel.pack()
-    nextStepButton.pack()
+    if page.get('image'):
+        try:
+            img = Image.open(page['image'])
+            max_w = 900
+            iw, ih = img.size
+            if iw > max_w:
+                scale = max_w / float(iw)
+                img = img.resize((int(iw * scale), int(ih * scale)), Image.NEAREST)
+            photo = ImageTk.PhotoImage(img)
+            ui_state['tutorial_image'] = photo
+            Label(inner, image=photo, bg='#f3efe2').pack(anchor='w', pady=(0, 12))
+        except (IOError, OSError):
+            pass
 
-    tutorialWindow.mainloop()
+    text_card = Frame(inner, bg='white', bd=1, relief='solid', padx=14, pady=12)
+    text_card.pack(fill='x', pady=(0, 16))
+    Label(text_card, text=page['title'], bg='white',
+          font=('TkDefaultFont', 14, 'bold'), justify=LEFT).pack(anchor='w')
+    Label(text_card, text=page['body'], bg='white', justify=LEFT,
+          wraplength=900, font=('TkDefaultFont', 10)).pack(anchor='w', pady=(8, 0))
 
-def tutorialMap(window):            #my idea is to have an annotated map, first of the national map, then of the state map for any new players to look at to get an idea of what is going on and what everything does. I think I should be able to have the national map fixed and have text boxes pop up and disappear explaining each piece.
-    window.destroy()
-    tutorialMapWindow = Tk()
-    natMapImage = Image.open("tutorialNationalMap.jpg")
-    natMapImg = ImageTk.PhotoImage(natMapImage)
-    natMap = Label(tutorialMapWindow, image = natMapImg)
-    natMap.pack()
-    center(tutorialMapWindow)
+    nav = Frame(inner, bg='#f3efe2')
+    nav.pack(anchor='w', pady=(0, 12))
+    if index > 0:
+        Button(nav, text='< Back', command=lambda: _show_tutorial_page(index - 1), padx=14).pack(side='left')
+    if index < len(_TUTORIAL_PAGES) - 1:
+        Button(nav, text='Next >', command=lambda: _show_tutorial_page(index + 1), padx=14).pack(side='left', padx=8)
+    else:
+        Button(nav, text='Finish', command=mainMenu, padx=14).pack(side='left', padx=8)
+    Button(nav, text='Back to Main Menu', command=mainMenu, padx=14).pack(side='left', padx=8)
 
-    message = Tk()         #this message will explain the colors on the map, and will have a button for the player to advance through the tutorial
-    messageLabel = Label(message, text = "This is the national map for the campaign, where you will start and end each turn. There is a great deal of information on this screen, so we'll start with the map itself. Each state is colored based on who is currently leading in the polls in that state or, if the state has already voted, who won. The states that have already voted are colored in a darker shade of the players color than those that have yet to vote. At the top of the right side bar you can see which color correspond to each player. In this example, player 1 (red) has already won in a number of states including Texas and Michigan, and is leading in California, Arizona, and Utah. States in white are places where no candidate has any support. At the top of the screen, the main menu has options to save or load a game. Took look at a state in more detail, and to make desicions about what resources you want to spend there, you'll click on the state you want to zoom to.", wraplength = 400, justify = LEFT)
-    nextStepButton = Button(message, text = "Onwards", command = lambda:tutorialMapSecondMessage(message, tutorialMapWindow))
-    messageLabel.pack()
-    nextStepButton.pack()
+    progress = Frame(inner, bg='#f3efe2')
+    progress.pack(anchor='w')
+    Label(progress, text='Step {} of {}'.format(index + 1, len(_TUTORIAL_PAGES)),
+          bg='#f3efe2', fg='#555555').pack(anchor='w')
 
-    for i in range(2):
-        if i == 1:
-            message.mainloop()
-        tutorialMapWindow.update_idletasks()
 
-def tutorialMapSecondMessage(message, mapWindow):
-    message.destroy()
-    message = Tk()         #this message will explain the colors on the map, and will have a button for the player to advance through the tutorial
-    messageLabel = Label(message, text = 'If you look now to the left of the screen, you will see the campaign calendar. At the top you can see what week it is right now (in this case, its week 11). Below that you can see the upcoming elections. Elections take place at the end of the turn, so Wyoming, Florida, and the other states that vote on week eleven will hold their elections after the last player ends their turn this week. Timing your campaining in states is important, in the two weeks before the election, your campaining will be more effective, as people start to pay more attention to politics.', wraplength = 400, justify = LEFT)
-    nextStepButton = Button(message, text = "Onwards", command = lambda:tutorialMapThirdMessage(message, mapWindow))
-    messageLabel.pack()
-    nextStepButton.pack()
-
-def tutorialMapThirdMessage(message, mapWindow):
-    message.destroy()
-    message = Tk()         #this message will explain the colors on the map, and will have a button for the player to advance through the tutorial
-    messageLabel = Label(message, text = 'Finally on this screen we have the right side bar, which has a variety of information about your campaign. First, at the top, we have how many delegates each player has won to this point.\n Just below that is your current momentum score. Momentum is gotten by winning states and district, but there is a fixed amount for each turn, so winning Iowa, which is the only contest on week 4, gives a lot more momentum than winning Minnesota, one of many contests on week 9(super tuesday). Momentum makes people more likely to vote for you and donate to your campaign, but it fades quickly if you stop winning.\n Below momentum are your available resoures, time and money. Time is your candidates time, and can either be spent campaigning directly in a state to build support, or fundraising, soliciting big donations to increase the war chest. Money can be spent to build your ground game in states, or to buy advertising to increase support. We\'ll go into more depth on those options when we get to the state screen later on.\n Under your resources is the issue of the week. If you are playing without issues, you can ignore this.\n Next comes the fundraising slider, which lets you choose how much of your candidates time you want to spend raising money, and finally we have the end turn button, which ends your turn. With that, let\'s take a look at the state map.', wraplength = 400, justify = LEFT)
-    nextStepButton = Button(message, text = "Onwards", command = lambda:tutorialState(message, mapWindow))
-    messageLabel.pack()
-    nextStepButton.pack()
-
-def tutorialState(window, mapWindow):           #now do the tutorial explaining the state maps in the same way
-    window.destroy()
-    mapWindow.destroy()
-
-    tutorialMapWindow = Tk()
-    natMapImage = Image.open("tutorialStateMap.jpg")
-    natMapImg = ImageTk.PhotoImage(natMapImage)
-    natMap = Label(tutorialMapWindow, image = natMapImg)
-    natMap.pack()
-    center(tutorialMapWindow)
-
-    message = Tk()         #this message will explain the colors on the map, and will have a button for the player to advance through the tutorial
-    messageLabel = Label(message, text = "", wraplength = 400, justify = LEFT)
-    nextStepButton = Button(message, text = "Onwards", command = lambda:tutorialMapSecondMessage(message, tutorialMapWindow))
-    messageLabel.pack()
-    nextStepButton.pack()
-
-    for i in range(2):
-        if i == 1:
-            message.mainloop()
-        tutorialMapWindow.update_idletasks()
+def tutorial(window=None):
+    """Entry point for the tutorial. window arg kept for backward compat."""
+    try:
+        if window is not None and hasattr(window, 'destroy'):
+            window.destroy()
+    except Exception:
+        pass
+    _show_tutorial_page(0)
 
 def setUpGame(window):        #this will set up the basic parameters of the game, or have the option to load a previously saved game.  
     window.destroy()
@@ -1079,7 +1196,22 @@ def calcEndTurn(fundraising):      #this will calculate the new resources availa
     localFundraising = round(localFundraising)
     resources[1] = resources[1] + fundraising * 4000 + 20000 + localFundraising
     players[player].momentum = players[player].momentum /2.0
-    players[player].endTurn(currentDate, fundraising * 4000 + 20000, localFundraising)
+    # Compute the time/money this player actually committed to campaigning
+    # and ads this turn (district allocations are reset only when the week
+    # rolls over, so they're still accurate here).
+    campaign_hours = 0
+    ad_spend = 0
+    for s in states:
+        for d in states[s].districts:
+            try:
+                campaign_hours += d.campaigningThisTurn[player - 1]
+                ad_spend += d.adsThisTurn[player - 1]
+            except (IndexError, TypeError):
+                pass
+    players[player].endTurn(currentDate, fundraising * 4000 + 20000, localFundraising,
+                            fundraisingHours=fundraising,
+                            campaigningHours=campaign_hours,
+                            adSpend=ad_spend)
 
 def calculateStateOpinions():       #this function will calculate the opinion of each player in each state
     if currentDate == 0:       
@@ -1126,10 +1258,19 @@ def calculateStateOpinions():       #this function will calculate the opinion of
 
                     if issueMult <= 0.25:
                         issueMult = 0.25
-                    mult = issueMult * mult 
-                    support = campaingingTime*1.5 + org*2
-                    support += float(adBuy) / float(adsTotal + 1) * (adsTotal / 100.0) ** (1.1/2.0)     #adbuy/add total - percentage of adds support player gets, second part is the amount of support created by the adds
-                    support = support*mult
+                    mult = issueMult * mult
+                    # Break support into its three sources so we can show a
+                    # per-source breakdown in the end-of-game report.
+                    org_support = org * 2 * mult
+                    campaign_support = campaingingTime * 1.5 * mult
+                    ad_support = (float(adBuy) / float(adsTotal + 1)) * (adsTotal / 100.0) ** (1.1 / 2.0) * mult
+                    support = org_support + campaign_support + ad_support
+                    try:
+                        players[i + 1].addStat('support_from_org', org_support)
+                        players[i + 1].addStat('support_from_campaign', campaign_support)
+                        players[i + 1].addStat('support_from_ads', ad_support)
+                    except AttributeError:
+                        pass
                     #the plus 1 is to avoid dividing by 0 when there is no advertising in a state
                     support = round(support)
                     district.setSupport(i, support)
@@ -1190,6 +1331,10 @@ def decideContests():
 
                 weekResults[winner]['delegates'] += districtDelegates
                 weekResults[winner]['districts'].append(district.name)
+                try:
+                    players[winner].addStat('districts_won', 1)
+                except AttributeError:
+                    pass
 
                 totalMomemtum += districtDelegates / 4.0
                 momentums[winner - 1] += districtDelegates
@@ -1207,6 +1352,10 @@ def decideContests():
             momentums[winner - 1] += stateDelegates
 
             pastElections[stateName] = stateWinner
+            try:
+                players[stateWinner].addStat('states_won', stateName)
+            except AttributeError:
+                pass
 
 
             votesCounts = ''
@@ -1346,6 +1495,11 @@ def calcAImove(agent):
         if org_value > threshold and players[player].resources[1] >= cost:
             players[player].resources[1] -= cost
             state.organizations[ai_idx] += 1
+            try:
+                players[player].addStat('org_money_total', int(cost))
+                players[player].addStat('orgs_built', 1)
+            except AttributeError:
+                pass
 
     # 2) Build a flat list of scored districts for spending. Use a stable
     # numeric tie-breaker (id) so we never compare District objects directly.
@@ -1883,24 +2037,35 @@ def show_turn_transition_screen():
 
 
 def update_map_selection(stateName):
-    if ui_state['calendar_listbox'] is None:
-        return
-    for index, name in enumerate(ui_state['calendar_items']):
-        if name == stateName:
-            ui_state['calendar_listbox'].selection_clear(0, END)
-            ui_state['calendar_listbox'].selection_set(index)
-            ui_state['calendar_listbox'].see(index)
-            break
+    rows = ui_state.get('calendar_rows') or {}
+    for name, row in rows.items():
+        try:
+            if name == stateName:
+                row.configure(highlightthickness=2, highlightbackground='#1f5f8b')
+            else:
+                row.configure(highlightthickness=0)
+        except Exception:
+            pass
 
 
-def select_state_from_calendar(event=None):
-    if ui_state['calendar_listbox'] is None:
-        return
-    selection = ui_state['calendar_listbox'].curselection()
-    if not selection:
-        return
-    stateName = ui_state['calendar_items'][int(selection[0])]
-    createNationalMap(stateName)
+def select_state_from_calendar(event=None, state_name=None):
+    if state_name:
+        createNationalMap(state_name)
+
+
+def _build_org_from_sidebar(stateName, cost):
+    """Wrapper for the calendar-row Build button: keep the player's current
+    view (national overview vs. zoomed district map) instead of always
+    jumping into the state's district map after building."""
+    prior_selection = ui_state.get('selected_state')
+    starting_resources = players[player].resources[1]
+    getOnBallot(player, stateName, cost, None, None)
+    spent = starting_resources != players[player].resources[1]
+    # If the build went through, getOnBallot will have re-rendered into the
+    # state's district view. Bounce back to the prior view if we weren't
+    # already focused on this state.
+    if spent and prior_selection != stateName:
+        createNationalMap(prior_selection if prior_selection else None)
 
 
 def search_for_state(event=None):
@@ -1996,7 +2161,7 @@ def mainMenu():
     for child in root.winfo_children():
         child.destroy()
 
-    w, h = 520, 380
+    w, h = 520, 440
     ws = root.winfo_screenwidth()
     hs = root.winfo_screenheight()
     x = int((ws - w) / 2)
@@ -2021,6 +2186,7 @@ def mainMenu():
     if has_game_in_progress():
         buttons.append(('Resume Current Game', resume_current_game))
     buttons.append(('Start a New Game', setUpGame))
+    buttons.append(('Tutorial', lambda: tutorial(None)))
     buttons.append(('Load Game', lambda: loadGame(None)))
     buttons.append(('Load from Server', loadGameRemote))
     buttons.append(('Sync Saves with Server', lambda: syncRemoteSaves(False)))
@@ -2511,7 +2677,20 @@ def format_state_tooltip(stateName):
     st = states[stateName]
     support = list(st.support) if st.support else []
     total_delegates = sum(d.population for d in st.districts)
-    lines = ['{} ({} delegates)'.format(stateName, int(total_delegates))]
+    contest_week = None
+    for contest in calendarOfContests:
+        if contest[0] == stateName:
+            contest_week = contest[1]
+            break
+    if contest_week is None:
+        when = ''
+    elif contest_week < currentDate:
+        when = '  (voted week {})'.format(contest_week)
+    elif contest_week == currentDate:
+        when = '  (votes this week)'
+    else:
+        when = '  (votes week {}, in {})'.format(contest_week, contest_week - currentDate)
+    lines = ['{} ({} delegates){}'.format(stateName, int(total_delegates), when)]
     if support:
         total = float(sum(support)) or 1.0
         leader_idx = support.index(max(support))
@@ -2585,7 +2764,7 @@ def createNationalMap(selected_state=None):
 
     shell = Frame(body, bg='#f3efe2')
     shell.pack(fill='both', expand=True)
-    left = Frame(shell, bg='#f3efe2', width=260)
+    left = Frame(shell, bg='#f3efe2', width=340)
     left.pack(side='left', fill='y', padx=(0, 12))
     left.pack_propagate(False)
     center_frame = Frame(shell, bg='#f3efe2')
@@ -2609,38 +2788,68 @@ def createNationalMap(selected_state=None):
     Label(calendar_card, textvariable=statusVar, bg='white', fg='#555555', justify=LEFT, wraplength=220).pack(anchor='w', padx=12, pady=(6, 10))
 
     Label(calendar_card, text='Upcoming contests', bg='white').pack(anchor='w', padx=12)
-    list_frame = Frame(calendar_card, bg='white')
-    list_frame.pack(fill='both', expand=True, padx=12, pady=(6, 12))
-    listbox = Listbox(list_frame, activestyle='dotbox')
-    scrollbar = Scrollbar(list_frame, orient='vertical', command=listbox.yview)
-    listbox.configure(yscrollcommand=scrollbar.set)
-    listbox.pack(side='left', fill='both', expand=True)
-    scrollbar.pack(side='right', fill='y')
-    ui_state['calendar_listbox'] = listbox
+    list_outer = Frame(calendar_card, bg='white')
+    list_outer.pack(fill='both', expand=True, padx=12, pady=(6, 12))
+    list_canvas = Canvas(list_outer, bg='white', highlightthickness=0)
+    list_scroll = Scrollbar(list_outer, orient='vertical', command=list_canvas.yview)
+    list_inner = Frame(list_canvas, bg='white')
+    list_inner.bind('<Configure>', lambda e: list_canvas.configure(scrollregion=list_canvas.bbox('all')))
+    list_canvas.create_window((0, 0), window=list_inner, anchor='nw')
+    list_canvas.configure(yscrollcommand=list_scroll.set)
+    list_canvas.pack(side='left', fill='both', expand=True)
+    list_scroll.pack(side='right', fill='y')
+    list_canvas.bind('<Enter>', lambda e: _bound_to_mousewheel(e, list_canvas))
+    list_canvas.bind('<Leave>', lambda e: _unbound_to_mousewheel(e, list_canvas))
+
+    ui_state['calendar_listbox'] = None  # legacy hook no longer used
     ui_state['calendar_items'] = []
+    ui_state['calendar_rows'] = {}       # state_name -> row Frame for highlight
+
     for contest in calendarOfContests:
         stateName = contest[0]
         date = contest[1]
-        on_ballot = False
         if stateName in states:
             delegates = int(sum(d.population for d in states[stateName].districts))
             try:
-                on_ballot = states[stateName].organizations[player - 1] > 0
+                org_level = states[stateName].organizations[player - 1]
             except (IndexError, TypeError):
-                on_ballot = False
+                org_level = 0
         else:
             delegates = 0
-        marker = '* ' if on_ballot else '  '
-        label = '{}{} - week {} ({} del)'.format(marker, stateName, date, delegates)
-        if date < currentDate:
-            label = '[Done] ' + label
-        elif date == currentDate:
-            label = '[This Week] ' + label
-        listbox.insert(END, label)
-        if on_ballot:
-            listbox.itemconfig(END, bg='#d6f0c2', selectbackground='#9bd07b')
+            org_level = 0
+        on_ballot = org_level > 0
+        past = date < currentDate
+        this_week = date == currentDate
+
+        bg = '#d6f0c2' if on_ballot else 'white'
+        if past:
+            bg = '#e6e6e6'
+        row = Frame(list_inner, bg=bg, bd=1, relief='solid')
+        row.pack(fill='x', pady=1)
+        ui_state['calendar_rows'][stateName] = row
+
+        prefix = '[Done] ' if past else ('[Now] ' if this_week else '')
+        ballot_marker = '* ' if on_ballot else ''
+        label_text = '{}{}{} - wk {} ({} del)'.format(prefix, ballot_marker, stateName, date, delegates)
+        # Click anywhere on the label opens the state.
+        name_btn = Button(row, text=label_text, anchor='w', relief='flat',
+                          bg=bg, activebackground='#cbe2c2',
+                          command=lambda s=stateName: select_state_from_calendar(state_name=s))
+        name_btn.pack(side='left', fill='x', expand=True)
+
+        # Right-side action button: build organization. Skipped for past contests.
+        if not past and stateName in states:
+            cost = max(10000, 10000 * org_level)
+            if org_level == 0:
+                action_text = 'Ballot $10k'
+            elif org_level == 1:
+                action_text = 'Office $10k'
+            else:
+                action_text = 'Build ${}k'.format(int(cost / 1000))
+            Button(row, text=action_text, padx=2,
+                   command=lambda s=stateName, c=cost: _build_org_from_sidebar(s, c)).pack(side='right', padx=2, pady=1)
+
         ui_state['calendar_items'].append(stateName)
-    listbox.bind('<<ListboxSelect>>', select_state_from_calendar)
 
     map_title = 'National Map'
     map_note = 'Click a state to edit district spending. The selected state plan will appear in the right panel instead of opening a separate window.'
@@ -2786,6 +2995,11 @@ def getOnBallot(player, stateName, cost, window, event):
     else:
         states[stateName].organizations[player - 1] += 1
     players[player].resources[1] = players[player].resources[1] - int(cost)
+    try:
+        players[player].addStat('org_money_total', int(cost))
+        players[player].addStat('orgs_built', 1)
+    except AttributeError:
+        pass
     createNationalMap(stateName)
 
 
@@ -3092,18 +3306,117 @@ def show_final_results():
             winner = person
             mostDelegates = players[person].delegateCount
 
-    root, body = build_screen('Election Complete', 'Final standings from the campaign.')
-    winner_card = make_card(body, 'Winner')
+    root, body = build_screen('Election Complete', 'Final standings, fundraising, and a per-candidate breakdown of how the campaign played out.')
+
+    # Scrollable container so the report can grow without overflowing.
+    outer = Frame(body, bg='#f3efe2')
+    outer.pack(fill='both', expand=True)
+    canvas = Canvas(outer, bg='#f3efe2', highlightthickness=0)
+    scroll = Scrollbar(outer, orient='vertical', command=canvas.yview)
+    inner = Frame(canvas, bg='#f3efe2')
+    inner.bind('<Configure>', lambda e: canvas.configure(scrollregion=canvas.bbox('all')))
+    canvas.create_window((0, 0), window=inner, anchor='nw')
+    canvas.configure(yscrollcommand=scroll.set)
+    canvas.pack(side='left', fill='both', expand=True)
+    scroll.pack(side='right', fill='y')
+    canvas.bind('<Enter>', lambda e: _bound_to_mousewheel(e, canvas))
+    canvas.bind('<Leave>', lambda e: _unbound_to_mousewheel(e, canvas))
+
+    winner_card = make_card(inner, 'Winner')
     winner_card.pack(fill='x', pady=(0, 16))
-    Label(winner_card, text='{} wins with {} delegates.'.format(players[winner].publicName, mostDelegates), bg='white', justify=LEFT, wraplength=920).pack(anchor='w', padx=12, pady=(0, 12))
+    Label(winner_card,
+          text='{} wins with {} delegates after {} weeks.'.format(
+              players[winner].publicName, mostDelegates, currentDate - 1),
+          bg='white', justify=LEFT, wraplength=900,
+          font=('TkDefaultFont', 12, 'bold')).pack(anchor='w', padx=12, pady=(0, 12))
 
-    standings = make_card(body, 'Final Delegate Count')
+    # Final standings table.
+    standings = make_card(inner, 'Final Standings')
     standings.pack(fill='x', pady=(0, 16))
-    for person in players:
-        Label(standings, text='{}: {}'.format(players[person].publicName, players[person].delegateCount), bg='white', justify=LEFT).pack(anchor='w', padx=12, pady=2)
+    sorted_players = sorted(players.values(), key=lambda p: p.delegateCount, reverse=True)
+    header = Frame(standings, bg='white')
+    header.pack(fill='x', padx=12, pady=(0, 4))
+    for col, w in [('Rank', 6), ('Candidate', 22), ('Delegates', 11), ('States', 8), ('Districts', 10)]:
+        Label(header, text=col, bg='white', font=('TkDefaultFont', 9, 'bold'), width=w, anchor='w').pack(side='left')
+    for rank, p in enumerate(sorted_players, 1):
+        row = Frame(standings, bg='white')
+        row.pack(fill='x', padx=12, pady=1)
+        states_won = p.getStat('states_won', []) if hasattr(p, 'getStat') else []
+        Label(row, text=str(rank), bg='white', width=6, anchor='w').pack(side='left')
+        Label(row, text=p.publicName, bg='white', width=22, anchor='w').pack(side='left')
+        Label(row, text=str(p.delegateCount), bg='white', width=11, anchor='w').pack(side='left')
+        Label(row, text=str(len(states_won)), bg='white', width=8, anchor='w').pack(side='left')
+        Label(row, text=str(p.getStat('districts_won', 0) if hasattr(p, 'getStat') else 0),
+              bg='white', width=10, anchor='w').pack(side='left')
 
-    actions = Frame(body, bg='#f3efe2')
-    actions.pack(anchor='w')
+    # Per-candidate detail cards.
+    for p in sorted_players:
+        get = p.getStat if hasattr(p, 'getStat') else (lambda k, d=0: d)
+        card = make_card(inner, '{} ({})'.format(p.publicName, p.isHuman))
+        card.pack(fill='x', pady=(0, 12))
+
+        # Money summary.
+        fund_inc = get('fundraising_income_total', 0)
+        local_inc = get('local_income_total', 0)
+        total_inc = fund_inc + local_inc
+        ad_spent = get('ad_money_total', 0)
+        org_spent = get('org_money_total', 0)
+        time_camp = get('campaigning_hours_total', 0)
+        time_fund = get('fundraising_hours_total', 0)
+        money_lines = [
+            'Total raised: ${:,}'.format(int(total_inc)),
+            '   Fundraising-time income: ${:,}  ({} hours of fundraising)'.format(int(fund_inc), int(time_fund)),
+            '   Local fundraising income: ${:,}'.format(int(local_inc)),
+            'Spent on ads: ${:,}'.format(int(ad_spent)),
+            'Spent on organization: ${:,}  ({} org tiers built)'.format(int(org_spent), int(get('orgs_built', 0))),
+            'Campaigning time used: {} hours'.format(int(time_camp)),
+            'Final cash on hand: ${:,}'.format(int(p.resources[1])),
+            'Final momentum: {:.1f}'.format(p.momentum),
+        ]
+        for line in money_lines:
+            Label(card, text=line, bg='white', justify=LEFT, wraplength=900).pack(anchor='w', padx=12, pady=1)
+
+        # Support breakdown.
+        sup_org = get('support_from_org', 0.0)
+        sup_camp = get('support_from_campaign', 0.0)
+        sup_ads = get('support_from_ads', 0.0)
+        sup_total = sup_org + sup_camp + sup_ads or 1.0
+        Label(card, text='Where their support came from:',
+              bg='white', font=('TkDefaultFont', 10, 'bold'), justify=LEFT).pack(anchor='w', padx=12, pady=(8, 2))
+        for source_name, value in [
+            ('Organization', sup_org),
+            ('Campaigning time', sup_camp),
+            ('Ad buys', sup_ads),
+        ]:
+            pct = 100.0 * value / sup_total
+            Label(card,
+                  text='   {}: {:.0f} support points  ({:.1f}%)'.format(source_name, value, pct),
+                  bg='white', justify=LEFT).pack(anchor='w', padx=12, pady=1)
+
+        # Efficiency: support per hour campaigning, per dollar of ads, per dollar org.
+        eff_lines = []
+        if time_camp > 0:
+            eff_lines.append('   Support per campaign hour: {:.1f}'.format(sup_camp / time_camp))
+        if ad_spent > 0:
+            eff_lines.append('   Support per $1k of ads: {:.2f}'.format(sup_ads / (ad_spent / 1000.0)))
+        if org_spent > 0:
+            eff_lines.append('   Support per $1k of org: {:.2f}'.format(sup_org / (org_spent / 1000.0)))
+        if eff_lines:
+            Label(card, text='Efficiency:', bg='white', font=('TkDefaultFont', 10, 'bold'), justify=LEFT).pack(anchor='w', padx=12, pady=(8, 2))
+            for line in eff_lines:
+                Label(card, text=line, bg='white', justify=LEFT).pack(anchor='w', padx=12, pady=1)
+
+        # States won.
+        states_won = get('states_won', [])
+        if states_won:
+            Label(card, text='States won ({}):'.format(len(states_won)),
+                  bg='white', font=('TkDefaultFont', 10, 'bold'), justify=LEFT).pack(anchor='w', padx=12, pady=(8, 2))
+            Label(card, text=', '.join(states_won), bg='white', justify=LEFT, wraplength=880).pack(anchor='w', padx=12, pady=(0, 4))
+        else:
+            Label(card, text='No state wins.', bg='white', justify=LEFT).pack(anchor='w', padx=12, pady=(8, 2))
+
+    actions = Frame(inner, bg='#f3efe2')
+    actions.pack(anchor='w', pady=(0, 8))
     Button(actions, text='Return to Main Menu', command=mainMenu, padx=14).pack(side='left')
     Button(actions, text='Exit Game', command=exitGame, padx=14).pack(side='left', padx=8)
 

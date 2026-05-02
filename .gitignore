@@ -5,3 +5,5 @@ build/*
 stateDistricts/disrictList.txt
 .remote_config.json
 remote_config.json
+launch_debug.log
+.claude/
