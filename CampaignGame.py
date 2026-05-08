@@ -2044,17 +2044,35 @@ def _is_all_ai_game():
 
 def start_active_turn_flow(show_report=True):
     if currentDate > numTurns:
+        if is_networked_game():
+            upload_networked_state()
         show_final_results()
+        return
+
+    if is_networked_game() and not network_my_turn():
+        # Already not our turn (e.g. we just loaded a remote save). Wait.
+        show_waiting_for_opponent()
         return
 
     if _is_all_ai_game():
         run_one_ai_week()
         return
 
+    # Run consecutive AI turns we own. In a networked game, stop as soon as
+    # the next AI player belongs to the opponent.
     while currentDate <= numTurns and players[player].isHuman != 'human':
+        if is_networked_game() and player not in network_state['local_players']:
+            break
         calcAImove(players[player].isHuman)
 
+    if is_networked_game() and not network_my_turn():
+        if upload_networked_state():
+            show_waiting_for_opponent()
+            return
+
     if currentDate > numTurns:
+        if is_networked_game():
+            upload_networked_state()
         show_final_results()
     elif show_report and currentDate > 1 and players[player].isHuman == 'human':
         showStartOfTurnReport()
@@ -2322,6 +2340,8 @@ def mainMenu():
     if has_game_in_progress():
         buttons.append(('Resume Current Game', resume_current_game))
     buttons.append(('Start a New Game', setUpGame))
+    buttons.append(('New Networked Game', host_networked_setup))
+    buttons.append(('Join Networked Game', join_networked_setup))
     buttons.append(('Tutorial', lambda: tutorial(None)))
     buttons.append(('Load Game', lambda: loadGame(None)))
     buttons.append(('Load from Server', loadGameRemote))
@@ -2457,6 +2477,14 @@ def setUpPlayer(mode):
                             text='{} ({} del)'.format(issue[key], int(side_counts[key])),
                             variable=var, value=value, bg='white').pack(side='left', padx=4)
 
+        def randomize_positions():
+            for v in issueVars:
+                v.set(random.choice([-1, 0, 1]))
+
+        controls = Frame(issue_card, bg='white')
+        controls.pack(anchor='w', padx=12, pady=(8, 4))
+        Button(controls, text='Randomize Positions', command=randomize_positions, padx=10).pack(side='left')
+
     Button(body, text='Save Player and Continue',
            command=lambda: setPositions([v.get() for v in issueVars], name.get(), isHuman.get(), None, mode, aiStrategy.get()),
            padx=14).pack(anchor='w', pady=(16, 0))
@@ -2488,7 +2516,13 @@ def setPositions(issues, name, isHuman, setUpPlayerWindow, mode, aiStrategy=None
                 district.setPositions([0 for _ in range(len(issueNames))])
 
         calculateStateOpinions()
-        start_active_turn_flow(False)
+        if is_networked_game():
+            # Host has finished configuring all players; pick local seats
+            # before anyone starts playing.
+            choose_local_seats()
+        else:
+            start_active_turn_flow(False)
+
 
 def render_selected_state(stateName):
     panel_parent = ui_state['state_panel_parent']
@@ -3232,8 +3266,19 @@ def endTurn(window, fundraising):
 
     if currentDate <= numTurns:
         autoSave()
-        show_turn_transition_screen()
+        if is_networked_game():
+            if network_my_turn():
+                show_turn_transition_screen()
+            else:
+                if upload_networked_state():
+                    show_waiting_for_opponent()
+                else:
+                    show_turn_transition_screen()
+        else:
+            show_turn_transition_screen()
     else:
+        if is_networked_game():
+            upload_networked_state()
         show_final_results()
 
 
@@ -3302,6 +3347,299 @@ def autoSave():
         ages.append(os.stat(fileName).st_mtime)
     fileName = autosaveFiles[ages.index(min(ages))]
     saveGameSecond(fileName, None, True)
+
+
+# --- NETWORKED MULTIPLAYER (LAN-via-server) ---
+# Two computers play the same game by relaying the pickled state through the
+# remote save server. Each match has a short ID and lives at a fixed save
+# name on the server; whichever side just played uploads, the other side
+# polls until it sees a newer mtime, then downloads and resumes.
+network_state = {
+    'match_id': None,           # non-None = networked game
+    'local_players': set(),     # 1-based seat numbers this client owns
+    'last_save_mtime': 0.0,     # last mtime we've already loaded
+    'poll_job': None,           # tk after() id for the polling loop
+}
+
+
+def is_networked_game():
+    return network_state['match_id'] is not None
+
+
+def network_my_turn():
+    return player in network_state['local_players']
+
+
+def _network_save_name(match_id):
+    return 'lan_' + match_id
+
+
+def _network_save_path(match_id):
+    return os.path.join(os.getcwd(), 'CampaignSaves', _network_save_name(match_id) + '.save')
+
+
+def _generate_match_id():
+    alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'  # no easily-confused chars
+    return ''.join(random.choice(alphabet) for _ in range(6))
+
+
+def _net_cancel_polling():
+    job = network_state.get('poll_job')
+    if job is not None:
+        try:
+            init_app_root().after_cancel(job)
+        except Exception:
+            pass
+    network_state['poll_job'] = None
+
+
+def upload_networked_state():
+    """Save locally and push to the server under the match's filename."""
+    cfg = RemoteSaveLoad.load_config()
+    if not cfg.get('server_url') or not cfg.get('api_key'):
+        messagebox.showwarning('Network Game', 'Configure remote_config.json before starting a networked game.')
+        return False
+    match_id = network_state['match_id']
+    if not match_id:
+        return False
+    name = _network_save_name(match_id)
+    save_path = _network_save_path(match_id)
+    saveGameSecond(save_path, None, True, True)
+    try:
+        with open(save_path, 'rb') as f:
+            RemoteSaveLoad.upload_save(cfg['server_url'], cfg['api_key'], name, f.read())
+    except Exception as e:
+        messagebox.showerror('Network Game', 'Upload failed: {}'.format(e))
+        return False
+    # Bump our seen-mtime so we don't immediately re-download our own upload.
+    try:
+        saves = RemoteSaveLoad.list_remote_saves(cfg['server_url'], cfg['api_key'])
+        for s in saves:
+            if s['name'] == name + '.save':
+                network_state['last_save_mtime'] = s['modified']
+                break
+    except Exception:
+        pass
+    return True
+
+
+def download_networked_state(match_id):
+    """Pull the match's save from the server and load it. Returns True on success."""
+    cfg = RemoteSaveLoad.load_config()
+    if not cfg.get('server_url') or not cfg.get('api_key'):
+        return False
+    name = _network_save_name(match_id)
+    try:
+        data = RemoteSaveLoad.download_save(cfg['server_url'], cfg['api_key'], name)
+    except Exception:
+        return False
+    save_path = _network_save_path(match_id)
+    os.makedirs(os.path.dirname(save_path), exist_ok=True)
+    with open(save_path, 'wb') as f:
+        f.write(data)
+    return _network_load_save_path(save_path)
+
+
+def _network_load_save_path(path):
+    """Load a pickled save into the module globals (no UI side effects)."""
+    global player, currentDate, players, states, pastElections, numPlayers, weekResults, numTurns
+    try:
+        saveFile = pickle.load(open(path, 'rb'))
+    except (FileNotFoundError, pickle.UnpicklingError, TypeError, EOFError) as e:
+        messagebox.showerror('Network Game', 'Could not load remote save: {}'.format(e))
+        return False
+    players = pickle.loads(saveFile[0])
+    states = pickle.loads(saveFile[1])
+    pastElections = pickle.loads(saveFile[2])
+    player = pickle.loads(saveFile[3])
+    currentDate = pickle.loads(saveFile[4])
+    weekResults = pickle.loads(saveFile[5])
+    try:
+        numTurns = pickle.loads(saveFile[6])
+    except IndexError:
+        numTurns = 8
+    setCalendar(numTurns)
+    numPlayers = len(players)
+    return True
+
+
+def network_check_for_update():
+    """Poll: returns True iff we loaded a newer save than what we last saw."""
+    cfg = RemoteSaveLoad.load_config()
+    if not cfg.get('server_url') or not cfg.get('api_key'):
+        return False
+    match_id = network_state['match_id']
+    if not match_id:
+        return False
+    target = _network_save_name(match_id) + '.save'
+    try:
+        saves = RemoteSaveLoad.list_remote_saves(cfg['server_url'], cfg['api_key'])
+    except Exception:
+        return False
+    for s in saves:
+        if s['name'] == target and s['modified'] > network_state['last_save_mtime']:
+            if download_networked_state(match_id):
+                network_state['last_save_mtime'] = s['modified']
+                return True
+            return False
+    return False
+
+
+def show_waiting_for_opponent():
+    """Polling screen shown between turns when it's the opponent's move."""
+    _net_cancel_polling()
+    root, body = build_screen('Waiting for Opponent',
+                              'Your turn is uploaded. The other player is up next.')
+
+    card = make_card(body, 'Match Status')
+    card.pack(fill='x', pady=(0, 12))
+    Label(card, text='Match ID: {}'.format(network_state['match_id']),
+          bg='white', font=('TkDefaultFont', 12, 'bold'),
+          justify=LEFT).pack(anchor='w', padx=12, pady=(0, 4))
+    Label(card, text='Your seat(s): {}'.format(', '.join(str(p) for p in sorted(network_state['local_players']))),
+          bg='white', justify=LEFT).pack(anchor='w', padx=12, pady=(0, 4))
+    Label(card, text='Now waiting on: {} (week {})'.format(
+              players[player].publicName, currentDate),
+          bg='white', justify=LEFT).pack(anchor='w', padx=12, pady=(0, 8))
+    status_var = StringVar(value='Polling for the next move...')
+    Label(card, textvariable=status_var, bg='white',
+          fg='#555555', justify=LEFT).pack(anchor='w', padx=12, pady=(0, 8))
+
+    def tick():
+        loaded = network_check_for_update()
+        if loaded:
+            _net_cancel_polling()
+            if network_my_turn() or _is_all_ai_game():
+                start_active_turn_flow(False)
+                return
+            status_var.set('Loaded an update. Still not your turn (player {} is up).'.format(player))
+        else:
+            status_var.set('Last poll: {}. No update yet.'.format(time.strftime('%H:%M:%S')))
+        # Re-arm the poll only if we didn't bail out above.
+        if is_networked_game() and not network_my_turn():
+            network_state['poll_job'] = init_app_root().after(3000, tick)
+
+    actions = Frame(body, bg='#f3efe2')
+    actions.pack(anchor='w', pady=(8, 0))
+    Button(actions, text='Poll Now', command=tick, padx=12).pack(side='left')
+    Button(actions, text='Leave Match', command=leave_networked_match, padx=12).pack(side='left', padx=8)
+
+    network_state['poll_job'] = init_app_root().after(2000, tick)
+
+
+def leave_networked_match():
+    _net_cancel_polling()
+    network_state['match_id'] = None
+    network_state['local_players'] = set()
+    network_state['last_save_mtime'] = 0.0
+    mainMenu()
+
+
+def network_after_turn():
+    """Hook called after endTurn / advance-turn when in a networked game.
+    Uploads if the next active player isn't local; otherwise plays on."""
+    if not is_networked_game():
+        return False
+    if currentDate > numTurns:
+        # Game ended - upload the final state for the other client to see.
+        upload_networked_state()
+        show_final_results()
+        return True
+    if network_my_turn():
+        return False  # next player is also us, fall through to local flow
+    if upload_networked_state():
+        show_waiting_for_opponent()
+    else:
+        show_turn_transition_screen()
+    return True
+
+
+# --- Networked game setup screens ---
+
+def host_networked_setup():
+    """Entry point: create a new networked match. The host runs the normal
+    new-game flow, then picks which seats they'll play locally; the rest are
+    handed off to whoever joins."""
+    network_state['match_id'] = _generate_match_id()
+    network_state['local_players'] = set()
+    network_state['last_save_mtime'] = 0.0
+    setUpGame()
+
+
+def join_networked_setup():
+    """Enter a match ID, download the existing save, pick local seat(s)."""
+    root, body = build_screen('Join Networked Game',
+                              'Enter the match ID your opponent shared with you.')
+    card = make_card(body, 'Match details')
+    card.pack(fill='x', pady=(0, 16))
+    Label(card, text='Match ID', bg='white').pack(anchor='w', padx=12, pady=(8, 0))
+    match_id_var = StringVar()
+    Entry(card, textvariable=match_id_var, width=18).pack(anchor='w', padx=12, pady=(0, 12))
+    status_var = StringVar(value='')
+    Label(card, textvariable=status_var, bg='white',
+          fg='#555555', justify=LEFT, wraplength=900).pack(anchor='w', padx=12, pady=(0, 8))
+
+    def do_join():
+        mid = match_id_var.get().strip().upper()
+        if not mid:
+            status_var.set('Enter a match ID.')
+            return
+        network_state['match_id'] = mid
+        network_state['local_players'] = set()
+        network_state['last_save_mtime'] = 0.0
+        if not download_networked_state(mid):
+            status_var.set('Could not download a save for that ID. Check the ID and your network.')
+            network_state['match_id'] = None
+            return
+        # Stamp seen-mtime so we don't bounce back to a load loop.
+        cfg = RemoteSaveLoad.load_config()
+        try:
+            saves = RemoteSaveLoad.list_remote_saves(cfg['server_url'], cfg['api_key'])
+            for s in saves:
+                if s['name'] == _network_save_name(mid) + '.save':
+                    network_state['last_save_mtime'] = s['modified']
+                    break
+        except Exception:
+            pass
+        choose_local_seats()
+
+    Button(card, text='Connect', command=do_join, padx=12).pack(anchor='w', padx=12, pady=(0, 12))
+    Button(body, text='Back', command=mainMenu, padx=12).pack(anchor='w', pady=(8, 0))
+
+
+def choose_local_seats():
+    """After the host completes setup or the joiner downloads, pick which
+    seats this machine will play."""
+    root, body = build_screen('Pick your seats',
+                              'Match {} - choose which player slot(s) this computer plays. Coordinate with your opponent so you do not pick the same ones.'.format(network_state['match_id']))
+    card = make_card(body, 'Seats')
+    card.pack(fill='x', pady=(0, 16))
+    seat_vars = {}
+    for p in sorted(players.keys()):
+        var = IntVar(value=0)
+        seat_vars[p] = var
+        Checkbutton(card,
+                    text='Player {} - {}'.format(p, players[p].publicName or '(no name)'),
+                    variable=var, bg='white').pack(anchor='w', padx=12, pady=2)
+
+    def confirm():
+        chosen = {p for p, v in seat_vars.items() if v.get()}
+        if not chosen:
+            messagebox.showwarning('Pick your seats', 'Pick at least one seat to play.')
+            return
+        network_state['local_players'] = chosen
+        # Upload the current state so the other side gets a stable starting
+        # point and the seen-mtime is initialized.
+        upload_networked_state()
+        Label(body,
+              text='Match started. Match ID is {}. Share this with the other player.'.format(network_state['match_id']),
+              bg='#f3efe2', justify=LEFT, wraplength=900).pack(anchor='w', pady=(8, 8))
+        if network_my_turn():
+            start_active_turn_flow(False)
+        else:
+            show_waiting_for_opponent()
+
+    Button(body, text='Confirm and start', command=confirm, padx=12).pack(anchor='w', pady=(8, 0))
 
 
 def syncRemoteSaves(silent=False):

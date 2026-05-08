@@ -816,22 +816,22 @@ def round5():
     return agg
 
 
-def round_lengths():
+def round_lengths(seats=4, seed_offset=0, label_suffix=''):
     """Run the same strategy pool across the three game lengths and compare."""
-    print('\n############ ROUND L: per-game-length tournament ############')
+    print('\n############ ROUND L: per-game-length tournament ({} players) ############'.format(seats))
     results = {}
     for nt in (8, 10, 20):
-        rows = run_tournament(ALL_STRATEGIES, n_games_per_seat=20, seats=4,
-                              seed_base=900 + nt, num_turns=nt)
+        rows = run_tournament(ALL_STRATEGIES, n_games_per_seat=20, seats=seats,
+                              seed_base=900 + nt + seed_offset, num_turns=nt)
         agg = aggregate(rows)
         results[nt] = (agg, rows)
-        print_table(agg, 'Game length = {} turns'.format(nt))
+        print_table(agg, 'Game length = {} turns ({} players)'.format(nt, seats))
 
-    plot_length_comparison(results)
+    plot_length_comparison(results, suffix=label_suffix or '{}p'.format(seats))
     return results
 
 
-def plot_length_comparison(results):
+def plot_length_comparison(results, suffix='4p'):
     """Side-by-side win-rate bars across the three lengths."""
     lengths = sorted(results.keys())
     names = sorted({n for nt in lengths for n in results[nt][0].keys()})
@@ -866,10 +866,48 @@ def plot_length_comparison(results):
     ax.legend()
     ax.grid(True, axis='y', alpha=0.3)
 
-    fig.suptitle('Strategy performance across game lengths')
+    fig.suptitle('Strategy performance across game lengths ({})'.format(suffix))
     fig.tight_layout()
-    fig.savefig(os.path.join(OUT_DIR, 'ai_lengths.png'), dpi=110)
+    fig.savefig(os.path.join(OUT_DIR, 'ai_lengths_{}.png'.format(suffix)), dpi=110)
     plt.close(fig)
+
+
+def plot_seats_comparison(results_3p, results_4p):
+    """For each game length, plot 3p vs 4p win rate per strategy."""
+    lengths = sorted(set(results_3p.keys()) | set(results_4p.keys()))
+    names = sorted({n for nt in lengths for n in results_4p.get(nt, ({},))[0].keys()})
+
+    fig, axes = plt.subplots(1, len(lengths), figsize=(5 * len(lengths), 5), sharey=True)
+    if len(lengths) == 1:
+        axes = [axes]
+    width = 0.4
+    for ax, nt in zip(axes, lengths):
+        agg3 = results_3p.get(nt, ({}, None))[0]
+        agg4 = results_4p.get(nt, ({}, None))[0]
+        x = np.arange(len(names))
+        ax.bar(x - width / 2, [agg3.get(n, {'win_rate': 0})['win_rate'] for n in names],
+               width, label='3 players')
+        ax.bar(x + width / 2, [agg4.get(n, {'win_rate': 0})['win_rate'] for n in names],
+               width, label='4 players')
+        ax.set_xticks(x)
+        ax.set_xticklabels(names, rotation=25, ha='right')
+        ax.set_title('{} turns'.format(nt))
+        ax.grid(True, axis='y', alpha=0.3)
+        if ax is axes[0]:
+            ax.set_ylabel('Win rate')
+            ax.legend()
+    fig.suptitle('Win rate: 3 vs 4 players, by game length')
+    fig.tight_layout()
+    fig.savefig(os.path.join(OUT_DIR, 'ai_seats_compare.png'), dpi=110)
+    plt.close(fig)
+
+
+def round_seats():
+    """Compare 3-player vs 4-player tournaments at all three game lengths."""
+    results_3p = round_lengths(seats=3, seed_offset=300, label_suffix='3p')
+    results_4p = round_lengths(seats=4, seed_offset=400, label_suffix='4p')
+    plot_seats_comparison(results_3p, results_4p)
+    return results_3p, results_4p
 
 
 def round6():
