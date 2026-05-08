@@ -1261,9 +1261,25 @@ def calculateStateOpinions():       #this function will calculate the opinion of
                     mult = issueMult * mult
                     # Break support into its three sources so we can show a
                     # per-source breakdown in the end-of-game report.
-                    org_support = org * 2 * mult
-                    campaign_support = campaingingTime * 1.5 * mult
-                    ad_support = (float(adBuy) / float(adsTotal + 1)) * (adsTotal / 100.0) ** (1.1 / 2.0) * mult
+                    # Org passive support: each tier adds 0.5 per district per
+                    # turn (was 2). Tuning data showed org build was strictly
+                    # dominant at higher rates, leaving ads / campaigning as
+                    # cosmetic choices.
+                    # Org passive support per tier per district per turn,
+                    # scaled inversely with game length so cumulative org
+                    # payoff is roughly the same in 8/10/20-turn games:
+                    #   8 turns -> 0.625 (5/8)
+                    #  10 turns -> 0.500 (5/10)
+                    #  20 turns -> 0.250 (5/20)
+                    nt = numTurns if numTurns and numTurns > 0 else 10
+                    org_support = org * (5.0 / nt) * mult
+                    # Campaigning support: bumped from 1.5 to 3.0 per hour to
+                    # make in-person time a meaningful alternative to ad spend.
+                    campaign_support = campaingingTime * 3.0 * mult
+                    # Ad support: share of the district's ad market times a
+                    # sub-linear intensity term. Back to the original 0.55
+                    # exponent so big buys still scale, just sub-linearly.
+                    ad_support = (float(adBuy) / float(adsTotal + 1)) * (adsTotal / 100.0) ** 0.55 * mult
                     support = org_support + campaign_support + ad_support
                     try:
                         players[i + 1].addStat('support_from_org', org_support)
@@ -1376,18 +1392,144 @@ def decideContests():
         players[i+1].momentum += momentums[i] / float(sum(momentums)+.01) * totalMomemtum
     return
 
-def _ai_personality(player_number):
-    """Return a stable, per-AI personality dict. Same player always gets the
-    same personality; different AIs get different priorities."""
+# Hand-tuned AI strategy presets. Each row is one selectable AI personality;
+# the order is the order they appear in the dropdown at player setup.
+# 'urgency_curve' maps weeks-to-election -> urgency score. Anything beyond the
+# largest key uses the 'urgency_far' fallback.
+AI_STRATEGIES = {
+    'Default': {
+        'description': 'Balanced all-rounder. Plays urgency, closeness, and delegates equally.',
+        'urgency': 1.0,
+        'closeness': 1.0,
+        'delegates': 1.0,
+        'fundraise_cutoff': 12.0,
+        'org_threshold': 12.0,
+        'noise': 0.20,
+        'org_max_weeks': 8,
+        'urgency_curve': {0: 2.4, 1: 1.7, 3: 1.1, 6: 0.6},
+        'urgency_far': 0.3,
+        'ad_filter': 0.0,
+    },
+    'Aggressive': {
+        'description': 'All-in on contests in the next 4 weeks. Cheap fundraising threshold.',
+        'urgency': 1.3,
+        'closeness': 1.0,
+        'delegates': 1.0,
+        'fundraise_cutoff': 8.0,
+        'org_threshold': 14.0,
+        'noise': 0.25,
+        'org_max_weeks': 4,
+        'urgency_curve': {0: 4.0, 1: 2.5, 2: 1.5},
+        'urgency_far': 0.1,
+        'ad_filter': 0.0,
+    },
+    'Big-State': {
+        'description': 'Weights delegate-rich states heavily over swing margins.',
+        'urgency': 1.0,
+        'closeness': 0.4,
+        'delegates': 2.0,
+        'fundraise_cutoff': 10.0,
+        'org_threshold': 10.0,
+        'noise': 0.20,
+        'org_max_weeks': 9,
+        'urgency_curve': {0: 2.0, 1: 1.5, 3: 1.2, 6: 0.9},
+        'urgency_far': 0.4,
+        'ad_filter': 0.0,
+    },
+    'Close-Races': {
+        'description': 'Pours resources into swing districts and ignores blowouts.',
+        'urgency': 1.0,
+        'closeness': 2.5,
+        'delegates': 0.6,
+        'fundraise_cutoff': 14.0,
+        'org_threshold': 16.0,
+        'noise': 0.20,
+        'org_max_weeks': 8,
+        'urgency_curve': {0: 2.0, 1: 1.5, 3: 1.0, 6: 0.7},
+        'urgency_far': 0.4,
+        'ad_filter': 0.0,
+    },
+    'Money-Machine': {
+        'description': 'Builds organization aggressively early, fundraises hard, big late push.',
+        'urgency': 1.0,
+        'closeness': 1.0,
+        'delegates': 1.2,
+        'fundraise_cutoff': 16.0,
+        'org_threshold': 8.0,
+        'noise': 0.20,
+        'org_max_weeks': 12,
+        'urgency_curve': {0: 1.8, 1: 1.4, 3: 1.0, 6: 0.7},
+        'urgency_far': 0.4,
+        'ad_filter': 0.0,
+    },
+    'Late-Push': {
+        'description': 'Hoards cash early, dumps into ads in the final weeks.',
+        'urgency': 1.0,
+        'closeness': 1.0,
+        'delegates': 1.0,
+        'fundraise_cutoff': 12.0,
+        'org_threshold': 12.0,
+        'noise': 0.20,
+        'org_max_weeks': 5,
+        'urgency_curve': {0: 3.0, 1: 2.4, 2: 1.5, 3: 1.0},
+        'urgency_far': 0.3,
+        'ad_filter': 60.0,  # only buy ads when score is high (i.e. very near elections)
+    },
+    'Random': {
+        'description': 'Random hand-tuned mix per match. Keeps things unpredictable.',
+        # Random fields filled in by _ai_personality.
+        '_random': True,
+    },
+}
+
+DEFAULT_AI_STRATEGY = 'Default'
+
+
+def _ai_personality(player_number, strategy_name=None):
+    """Return the personality dict for an AI. If strategy_name is one of the
+    presets, use it (with a tiny stable per-player jitter on numeric fields).
+    Otherwise fall back to a randomized 'Random' personality keyed off the
+    player number for stability across turns."""
+    if strategy_name and strategy_name in AI_STRATEGIES and not AI_STRATEGIES[strategy_name].get('_random'):
+        base = dict(AI_STRATEGIES[strategy_name])
+        rng = random.Random(0xC0FFEE + player_number * 31)
+        # Small per-player jitter so two AIs picking the same preset still
+        # diverge a little turn-to-turn.
+        for k in ('urgency', 'closeness', 'delegates'):
+            base[k] = base[k] * rng.uniform(0.92, 1.08)
+        base['fundraise_cutoff'] *= rng.uniform(0.92, 1.08)
+        base['org_threshold'] *= rng.uniform(0.92, 1.08)
+        return base
     rng = random.Random(0xC0FFEE + player_number * 31)
     return {
-        'urgency': rng.uniform(0.85, 1.35),       # how much they chase imminent contests
-        'closeness': rng.uniform(0.75, 1.35),     # how much they fight for swing districts
-        'delegates': rng.uniform(0.75, 1.30),     # how much they value big-state delegates
-        'fundraise_cutoff': rng.uniform(9.0, 16.0),   # below this score, fundraise instead
-        'org_threshold': rng.uniform(13.0, 24.0),     # tolerance for building orgs
-        'noise': rng.uniform(0.18, 0.32),         # per-district random spread
+        'description': 'Randomized mix.',
+        'urgency': rng.uniform(0.85, 1.35),
+        'closeness': rng.uniform(0.75, 1.35),
+        'delegates': rng.uniform(0.75, 1.30),
+        'fundraise_cutoff': rng.uniform(9.0, 16.0),
+        'org_threshold': rng.uniform(10.0, 22.0),
+        'noise': rng.uniform(0.18, 0.32),
+        'org_max_weeks': 8,
+        'urgency_curve': {0: 2.4, 1: 1.7, 3: 1.1, 6: 0.6},
+        'urgency_far': 0.3,
+        'ad_filter': 0.0,
     }
+
+
+def _urgency_for(personality, time_to_election):
+    """Lookup the urgency score for a given weeks-to-election from the
+    preset's urgency_curve table."""
+    curve = personality.get('urgency_curve') or {0: 2.4, 1: 1.7, 3: 1.1, 6: 0.6}
+    far = personality.get('urgency_far', 0.3)
+    # Find the smallest threshold key >= time_to_election.
+    best_key = None
+    for k in sorted(curve.keys()):
+        if time_to_election <= k:
+            best_key = k
+            break
+    if best_key is None:
+        return far
+    return curve[best_key]
 
 
 def _score_district(district, timeToElection, stateDelegates, ai_idx, personality, rng):
@@ -1408,17 +1550,8 @@ def _score_district(district, timeToElection, stateDelegates, ai_idx, personalit
     margin = top_other - my_support
     closeness = 100.0 / (1.0 + abs(margin) ** 1.2)
 
-    # Sharpened urgency curve: this week's contests dominate the planner.
-    if timeToElection == 0:
-        urgency = 2.4
-    elif timeToElection == 1:
-        urgency = 1.7
-    elif timeToElection <= 3:
-        urgency = 1.1
-    elif timeToElection <= 6:
-        urgency = 0.6
-    else:
-        urgency = 0.3
+    # Strategy-specific urgency curve.
+    urgency = _urgency_for(personality, timeToElection)
 
     delegates = (district.population / 3.0) + (stateDelegates / 6.0)
 
@@ -1455,7 +1588,8 @@ def calcAImove(agent):
     global numPlayers
 
     ai_idx = player - 1
-    personality = _ai_personality(player)
+    strategy_name = getattr(players[player], 'aiStrategy', None) or DEFAULT_AI_STRATEGY
+    personality = _ai_personality(player, strategy_name)
     # Per-turn RNG: stable jitter with a seed mixing player + week so every
     # AI gets fresh random kicks each turn but two AIs in the same week still
     # diverge from each other.
@@ -1482,9 +1616,10 @@ def calcAImove(agent):
         }
 
     # 1) Build organizations where the upside is high enough.
+    org_max_weeks = personality.get('org_max_weeks', 8)
     for state_name, info in state_info.items():
         time_to_election = info['time']
-        if time_to_election > 8:
+        if time_to_election > org_max_weeks:
             continue
         state = info['state']
         org_level = state.organizations[ai_idx]
@@ -1522,10 +1657,11 @@ def calcAImove(agent):
 
     # 3) Spend ad money on the best districts. Each $1000 yields diminishing returns.
     AD_CHUNK = 1000
+    ad_filter = personality.get('ad_filter', 0.0)
     while players[player].resources[1] >= AD_CHUNK:
         i = best()
         score, _, district, _ = scored[i]
-        if score <= 0:
+        if score <= ad_filter:
             break
         district.setAdsThisTurn(ai_idx, district.adsThisTurn[ai_idx] + AD_CHUNK)
         players[player].resources[1] -= AD_CHUNK
@@ -2267,6 +2403,31 @@ def setUpPlayer(mode):
     Label(setup_card, text='Controller', bg='white').pack(anchor='w', padx=12)
     OptionMenu(setup_card, isHuman, 'human', 'AI').pack(anchor='w', padx=12, pady=(0, 10))
 
+    # AI strategy picker. Hidden until the controller is set to AI.
+    aiStrategy = StringVar(value=DEFAULT_AI_STRATEGY)
+    ai_label = Label(setup_card, text='AI strategy', bg='white')
+    ai_menu = OptionMenu(setup_card, aiStrategy, *AI_STRATEGIES.keys())
+    ai_desc_var = StringVar(value=AI_STRATEGIES[DEFAULT_AI_STRATEGY].get('description', ''))
+    ai_desc = Label(setup_card, textvariable=ai_desc_var, bg='white',
+                    fg='#555555', justify=LEFT, wraplength=620)
+
+    def update_ai_visibility(*_):
+        if isHuman.get() == 'AI':
+            ai_label.pack(anchor='w', padx=12)
+            ai_menu.pack(anchor='w', padx=12, pady=(0, 4))
+            ai_desc.pack(anchor='w', padx=12, pady=(0, 10))
+        else:
+            ai_label.pack_forget()
+            ai_menu.pack_forget()
+            ai_desc.pack_forget()
+
+    def update_ai_desc(*_):
+        ai_desc_var.set(AI_STRATEGIES.get(aiStrategy.get(), {}).get('description', ''))
+
+    isHuman.trace_add('write', update_ai_visibility)
+    aiStrategy.trace_add('write', update_ai_desc)
+    update_ai_visibility()
+
     issueVars = []
     if mode == 2:
         # Delegate-weighted balance per side, computed from the actual loaded
@@ -2297,16 +2458,18 @@ def setUpPlayer(mode):
                             variable=var, value=value, bg='white').pack(side='left', padx=4)
 
     Button(body, text='Save Player and Continue',
-           command=lambda: setPositions([v.get() for v in issueVars], name.get(), isHuman.get(), None, mode),
+           command=lambda: setPositions([v.get() for v in issueVars], name.get(), isHuman.get(), None, mode, aiStrategy.get()),
            padx=14).pack(anchor='w', pady=(16, 0))
 
 
-def setPositions(issues, name, isHuman, setUpPlayerWindow, mode):
+def setPositions(issues, name, isHuman, setUpPlayerWindow, mode, aiStrategy=None):
     global player
     person = players[player]
     person.setPositions(issues)
     person.setHuman(isHuman)
     person.setName(name if name else 'Player {}'.format(player))
+    if aiStrategy and aiStrategy in AI_STRATEGIES:
+        person.aiStrategy = aiStrategy
     if player < numPlayers:
         player += 1
         setUpPlayer(mode)
