@@ -8,6 +8,7 @@ class Player:
         self.delegateCount = 0
         self.momentum = 0
         self.history = {}
+        self.aiStrategy = 'Default'   # Picked at setup when controller is AI.
         # Cumulative campaign stats for the end-of-game report. New attributes
         # are read defensively so old saves still load (use _stat() helper).
         self.stats = {
