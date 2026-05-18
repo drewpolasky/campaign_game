@@ -1,9 +1,15 @@
 *~
 CampaignSaves/*
-__pycache__/*
+__pycache__/
+**/__pycache__/
 build/*
 stateDistricts/disrictList.txt
 .remote_config.json
 remote_config.json
 launch_debug.log
 .claude/
+.venv/
+.venv-wsl/
+.campaign_window_pos.txt
+runs/**/tb/
+balance_plots/

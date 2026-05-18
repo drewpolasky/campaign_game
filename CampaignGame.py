@@ -1480,6 +1480,12 @@ AI_STRATEGIES = {
         # Random fields filled in by _ai_personality.
         '_random': True,
     },
+    'NeuralPPO': {
+        'description': 'PPO-trained neural policy. Loads from runs/v2/model by default '
+                       '(override with $CAMPAIGN_RL_MODEL).',
+        # Marker — real game dispatches to rl.realgame_strategy when this is set.
+        '_neural': True,
+    },
 }
 
 DEFAULT_AI_STRATEGY = 'Default'
@@ -1589,6 +1595,25 @@ def calcAImove(agent):
 
     ai_idx = player - 1
     strategy_name = getattr(players[player], 'aiStrategy', None) or DEFAULT_AI_STRATEGY
+
+    # Neural policy short-circuit: encode the world, run the trained PPO
+    # model, decode the action onto the live State / District objects, then
+    # close out the turn through the same end-of-turn path as a human player.
+    if AI_STRATEGIES.get(strategy_name, {}).get('_neural'):
+        import traceback
+        try:
+            from rl import realgame_strategy
+            fundraising = realgame_strategy.act(player)
+        except Exception as e:
+            print(f'NeuralPPO strategy failed ({type(e).__name__}: {e!r})')
+            traceback.print_exc()
+            print('falling back to Default for this turn.')
+            strategy_name = DEFAULT_AI_STRATEGY
+        else:
+            calcEndTurn(fundraising)
+            _ai_advance_turn()
+            return
+
     personality = _ai_personality(player, strategy_name)
     # Per-turn RNG: stable jitter with a seed mixing player + week so every
     # AI gets fresh random kicks each turn but two AIs in the same week still
@@ -1913,12 +1938,32 @@ def init_app_root():
         screen_h = app_window.winfo_screenheight()
         width = min(1480, max(1100, screen_w - 120))
         height = min(920, max(720, screen_h - 120))
-        pointer_x = app_window.winfo_pointerx()
-        pointer_y = app_window.winfo_pointery()
-        pos_x = max(pointer_x - (width // 2), 0)
-        pos_y = max(pointer_y - 80, 0)
-        debug_launch('screen={}x{}, root={}x{}, pointer=({}, {}), pos=({}, {})'.format(screen_w, screen_h, width, height, pointer_x, pointer_y, pos_x, pos_y))
-        app_window.geometry('{}x{}+{}+{}'.format(width, height, pos_x, pos_y))
+        # Try to restore where the user last closed the window. Falls back
+        # to a centered position on first run or if the saved location is
+        # off-screen.
+        saved_geom = _load_window_geometry()
+        used_geom = None
+        if saved_geom:
+            try:
+                size_part, _, off_part = saved_geom.partition('+')
+                sw, _, sh = size_part.partition('x')
+                sx, _, sy = off_part.partition('+')
+                sw_i, sh_i, sx_i, sy_i = int(sw), int(sh), int(sx), int(sy)
+                # Sanity check: at least 100px of the window must land on
+                # screen on both axes (guards against stale multi-monitor
+                # geometries pointing into the void).
+                if (sw_i >= 800 and sh_i >= 600
+                        and sx_i + sw_i > 100 and sx_i < screen_w - 100
+                        and sy_i + sh_i > 100 and sy_i < screen_h - 100):
+                    used_geom = saved_geom
+            except (TypeError, ValueError):
+                pass
+        if used_geom is None:
+            pos_x = max((screen_w - width) // 2, 0)
+            pos_y = max((screen_h - height) // 2, 0)
+            used_geom = '{}x{}+{}+{}'.format(width, height, pos_x, pos_y)
+        debug_launch('screen={}x{}, geometry={}'.format(screen_w, screen_h, used_geom))
+        app_window.geometry(used_geom)
         app_window.minsize(1000, 700)
         app_window.configure(bg='#f3efe2')
         app_window.protocol('WM_DELETE_WINDOW', exitGame)
@@ -2259,11 +2304,67 @@ def update_resource_summary():
     labels['momentum'].set('Momentum: {}'.format(round(players[player].momentum, 1)))
     issue_label = issueNames[eventOfTheWeek]
     your_pos = _format_position(players[player].positions[eventOfTheWeek] if players[player].positions else 0, eventOfTheWeek)
-    labels['issue'].set('Headline:\n  {}\nIssue: {}\nYour stance: {}'.format(headlineOfTheWeek or issue_label, issue_label, your_pos))
+    # Separate the headline from the issue/stance metadata; the headline can
+    # be long and was clipping when crammed into the same Label.
+    labels['headline'].set('Headline: {}'.format(headlineOfTheWeek or issue_label))
+    labels['issue'].set('Issue: {}\nYour stance: {}'.format(issue_label, your_pos))
     standings = []
     for person in players:
         standings.append('{}: {} delegates'.format(players[person].publicName, players[person].delegateCount))
     labels['standings'].set('\n'.join(standings))
+
+
+def showOpponentStances():
+    """Pop up a window listing every other player's stance on every issue.
+    Opponents are placed in a grid so 3+ opponents fit on one screen."""
+    win = Toplevel()
+    win.title("Opponents' Stances")
+    win.configure(bg='#f3efe2')
+    try:
+        win.transient(app_window if app_window is not None else app_root)
+    except (TclError, AttributeError):
+        pass
+
+    Label(win, text="Opponents' stances on each issue",
+          bg='#f3efe2', font=('TkDefaultFont', 12, 'bold'),
+          padx=14, pady=10).pack(anchor='w')
+
+    body = Frame(win, bg='#f3efe2', padx=14, pady=4)
+    body.pack(fill='both', expand=True)
+
+    opponents = [p for p in players if p != player]
+    if not opponents:
+        Label(body, text='(no opponents this game)', bg='#f3efe2').pack(anchor='w', pady=8)
+    else:
+        # Grid layout: up to 2 opponents per row so even 4-player games fit.
+        cols = 2 if len(opponents) >= 2 else 1
+        for idx, p_id in enumerate(opponents):
+            row, col = divmod(idx, cols)
+            cell = Frame(body, bg='white', bd=1, relief='groove', padx=10, pady=8)
+            cell.grid(row=row, column=col, sticky='nsew', padx=6, pady=6)
+            opp = players[p_id]
+            Label(cell, text=opp.publicName or 'Player {}'.format(p_id),
+                  bg='white', font=('TkDefaultFont', 11, 'bold')
+                  ).pack(anchor='w', pady=(0, 2))
+            Label(cell,
+                  text='Momentum: {} \u00b7 Delegates: {}'.format(
+                      round(getattr(opp, 'momentum', 0), 1),
+                      getattr(opp, 'delegateCount', 0)),
+                  bg='white', fg='#555555', font=('TkDefaultFont', 9, 'italic')
+                  ).pack(anchor='w', pady=(0, 4))
+            positions = opp.positions or [0] * len(issueNames)
+            for i, issue in enumerate(issueNames):
+                stance = _format_position(positions[i] if i < len(positions) else 0, i)
+                Label(cell,
+                      text='{:<20} {}'.format(issue + ':', stance),
+                      bg='white', justify=LEFT, font=('TkFixedFont', 10)
+                      ).pack(anchor='w')
+        # Make grid columns share width evenly.
+        for c in range(cols):
+            body.grid_columnconfigure(c, weight=1, uniform='opp')
+
+    Button(win, text='Close', command=win.destroy, padx=14).pack(pady=12)
+    win.bind('<Escape>', lambda e: win.destroy())
 
 
 def main():
@@ -3100,19 +3201,27 @@ def createNationalMap(selected_state=None):
         dashboard.pack(fill='x', pady=(0, 12))
         resourceVar = StringVar()
         momentumVar = StringVar()
+        headlineVar = StringVar()
         issueVar = StringVar()
         standingsVar = StringVar()
         ui_state['resource_labels'] = {
             'resources': resourceVar,
             'momentum': momentumVar,
+            'headline': headlineVar,
             'issue': issueVar,
             'standings': standingsVar,
         }
-        Label(dashboard, textvariable=resourceVar, bg='white', justify=LEFT, wraplength=240).pack(anchor='w', padx=12, pady=2)
-        Label(dashboard, textvariable=momentumVar, bg='white', justify=LEFT, wraplength=240).pack(anchor='w', padx=12, pady=2)
-        Label(dashboard, textvariable=issueVar, bg='white', justify=LEFT, wraplength=240).pack(anchor='w', padx=12, pady=2)
-        Label(dashboard, text='Standings', bg='white', font=('TkDefaultFont', 10, 'bold')).pack(anchor='w', padx=12, pady=(8, 0))
-        Label(dashboard, textvariable=standingsVar, bg='white', justify=LEFT, wraplength=240).pack(anchor='w', padx=12, pady=(0, 8))
+        # Conservative wraplength (200px) matches the actual visible card
+        # width on smaller / WSL displays; with anchor='w' the left edge is
+        # pinned so leading characters can't clip.
+        WRAP = 200
+        Label(dashboard, textvariable=resourceVar, bg='white', anchor='w', justify=LEFT, wraplength=WRAP).pack(anchor='w', fill='x', padx=12, pady=2)
+        Label(dashboard, textvariable=momentumVar, bg='white', anchor='w', justify=LEFT, wraplength=WRAP).pack(anchor='w', fill='x', padx=12, pady=2)
+        Label(dashboard, textvariable=headlineVar, bg='white', anchor='w', justify=LEFT, wraplength=WRAP, font=('TkDefaultFont', 10, 'italic')).pack(anchor='w', fill='x', padx=12, pady=(6, 2))
+        Label(dashboard, textvariable=issueVar, bg='white', anchor='w', justify=LEFT, wraplength=WRAP).pack(anchor='w', fill='x', padx=12, pady=2)
+        Label(dashboard, text='Standings', bg='white', anchor='w', font=('TkDefaultFont', 10, 'bold')).pack(anchor='w', fill='x', padx=12, pady=(8, 0))
+        Label(dashboard, textvariable=standingsVar, bg='white', anchor='w', justify=LEFT, wraplength=WRAP).pack(anchor='w', fill='x', padx=12, pady=(0, 4))
+        Button(dashboard, text="View Opponents' Stances", command=showOpponentStances).pack(anchor='w', padx=12, pady=(0, 8))
 
         fundraisingVar = IntVar(value=0)
         ui_state['fundraising_var'] = fundraisingVar
@@ -3922,9 +4031,39 @@ def show_final_results():
     Button(actions, text='Exit Game', command=exitGame, padx=14).pack(side='left', padx=8)
 
 
+_WINDOW_POS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                '.campaign_window_pos.txt')
+
+
+def _save_window_geometry():
+    """Record the main window's current geometry so the next launch can
+    reopen at the same screen position."""
+    global app_window
+    try:
+        if app_window is not None and app_window.winfo_exists():
+            geom = app_window.geometry()
+            with open(_WINDOW_POS_PATH, 'w') as f:
+                f.write(geom)
+    except (TclError, OSError):
+        pass
+
+
+def _load_window_geometry():
+    """Return the saved geometry string ('WxH+X+Y') or None if unavailable."""
+    try:
+        with open(_WINDOW_POS_PATH, 'r') as f:
+            geom = f.read().strip()
+        if geom and 'x' in geom and '+' in geom:
+            return geom
+    except OSError:
+        pass
+    return None
+
+
 def exitGame():
     close_modal()
     global app_window
+    _save_window_geometry()
     if app_window is not None and app_window.winfo_exists():
         app_window.destroy()
     if app_root is not None and app_root.winfo_exists():
@@ -3932,7 +4071,8 @@ def exitGame():
     sys.exit()
 
 
-main()
+if __name__ == '__main__':
+    main()
 
 
 
