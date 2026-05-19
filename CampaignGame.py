@@ -1936,8 +1936,11 @@ def init_app_root():
         app_window = Toplevel(app_root)
         screen_w = app_window.winfo_screenwidth()
         screen_h = app_window.winfo_screenheight()
-        width = min(1480, max(1100, screen_w - 120))
-        height = min(920, max(720, screen_h - 120))
+        # Match the looser sizing in build_screen so small displays (e.g.
+        # 1366x768 laptops) don't get a window that's already taller than
+        # their screen on launch.
+        width = min(1480, max(900, screen_w - 80))
+        height = min(920, max(620, screen_h - 80))
         # Try to restore where the user last closed the window. Falls back
         # to a centered position on first run or if the saved location is
         # off-screen.
@@ -1964,7 +1967,7 @@ def init_app_root():
             used_geom = '{}x{}+{}+{}'.format(width, height, pos_x, pos_y)
         debug_launch('screen={}x{}, geometry={}'.format(screen_w, screen_h, used_geom))
         app_window.geometry(used_geom)
-        app_window.minsize(1000, 700)
+        app_window.minsize(800, 560)
         app_window.configure(bg='#f3efe2')
         app_window.protocol('WM_DELETE_WINDOW', exitGame)
         app_window.bind('<Control-s>', lambda event: saveGame())
@@ -2023,12 +2026,15 @@ def build_screen(title, subtitle='', gameplay=False):
     root = clear_root(title)
     screen_w = root.winfo_screenwidth()
     screen_h = root.winfo_screenheight()
-    width = min(1480, max(1100, screen_w - 120))
-    height = min(920, max(720, screen_h - 120))
+    # Adapt to screen size: only push back to a generous default when there's
+    # room. On 768p laptops a 720px minimum used to make the window too tall
+    # for the screen, hiding bottom controls with no scrollbar to recover.
+    width = min(1480, max(900, screen_w - 80))
+    height = min(920, max(620, screen_h - 80))
     x = max(int((screen_w - width) / 2), 0)
     y = max(int((screen_h - height) / 2), 0)
     try:
-        root.minsize(1000, 700)
+        root.minsize(800, 560)
     except Exception:
         pass
     root.geometry('{}x{}+{}+{}'.format(width, height, x, y))
@@ -2057,6 +2063,51 @@ def build_game_nav(parent):
     Button(nav, text='Save', command=saveGame, padx=10).pack(side='left', padx=4)
     Button(nav, text='Load', command=lambda: loadGame(None), padx=10).pack(side='left', padx=4)
     Button(nav, text='End Turn', command=lambda: endTurn(None, ui_state['fundraising_var'].get() if ui_state['fundraising_var'] else 0), padx=10).pack(side='left', padx=4)
+
+
+def make_scrollable_column(parent, width=None, bg=None, padx=0):
+    """Return (container, inner_frame).
+
+    `container` is a Frame you `.pack()` into the parent (with side='left'
+    and any fill/expand options). `inner_frame` is where you put the actual
+    widgets — it lives inside a Canvas with a vertical Scrollbar so the
+    column can scroll if its contents exceed the visible height.
+
+    Use this for any side column whose contents might overflow vertically
+    on smaller displays (e.g. the dashboard column with the End Turn
+    button at the bottom).
+    """
+    bg = bg if bg is not None else parent.cget('bg')
+    container = Frame(parent, bg=bg, width=width)
+    if width is not None:
+        container.pack_propagate(False)
+
+    canvas = Canvas(container, bg=bg, highlightthickness=0)
+    scrollbar = Scrollbar(container, orient='vertical', command=canvas.yview)
+    inner = Frame(canvas, bg=bg)
+    inner_id = canvas.create_window((0, 0), window=inner, anchor='nw')
+
+    def _on_inner_configure(event):
+        canvas.configure(scrollregion=canvas.bbox('all'))
+
+    def _on_canvas_configure(event):
+        # Force inner Frame width to match canvas width so child widgets
+        # that want fill='x' actually expand.
+        canvas.itemconfig(inner_id, width=event.width)
+
+    inner.bind('<Configure>', _on_inner_configure)
+    canvas.bind('<Configure>', _on_canvas_configure)
+
+    canvas.configure(yscrollcommand=scrollbar.set)
+    scrollbar.pack(side='right', fill='y')
+    canvas.pack(side='left', fill='both', expand=True)
+
+    # Hover-based mouse wheel binding using the same helpers as the
+    # calendar canvas.
+    canvas.bind('<Enter>', lambda e: _bound_to_mousewheel(e, canvas))
+    canvas.bind('<Leave>', lambda e: _unbound_to_mousewheel(e, canvas))
+
+    return container, inner
 
 
 def make_card(parent, title):
@@ -3062,14 +3113,15 @@ def createNationalMap(selected_state=None):
 
     shell = Frame(body, bg='#f3efe2')
     shell.pack(fill='both', expand=True)
-    left = Frame(shell, bg='#f3efe2', width=340)
-    left.pack(side='left', fill='y', padx=(0, 12))
-    left.pack_propagate(False)
+    # Both side columns are scrollable so their contents stay reachable on
+    # small / awkward display sizes — the dashboard column in particular
+    # can be taller than the visible window.
+    left_container, left = make_scrollable_column(shell, width=340, bg='#f3efe2')
+    left_container.pack(side='left', fill='y', padx=(0, 12))
     center_frame = Frame(shell, bg='#f3efe2')
     center_frame.pack(side='left', fill='both', expand=True)
-    right = Frame(shell, bg='#f3efe2', width=420)
-    right.pack(side='left', fill='y', padx=(12, 0))
-    right.pack_propagate(False)
+    right_container, right = make_scrollable_column(shell, width=420, bg='#f3efe2')
+    right_container.pack(side='left', fill='y', padx=(12, 0))
 
     calendar_card = make_card(left, 'Calendar and Search')
     calendar_card.pack(fill='both', expand=True)
