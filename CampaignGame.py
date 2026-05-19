@@ -1302,6 +1302,11 @@ def decideContests():
         momentums.append(0)
         weekDelegates[i+1] = 0
         weekResults[i+1] = {'delegates':0, 'states':[],'districts':[]}
+    # Per-state vote-share breakdowns, populated for each state decided
+    # this week. Stored under a string key so it doesn't collide with the
+    # 1-based player IDs that own the rest of weekResults. The start-of-
+    # turn report renders this as a separate "Decided States" section.
+    weekResults['_state_results'] = {}
     totalMomemtum = 50
     for state in calendarOfContests:
         if state[1] + 1 == currentDate:
@@ -1374,12 +1379,18 @@ def decideContests():
                 pass
 
 
-            votesCounts = ''
             stateVotesTotal = sum(stateVotes)
+            state_pct = {}
             for i in range(numPlayers):
-                playerStateVotes = stateVotes[i]
-                votesPercentage = round(float(playerStateVotes) / float(stateVotesTotal) * 100) 
-                votesCounts += str(players[i+1].publicName) + ' wins ' + str(int(votesPercentage)) + ' precent of the vote, \n'
+                if stateVotesTotal > 0:
+                    pct = round(float(stateVotes[i]) / float(stateVotesTotal) * 100, 1)
+                else:
+                    pct = 0.0
+                state_pct[i + 1] = pct
+            weekResults['_state_results'][stateName] = {
+                'winner': stateWinner,
+                'percentages': state_pct,
+            }
             
 
     weekResultString = ''
@@ -2220,10 +2231,11 @@ def show_ai_week_screen():
 
     results_card = make_card(left, 'Last Week Results')
     results_card.pack(fill='both', expand=True, pady=(0, 12))
-    if not weekResults:
+    player_keys = [k for k in weekResults if isinstance(k, int)]
+    if not player_keys:
         Label(results_card, text='No contests were resolved last week.', bg='white', justify=LEFT, wraplength=340).pack(anchor='w', padx=12, pady=(0, 12))
     else:
-        for person in weekResults:
+        for person in player_keys:
             person_frame = Frame(results_card, bg='white', bd=1, relief='solid', padx=10, pady=6)
             person_frame.pack(fill='x', padx=12, pady=4)
             Label(person_frame, text=players[person].publicName or 'Player {}'.format(person),
@@ -2235,6 +2247,29 @@ def show_ai_week_screen():
                     display = ', '.join(value) if value else '(none)'
                 Label(person_frame, text='{}: {}'.format(resultType, display),
                       bg='white', justify=LEFT, wraplength=320).pack(anchor='w', pady=1)
+
+    # Per-state vote breakdowns from last week's decided primaries.
+    state_breakdowns = weekResults.get('_state_results', {}) if isinstance(weekResults, dict) else {}
+    if state_breakdowns:
+        states_card = make_card(left, 'Decided States')
+        states_card.pack(fill='x', pady=(0, 12))
+        for stateName in sorted(state_breakdowns):
+            entry = state_breakdowns[stateName]
+            row = Frame(states_card, bg='white', bd=1, relief='solid', padx=8, pady=6)
+            row.pack(fill='x', padx=12, pady=3)
+            winner_id = entry.get('winner')
+            winner_name = (players[winner_id].publicName
+                           if winner_id in players else 'unknown')
+            Label(row, text='{}  -  won by {}'.format(stateName, winner_name),
+                  bg='white', font=('TkDefaultFont', 10, 'bold')
+                  ).pack(anchor='w')
+            for pid, pct in sorted(entry.get('percentages', {}).items(),
+                                   key=lambda kv: -kv[1]):
+                name = players[pid].publicName if pid in players else 'P{}'.format(pid)
+                mark = '  (winner)' if pid == winner_id else ''
+                Label(row, text='  {:<20} {:>5.1f}%{}'.format(name, pct, mark),
+                      bg='white', justify=LEFT, font=('TkFixedFont', 10)
+                      ).pack(anchor='w')
 
     Button(left, text='Run Next Week' if currentDate <= numTurns else 'See Final Results',
            command=run_one_ai_week, padx=14).pack(anchor='w', pady=(8, 0))
@@ -2852,10 +2887,13 @@ def showStartOfTurnReport():
 
     results_card = make_card(body, 'Last Week Results')
     results_card.pack(fill='x', pady=(0, 16))
-    if not weekResults:
+    # Per-player totals; integer keys map to player IDs. Any non-int key
+    # (e.g. our '_state_results') is metadata and rendered separately below.
+    player_keys = [k for k in weekResults if isinstance(k, int)]
+    if not player_keys:
         Label(results_card, text='No contests were resolved last week.', bg='white').pack(anchor='w', padx=12, pady=(0, 12))
     else:
-        for person in weekResults:
+        for person in player_keys:
             person_frame = Frame(results_card, bg='white', bd=1, relief='solid', padx=10, pady=8)
             person_frame.pack(fill='x', padx=12, pady=6)
             Label(person_frame, text=players[person].publicName, bg='white', font=('TkDefaultFont', 10, 'bold')).pack(anchor='w')
@@ -2866,6 +2904,34 @@ def showStartOfTurnReport():
                 else:
                     display = ', '.join(value)
                 Label(person_frame, text='{}: {}'.format(resultType, display), bg='white', justify=LEFT, wraplength=860).pack(anchor='w', pady=1)
+
+    # Per-state vote breakdowns — populated by decideContests. Older saves
+    # won't have this key, so guard with .get().
+    state_breakdowns = weekResults.get('_state_results', {}) if isinstance(weekResults, dict) else {}
+    if state_breakdowns:
+        states_card = make_card(body, 'Decided States')
+        states_card.pack(fill='x', pady=(0, 16))
+        for stateName in sorted(state_breakdowns):
+            entry = state_breakdowns[stateName]
+            row = Frame(states_card, bg='white', bd=1, relief='solid', padx=10, pady=8)
+            row.pack(fill='x', padx=12, pady=4)
+            winner_id = entry.get('winner')
+            winner_name = (players[winner_id].publicName
+                           if winner_id in players else 'unknown')
+            Label(row,
+                  text='{}  -  won by {}'.format(stateName, winner_name),
+                  bg='white', font=('TkDefaultFont', 10, 'bold')
+                  ).pack(anchor='w')
+            pcts = entry.get('percentages', {})
+            # Render highest share first so it's easy to scan.
+            ordered = sorted(pcts.items(), key=lambda kv: -kv[1])
+            for pid, pct in ordered:
+                name = players[pid].publicName if pid in players else 'P{}'.format(pid)
+                mark = '  (winner)' if pid == winner_id else ''
+                Label(row,
+                      text='  {:<24} {:>5.1f}%{}'.format(name, pct, mark),
+                      bg='white', justify=LEFT, font=('TkFixedFont', 10)
+                      ).pack(anchor='w')
 
     actions = Frame(body, bg='#f3efe2')
     actions.pack(anchor='w')
