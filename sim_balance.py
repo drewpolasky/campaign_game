@@ -151,7 +151,8 @@ def calc_state_opinions(sim):
             # Election-week bonus.
             tte = time_to_election(sim, state_name)
             mult_time = 1.2 if tte == 0 else (1.1 if tte == 1 else 1.0)
-            mult_mom = 1.0 + p.momentum / 50.0
+            # 50 momentum -> ~+30% support bonus (matches CampaignGame.py).
+            mult_mom = 1.0 + p.momentum / 167.0
             # Issue alignment.
             try:
                 state_pos = st.positions[sim.event_of_week]
@@ -204,7 +205,8 @@ def calc_end_turn(sim, p_idx, fundraising_hours):
     p.resources[1] += fundraising_income + local
     p.income_total += fundraising_income + local
     p.fundraising_hours_total += fundraising_hours
-    p.momentum /= 2.0
+    # Decay 3/4 of momentum each week; wins added later in decide_contests.
+    p.momentum /= 4.0
 
 
 def decide_contests(sim):

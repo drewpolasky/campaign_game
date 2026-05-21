@@ -1195,7 +1195,9 @@ def calcEndTurn(fundraising):      #this will calculate the new resources availa
 
     localFundraising = round(localFundraising)
     resources[1] = resources[1] + fundraising * 4000 + 20000 + localFundraising
-    players[player].momentum = players[player].momentum /2.0
+    # Momentum decays steeply each week — keep only the last 1/4. Wins from
+    # the contests decided later this week are added on top in decideContests.
+    players[player].momentum = players[player].momentum / 4.0
     # Compute the time/money this player actually committed to campaigning
     # and ads this turn (district allocations are reset only when the week
     # rolls over, so they're still accurate here).
@@ -1234,7 +1236,10 @@ def calculateStateOpinions():       #this function will calculate the opinion of
                     campaingingTime = district.campaigningThisTurn[i]
                     adBuy = district.adsThisTurn[i]
                     adsTotal = sum(district.adsThisTurn)
-                    mult = (1 + float(players[i + 1].momentum) / 50.0) * mult
+                    # Momentum boost on support: 50 momentum ~= +30% bonus
+                    # (calibrated so a strong but not dominant momentum lead
+                    # is meaningful without snowballing past comeback range).
+                    mult = (1 + float(players[i + 1].momentum) / 167.0) * mult
 
                     # Issue-of-the-week alignment uses the STATE's position
                     # (one position per state for now). If the player's stance
@@ -1739,6 +1744,10 @@ def _ai_advance_turn():
     decideContests()
     player = 1
     eventOfTheWeek = random.randint(0, len(issueNames) - 1)
+    # Refresh the displayed flavor headline so it tracks the new issue.
+    # Without this, weeks rolled through AI-only paths would keep showing
+    # the previous week's headline.
+    _refresh_headline()
     for state in states:
         for district in states[state].districts:
             for person in players:
@@ -1908,6 +1917,20 @@ app_root = None
 app_window = None
 current_modal = None
 pixel_lookup = None
+# Persistent UI chrome — created once on first launch in init_app_root and
+# reused for every screen. build_screen() just updates the header text and
+# replaces the contents of chrome_body, so transitions feel like content
+# swaps rather than full rebuilds (no flicker, no geometry loss, no
+# resetting the user's window position / fullscreen state).
+chrome = {
+    'outer': None,
+    'header': None,
+    'title_var': None,
+    'subtitle_var': None,
+    'subtitle_label': None,
+    'nav': None,
+    'body': None,
+}
 ui_state = {
     'selected_state': None,
     'map_label': None,
@@ -1919,6 +1942,11 @@ ui_state = {
     'calendar_items': [],
     'search_var': None,
     'search_status_var': None,
+    # When a state-plan screen is on display, this holds enough info to
+    # commit its slider values to the underlying districts during the next
+    # screen transition. Set when the state plan UI is built; cleared on
+    # successful commit (either explicit save or auto-commit).
+    'pending_state_plan': None,
 }
 menu_resume_state = {
     'selected_state': None,
@@ -1955,7 +1983,7 @@ def init_app_root():
         # Try to restore where the user last closed the window. Falls back
         # to a centered position on first run or if the saved location is
         # off-screen.
-        saved_geom = _load_window_geometry()
+        saved_mode, saved_geom = _load_window_geometry()
         used_geom = None
         if saved_geom:
             try:
@@ -1976,8 +2004,30 @@ def init_app_root():
             pos_x = max((screen_w - width) // 2, 0)
             pos_y = max((screen_h - height) // 2, 0)
             used_geom = '{}x{}+{}+{}'.format(width, height, pos_x, pos_y)
-        debug_launch('screen={}x{}, geometry={}'.format(screen_w, screen_h, used_geom))
+        debug_launch('screen={}x{}, geometry={}, saved_mode={}'.format(screen_w, screen_h, used_geom, saved_mode))
         app_window.geometry(used_geom)
+        if saved_mode == 'FS':
+            # Restore the maximized / zoomed window state. zoomed is the
+            # native Windows / Tk way; -zoomed handles X11 window managers;
+            # -fullscreen is the cross-platform fallback. Try them in order
+            # and stop at the first one that sticks.
+            applied = False
+            try:
+                app_window.state('zoomed')
+                applied = True
+            except TclError:
+                pass
+            if not applied:
+                try:
+                    app_window.attributes('-zoomed', True)
+                    applied = True
+                except TclError:
+                    pass
+            if not applied:
+                try:
+                    app_window.attributes('-fullscreen', True)
+                except TclError:
+                    pass
         app_window.minsize(800, 560)
         app_window.configure(bg='#f3efe2')
         app_window.protocol('WM_DELETE_WINDOW', exitGame)
@@ -1988,10 +2038,46 @@ def init_app_root():
         force_root_visible(app_window)
         app_window.after(100, lambda: force_root_visible(app_window))
         app_window.after(400, lambda: force_root_visible(app_window))
+        _build_persistent_chrome()
     else:
         debug_launch('reusing existing app window with geometry={}'.format(app_window.geometry()))
         force_root_visible(app_window)
+        # If chrome was somehow torn down (e.g. an old call path), rebuild.
+        if chrome['body'] is None or not chrome['body'].winfo_exists():
+            _build_persistent_chrome()
     return app_window
+
+
+def _build_persistent_chrome():
+    """Create the outer Frame, dark header, nav bar, and body container.
+    Called once when the window is first set up; subsequent screen
+    transitions just retitle the header and swap body contents."""
+    outer = Frame(app_window, bg='#f3efe2')
+    outer.pack(fill='both', expand=True)
+
+    header = Frame(outer, bg='#143642', padx=22, pady=18)
+    header.pack(fill='x')
+    title_var = StringVar(value='Campaign Game')
+    subtitle_var = StringVar(value='')
+    Label(header, textvariable=title_var, bg='#143642', fg='white',
+          font=('TkDefaultFont', 17, 'bold')).pack(anchor='w')
+    subtitle_label = Label(header, textvariable=subtitle_var, bg='#143642',
+                           fg='#d7e8ed', font=('TkDefaultFont', 10))
+    # Pack only when there is a subtitle to render — avoids an empty band.
+
+    nav = Frame(header, bg='#143642')
+    # Same: only packed for gameplay screens.
+
+    body = Frame(outer, bg='#f3efe2', padx=18, pady=18)
+    body.pack(fill='both', expand=True)
+
+    chrome['outer'] = outer
+    chrome['header'] = header
+    chrome['title_var'] = title_var
+    chrome['subtitle_var'] = subtitle_var
+    chrome['subtitle_label'] = subtitle_label
+    chrome['nav'] = nav
+    chrome['body'] = body
 
 
 def close_modal():
@@ -2017,12 +2103,73 @@ def force_root_visible(root=None):
         debug_launch('force_root_visible TclError={}'.format(err))
 
 
+def auto_commit_state_plan():
+    """If a state-plan screen is currently displayed, commit its slider
+    values to the underlying districts before navigating away. Silent on
+    over-budget conditions — those revert without applying, since the user
+    didn't explicitly hit Save and we'd rather lose the plan than break the
+    game's resource accounting.
+
+    Safe to call any time; no-op when nothing is pending."""
+    plan = ui_state.get('pending_state_plan')
+    if not plan:
+        return
+    # Clear immediately so re-entry (e.g. nested clear_root calls) doesn't
+    # try to commit the same plan twice.
+    ui_state['pending_state_plan'] = None
+
+    try:
+        sliders_time = plan['time_sliders']
+        sliders_ads = plan['ad_sliders']
+        stateName = plan['state_name']
+        allocatedTime = plan['allocated_time']
+        allocatedMoney = plan['allocated_money']
+        # Snapshot slider values BEFORE the widgets get destroyed.
+        new_time = [s.get() for s in sliders_time]
+        new_ads = [s.get() for s in sliders_ads]
+    except (TclError, KeyError, AttributeError):
+        return
+
+    p = players[player]
+    # Refund the existing allocations so we can re-validate against the
+    # un-spent budget.
+    p.resources[1] += allocatedMoney
+    p.resources[0] += allocatedTime
+    total_ads = sum(new_ads)
+    total_time = sum(new_time)
+    if total_ads > p.resources[1] or total_time > p.resources[0]:
+        # Over budget: revert refund, don't apply changes.
+        p.resources[1] -= allocatedMoney
+        p.resources[0] -= allocatedTime
+        return
+
+    p.resources[1] -= total_ads
+    p.resources[0] -= total_time
+    currentState = states.get(stateName)
+    if currentState is None:
+        return
+    for i, district in enumerate(currentState.districts):
+        if i < len(new_ads):
+            district.setAdsThisTurn(player - 1, new_ads[i])
+        if i < len(new_time):
+            district.setCampaigningThisTurn(player - 1, new_time[i])
+
+
 def clear_root(title):
+    """Prepare the persistent chrome for a new screen: close any open
+    modal, update the window title, reset per-screen ui_state, and clear
+    out the body. The window itself, its geometry, and the header chrome
+    are preserved across calls so transitions don't flicker."""
+    # Persist any in-flight state-plan slider values before their widgets
+    # get destroyed — this is what makes Back/Build/Nav auto-save the plan.
+    auto_commit_state_plan()
     root = init_app_root()
     close_modal()
     root.title(title)
-    for child in root.winfo_children():
-        child.destroy()
+    body = chrome['body']
+    if body is not None and body.winfo_exists():
+        for child in body.winfo_children():
+            child.destroy()
     for key in ui_state:
         if isinstance(ui_state[key], dict):
             ui_state[key] = {}
@@ -2033,47 +2180,76 @@ def clear_root(title):
     return root
 
 
-def build_screen(title, subtitle='', gameplay=False):
+def build_screen(title, subtitle='', gameplay=False, chromeless=False):
+    """Retitle the persistent header, toggle the gameplay nav, and return
+    (window, empty body Frame) for the screen function to pack into.
+
+    chromeless=True hides the dark header band entirely — used by screens
+    like the main menu that paint their own background and don't want any
+    chrome above them. The body still persists so transitions stay smooth.
+    """
     root = clear_root(title)
-    screen_w = root.winfo_screenwidth()
-    screen_h = root.winfo_screenheight()
-    # Adapt to screen size: only push back to a generous default when there's
-    # room. On 768p laptops a 720px minimum used to make the window too tall
-    # for the screen, hiding bottom controls with no scrollbar to recover.
-    width = min(1480, max(900, screen_w - 80))
-    height = min(920, max(620, screen_h - 80))
-    x = max(int((screen_w - width) / 2), 0)
-    y = max(int((screen_h - height) / 2), 0)
-    try:
-        root.minsize(800, 560)
-    except Exception:
-        pass
-    root.geometry('{}x{}+{}+{}'.format(width, height, x, y))
-    outer = Frame(root, bg='#f3efe2')
-    outer.pack(fill='both', expand=True)
+    chrome['title_var'].set(title)
+    chrome['subtitle_var'].set(subtitle)
 
-    header = Frame(outer, bg='#143642', padx=22, pady=18)
-    header.pack(fill='x')
-    Label(header, text=title, bg='#143642', fg='white', font=('TkDefaultFont', 17, 'bold')).pack(anchor='w')
-    if subtitle:
-        Label(header, text=subtitle, bg='#143642', fg='#d7e8ed', font=('TkDefaultFont', 10)).pack(anchor='w', pady=(4, 0))
-    if gameplay:
-        build_game_nav(header)
+    header = chrome['header']
+    subtitle_label = chrome['subtitle_label']
+    nav = chrome['nav']
 
-    body = Frame(outer, bg='#f3efe2', padx=18, pady=18)
-    body.pack(fill='both', expand=True)
-    return root, body
+    if chromeless:
+        if header.winfo_ismapped():
+            header.pack_forget()
+    else:
+        if not header.winfo_ismapped():
+            header.pack(fill='x', before=chrome['body'])
+        if subtitle:
+            if not subtitle_label.winfo_ismapped():
+                subtitle_label.pack(anchor='w', pady=(4, 0))
+        else:
+            if subtitle_label.winfo_ismapped():
+                subtitle_label.pack_forget()
+
+        # Always rebuild the nav buttons since their callbacks bind values
+        # like the current fundraising var.
+        for child in nav.winfo_children():
+            child.destroy()
+        if gameplay:
+            if not nav.winfo_ismapped():
+                nav.pack(anchor='e', pady=(10, 0))
+            _populate_game_nav(nav)
+        else:
+            if nav.winfo_ismapped():
+                nav.pack_forget()
+
+    return root, chrome['body']
 
 
-def build_game_nav(parent):
-    nav = Frame(parent, bg='#143642')
-    nav.pack(anchor='e', pady=(10, 0))
+def _populate_game_nav(nav):
+    """Fill the persistent gameplay nav with action buttons. Called from
+    build_screen() whenever a gameplay screen is constructed; the parent
+    Frame is reused but its children are rebuilt so callbacks pick up the
+    current fundraising var, etc."""
     Button(nav, text='Main Menu', command=open_main_menu_from_game, padx=10).pack(side='left', padx=4)
     Button(nav, text='National Map', command=createNationalMap, padx=10).pack(side='left', padx=4)
     Button(nav, text='Turn Report', command=showStartOfTurnReport, padx=10).pack(side='left', padx=4)
     Button(nav, text='Save', command=saveGame, padx=10).pack(side='left', padx=4)
     Button(nav, text='Load', command=lambda: loadGame(None), padx=10).pack(side='left', padx=4)
     Button(nav, text='End Turn', command=lambda: endTurn(None, ui_state['fundraising_var'].get() if ui_state['fundraising_var'] else 0), padx=10).pack(side='left', padx=4)
+
+
+# Backwards-compat shim — anything still calling build_game_nav(parent)
+# (old-style: create its own Frame inside `parent`) gets the same effect
+# by routing through the persistent nav.
+def build_game_nav(parent):
+    nav = chrome.get('nav')
+    if nav is None or not nav.winfo_exists():
+        nav = Frame(parent, bg='#143642')
+        nav.pack(anchor='e', pady=(10, 0))
+    elif not nav.winfo_ismapped():
+        nav.pack(anchor='e', pady=(10, 0))
+    for child in nav.winfo_children():
+        child.destroy()
+    _populate_game_nav(nav)
 
 
 def make_scrollable_column(parent, width=None, bg=None, padx=0):
@@ -2339,18 +2515,55 @@ def select_state_from_calendar(event=None, state_name=None):
 
 
 def _build_org_from_sidebar(stateName, cost):
-    """Wrapper for the calendar-row Build button: keep the player's current
-    view (national overview vs. zoomed district map) instead of always
-    jumping into the state's district map after building."""
+    """Build org from the calendar-row sidebar button without ever passing
+    through the zoomed state map. Stays on whatever view the player was on
+    (national overview by default)."""
     prior_selection = ui_state.get('selected_state')
-    starting_resources = players[player].resources[1]
-    getOnBallot(player, stateName, cost, None, None)
-    spent = starting_resources != players[player].resources[1]
-    # If the build went through, getOnBallot will have re-rendered into the
-    # state's district view. Bounce back to the prior view if we weren't
-    # already focused on this state.
-    if spent and prior_selection != stateName:
-        createNationalMap(prior_selection if prior_selection else None)
+    getOnBallot(player, stateName, cost, None, None,
+                redirect_to=prior_selection)
+
+
+def clearAllPlans():
+    """Wipe campaigning hours and ad money allocated across every state
+    this turn, refunding the resources back to the player. Useful when
+    you want to start a turn's plan over without walking through every
+    state. Asks for confirmation since this is destructive."""
+    refund_money = 0
+    refund_time = 0
+    for st in states.values():
+        for d in st.districts:
+            try:
+                refund_money += d.adsThisTurn[player - 1]
+                refund_time += d.campaigningThisTurn[player - 1]
+            except (IndexError, AttributeError):
+                continue
+
+    if refund_money <= 0 and refund_time <= 0 and ui_state.get('pending_state_plan') is None:
+        # Nothing to clear — don't bother prompting.
+        return
+
+    if not messagebox.askyesno(
+            'Clear All Plans?',
+            "Refund {} hours of campaigning and ${:,} of ad buys allocated this "
+            "turn? You'll get the resources back, but the plan goes to zero.".format(
+                int(refund_time), int(refund_money))):
+        return
+
+    for st in states.values():
+        for d in st.districts:
+            try:
+                d.setAdsThisTurn(player - 1, 0)
+                d.setCampaigningThisTurn(player - 1, 0)
+            except (IndexError, AttributeError):
+                continue
+    players[player].resources[1] += refund_money
+    players[player].resources[0] += refund_time
+    # Any in-flight state-plan sliders are now stale (their allocatedTime /
+    # allocatedMoney baselines were just zeroed). Drop them rather than
+    # auto-commit during the rerender — the next createNationalMap call
+    # would otherwise double-refund.
+    ui_state['pending_state_plan'] = None
+    createNationalMap(ui_state.get('selected_state'))
 
 
 def search_for_state(event=None):
@@ -2479,7 +2692,10 @@ def main():
     root = init_app_root()
     debug_launch('init_app_root returned state={} geometry={} mapped={} viewable={}'.format(root.state(), root.geometry(), root.winfo_ismapped(), root.winfo_viewable()))
 
-    splash = Frame(root, bg='#f3efe2')
+    # Show a brief splash inside the persistent body — clear_root() will
+    # tear it out when mainMenu paints over it.
+    splash_body = chrome['body']
+    splash = Frame(splash_body, bg='#f3efe2')
     splash.pack(fill='both', expand=True)
     Label(splash, text='Loading Campaign...', bg='#f3efe2', fg='#143642', font=('TkDefaultFont', 18, 'bold')).pack(pady=40)
     Label(splash, text='If you can see this, the root window is opening correctly.', bg='#f3efe2', fg='#143642').pack()
@@ -2496,51 +2712,52 @@ def main():
 
 def mainMenu():
     debug_launch('mainMenu entered')
-    root = init_app_root()
-    close_modal()
-    root.title('Campaign')
-    for child in root.winfo_children():
-        child.destroy()
+    # Render into the persistent chrome body. chromeless=True hides the
+    # dark header so the menu owns its own visual treatment.
+    root, body = build_screen('Campaign', chromeless=True)
 
-    w, h = 520, 440
-    ws = root.winfo_screenwidth()
-    hs = root.winfo_screenheight()
-    x = int((ws - w) / 2)
-    y = int((hs - h) / 2)
-    root.geometry('{}x{}+{}+{}'.format(w, h, x, y))
-    try:
-        root.minsize(w, h)
-    except Exception:
-        pass
+    # Recompute layout based on whatever the window's current size is —
+    # the persistent window keeps the user's last geometry / fullscreen
+    # state, so we no longer force a small 520x440 menu window.
+    body.update_idletasks()
+    w = max(body.winfo_width(), 520)
+    h = max(body.winfo_height(), 440)
 
-    canvas = Canvas(root, width=w, height=h, highlightthickness=0)
+    canvas = Canvas(body, highlightthickness=0)
     canvas.pack(fill='both', expand=True)
-    bgImage = Image.open('nationalMap.png').resize((w, h))
-    bgPhoto = ImageTk.PhotoImage(bgImage)
-    canvas.create_image(0, 0, anchor='nw', image=bgPhoto)
-    canvas.bgPhoto = bgPhoto  # keep reference
 
-    canvas.create_text(w/2, 36, text='Campaign',
-                       font=('TkDefaultFont', 22, 'bold'), fill='white')
+    def _layout(event=None):
+        canvas.delete('all')
+        cw = canvas.winfo_width() or w
+        ch = canvas.winfo_height() or h
+        bg = Image.open('nationalMap.png').resize((cw, ch))
+        photo = ImageTk.PhotoImage(bg)
+        canvas.create_image(0, 0, anchor='nw', image=photo)
+        canvas.bgPhoto = photo  # keep reference
+        canvas.create_text(cw / 2, 36, text='Campaign',
+                           font=('TkDefaultFont', 22, 'bold'), fill='white')
 
-    buttons = []
-    if has_game_in_progress():
-        buttons.append(('Resume Current Game', resume_current_game))
-    buttons.append(('Start a New Game', setUpGame))
-    buttons.append(('New Networked Game', host_networked_setup))
-    buttons.append(('Join Networked Game', join_networked_setup))
-    buttons.append(('Tutorial', lambda: tutorial(None)))
-    buttons.append(('Load Game', lambda: loadGame(None)))
-    buttons.append(('Load from Server', loadGameRemote))
-    buttons.append(('Sync Saves with Server', lambda: syncRemoteSaves(False)))
-    buttons.append(('Exit', exitGame))
+        buttons_list = []
+        if has_game_in_progress():
+            buttons_list.append(('Resume Current Game', resume_current_game))
+        buttons_list.append(('Start a New Game', setUpGame))
+        buttons_list.append(('New Networked Game', host_networked_setup))
+        buttons_list.append(('Join Networked Game', join_networked_setup))
+        buttons_list.append(('Tutorial', lambda: tutorial(None)))
+        buttons_list.append(('Load Game', lambda: loadGame(None)))
+        buttons_list.append(('Load from Server', loadGameRemote))
+        buttons_list.append(('Sync Saves with Server', lambda: syncRemoteSaves(False)))
+        buttons_list.append(('Exit', exitGame))
 
-    start_y = h - (len(buttons) * 38) - 20
-    for i, (label, cmd) in enumerate(buttons):
-        btn = Button(root, text=label, command=cmd, width=22)
-        canvas.create_window(w/2, start_y + i * 38, window=btn)
+        start_y = ch - (len(buttons_list) * 38) - 20
+        for i, (label, cmd) in enumerate(buttons_list):
+            btn = Button(canvas, text=label, command=cmd, width=22)
+            canvas.create_window(cw / 2, start_y + i * 38, window=btn)
 
-    debug_launch('mainMenu map layout packed children={} geometry={}'.format(len(root.winfo_children()), root.geometry()))
+    _layout()
+    canvas.bind('<Configure>', _layout)
+
+    debug_launch('mainMenu map layout packed children={} geometry={}'.format(len(body.winfo_children()), root.geometry()))
     root.update()
 
 
@@ -2847,6 +3064,17 @@ def render_selected_state(stateName):
 
     update_budget_label()
 
+    # Register the in-flight plan so any navigation away (Build from
+    # sidebar, Back to Overview, nav-bar buttons, calendar click, etc.)
+    # auto-commits these slider values before the widgets are destroyed.
+    ui_state['pending_state_plan'] = {
+        'time_sliders': campaigningTime,
+        'ad_sliders': addBuys,
+        'state_name': stateName,
+        'allocated_time': allocatedTime,
+        'allocated_money': allocatedMoney,
+    }
+
     actions = Frame(state_card, bg='white')
     actions.pack(fill='x', padx=12, pady=(4, 12))
     Button(actions, text='Save Ad Buys & Campaign Time', command=lambda: backToMap(None, campaigningTime, stateName, allocatedTime, allocatedMoney, addBuys), padx=12).pack(side='left')
@@ -2910,11 +3138,33 @@ def showStartOfTurnReport():
     state_breakdowns = weekResults.get('_state_results', {}) if isinstance(weekResults, dict) else {}
     if state_breakdowns:
         states_card = make_card(body, 'Decided States')
-        states_card.pack(fill='x', pady=(0, 16))
+        states_card.pack(fill='both', expand=True, pady=(0, 16))
+
+        # Wrap the per-state rows in a Canvas + Scrollbar so a heavy
+        # Super-Tuesday-style week (many decided states at once) doesn't
+        # push the actions buttons off the bottom of the screen.
+        scroll_outer = Frame(states_card, bg='white')
+        scroll_outer.pack(fill='both', expand=True, padx=12, pady=(4, 12))
+        scroll_canvas = Canvas(scroll_outer, bg='white', highlightthickness=0,
+                               height=260)
+        scroll_bar = Scrollbar(scroll_outer, orient='vertical',
+                               command=scroll_canvas.yview)
+        scroll_inner = Frame(scroll_canvas, bg='white')
+        inner_id = scroll_canvas.create_window((0, 0), window=scroll_inner, anchor='nw')
+        scroll_inner.bind('<Configure>',
+                          lambda e: scroll_canvas.configure(scrollregion=scroll_canvas.bbox('all')))
+        scroll_canvas.bind('<Configure>',
+                           lambda e: scroll_canvas.itemconfig(inner_id, width=e.width))
+        scroll_canvas.configure(yscrollcommand=scroll_bar.set)
+        scroll_bar.pack(side='right', fill='y')
+        scroll_canvas.pack(side='left', fill='both', expand=True)
+        scroll_canvas.bind('<Enter>', lambda e: _bound_to_mousewheel(e, scroll_canvas))
+        scroll_canvas.bind('<Leave>', lambda e: _unbound_to_mousewheel(e, scroll_canvas))
+
         for stateName in sorted(state_breakdowns):
             entry = state_breakdowns[stateName]
-            row = Frame(states_card, bg='white', bd=1, relief='solid', padx=10, pady=8)
-            row.pack(fill='x', padx=12, pady=4)
+            row = Frame(scroll_inner, bg='white', bd=1, relief='solid', padx=10, pady=8)
+            row.pack(fill='x', pady=4)
             winner_id = entry.get('winner')
             winner_name = (players[winner_id].publicName
                            if winner_id in players else 'unknown')
@@ -3339,7 +3589,8 @@ def createNationalMap(selected_state=None):
         Label(dashboard, textvariable=issueVar, bg='white', anchor='w', justify=LEFT, wraplength=WRAP).pack(anchor='w', fill='x', padx=12, pady=2)
         Label(dashboard, text='Standings', bg='white', anchor='w', font=('TkDefaultFont', 10, 'bold')).pack(anchor='w', fill='x', padx=12, pady=(8, 0))
         Label(dashboard, textvariable=standingsVar, bg='white', anchor='w', justify=LEFT, wraplength=WRAP).pack(anchor='w', fill='x', padx=12, pady=(0, 4))
-        Button(dashboard, text="View Opponents' Stances", command=showOpponentStances).pack(anchor='w', padx=12, pady=(0, 8))
+        Button(dashboard, text="View Opponents' Stances", command=showOpponentStances).pack(anchor='w', padx=12, pady=(0, 4))
+        Button(dashboard, text='Clear All Spending / Time', command=clearAllPlans).pack(anchor='w', padx=12, pady=(0, 8))
 
         fundraisingVar = IntVar(value=0)
         ui_state['fundraising_var'] = fundraisingVar
@@ -3387,11 +3638,22 @@ def zoomToState(event):
 
     stateName = get_state_name_from_pixel(xLoc, yLoc)
     if stateName is None:
-        messagebox.showerror('State Error', "That's not a state")
+        # Click was off any known state (e.g. on ocean or a state border).
+        # Quietly ignore instead of popping an error dialog.
         return
     createNationalMap(stateName)
 
-def getOnBallot(player, stateName, cost, window, event):
+def getOnBallot(player, stateName, cost, window, event, redirect_to='__zoom__'):
+    """Build / upgrade organization in `stateName` for `player`.
+
+    redirect_to controls which view to render after a successful build:
+      - '__zoom__' (default): zoom into stateName's district map. Preserves
+        the original behavior for callers that came from a state-zoom flow.
+      - None: re-render the national overview.
+      - any other string: zoom into that state instead (used by the
+        sidebar Build button to keep the player on whichever state they
+        were already viewing).
+    """
     global calendarOfContests
     global currentDate
     global states
@@ -3424,7 +3686,11 @@ def getOnBallot(player, stateName, cost, window, event):
         players[player].addStat('orgs_built', 1)
     except AttributeError:
         pass
-    createNationalMap(stateName)
+
+    if redirect_to == '__zoom__':
+        createNationalMap(stateName)
+    else:
+        createNationalMap(redirect_to)
 
 
 def backToMap(window, campaingingTime, stateName, allocatedTime, allocatedMoney, addBuys):
@@ -3459,6 +3725,9 @@ def backToMap(window, campaingingTime, stateName, allocatedTime, allocatedMoney,
         district.setAdsThisTurn(player - 1, addBuys[index].get())
         district.setCampaigningThisTurn(player - 1, campaingingTime[index].get())
 
+    # Plan committed explicitly — the auto-commit on the upcoming
+    # createNationalMap should be a no-op.
+    ui_state['pending_state_plan'] = None
     # Return to the national overview after saving the state's plan.
     createNationalMap()
 
@@ -4153,29 +4422,61 @@ _WINDOW_POS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                 '.campaign_window_pos.txt')
 
 
+def _is_window_fullscreen(window):
+    """True if the window is currently maximized / zoomed / fullscreen on
+    any platform. Falls back to False on any TclError."""
+    try:
+        if str(window.attributes('-fullscreen')) in ('1', 'True'):
+            return True
+    except TclError:
+        pass
+    try:
+        if window.state() == 'zoomed':
+            return True
+    except TclError:
+        pass
+    try:
+        if str(window.attributes('-zoomed')) in ('1', 'True'):
+            return True
+    except TclError:
+        pass
+    return False
+
+
 def _save_window_geometry():
-    """Record the main window's current geometry so the next launch can
-    reopen at the same screen position."""
+    """Record the main window's geometry AND fullscreen state so the next
+    launch can reopen the same way. Format: a single line, either
+        FS
+    when the window was fullscreen / maximized, or
+        WxH+X+Y
+    for a normal positioned window."""
     global app_window
     try:
         if app_window is not None and app_window.winfo_exists():
-            geom = app_window.geometry()
+            if _is_window_fullscreen(app_window):
+                payload = 'FS'
+            else:
+                payload = app_window.geometry()
             with open(_WINDOW_POS_PATH, 'w') as f:
-                f.write(geom)
+                f.write(payload)
     except (TclError, OSError):
         pass
 
 
 def _load_window_geometry():
-    """Return the saved geometry string ('WxH+X+Y') or None if unavailable."""
+    """Return ('FS', None) if the saved state was fullscreen, or
+    (None, 'WxH+X+Y') for a positioned window, or (None, None) if
+    nothing useful is saved."""
     try:
         with open(_WINDOW_POS_PATH, 'r') as f:
-            geom = f.read().strip()
-        if geom and 'x' in geom and '+' in geom:
-            return geom
+            payload = f.read().strip()
     except OSError:
-        pass
-    return None
+        return (None, None)
+    if payload == 'FS':
+        return ('FS', None)
+    if payload and 'x' in payload and '+' in payload:
+        return (None, payload)
+    return (None, None)
 
 
 def exitGame():
