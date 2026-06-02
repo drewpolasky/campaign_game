@@ -7,9 +7,19 @@ stateDistricts/disrictList.txt
 .remote_config.json
 remote_config.json
 launch_debug.log
+launch_debug_*.log
+campaign_debug.log
+campaign_debug_*.log
+logs/
 .claude/
 .venv/
 .venv-wsl/
 .campaign_window_pos.txt
 runs/**/tb/
+# The rolling self-play snapshot history (5-10 MB per checkpoint, can
+# easily be hundreds per training run) is local-only — only the final
+# `model.zip` per run is committed for portability between machines.
+runs/**/snapshots/
+runs/**/pool_manifest.txt
+runs/smoke/
 balance_plots/

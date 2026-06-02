@@ -41,7 +41,14 @@ class CampaignGymEnv(gym.Env):
 
         self.observation_space = spaces.Box(
             low=-5.0, high=5.0, shape=(_obs.OBS_DIM,), dtype=np.float32)
-        if action_kind == 'continuous':
+        if action_kind == 'coupled':
+            self.action_space = spaces.Box(
+                low=_actions.COUPLED_ACTION_LOW,
+                high=_actions.COUPLED_ACTION_HIGH,
+                shape=(_actions.COUPLED_ACTION_DIM,),
+                dtype=np.float32,
+            )
+        elif action_kind == 'continuous':
             self.action_space = spaces.Box(
                 low=_actions.CONT_ACTION_LOW,
                 high=_actions.CONT_ACTION_HIGH,

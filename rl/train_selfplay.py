@@ -88,10 +88,13 @@ def main():
     p.add_argument('--out', default='runs/selfplay')
     p.add_argument('--seed', type=int, default=0)
     p.add_argument('--n-steps', type=int, default=256)
-    p.add_argument('--action-kind', choices=['discrete', 'continuous'],
+    p.add_argument('--action-kind', choices=['discrete', 'continuous', 'coupled'],
                    default='discrete',
                    help='action space of the LEARNING agent. Frozen opponents '
                         'auto-dispatch from their own checkpoint.')
+    p.add_argument('--net-arch', nargs='+', type=int, default=[128, 128],
+                   help='hidden layer sizes for the MLP policy + value heads. '
+                        'e.g. --net-arch 256 256 for a wider net.')
     args = p.parse_args()
 
     os.makedirs(args.out, exist_ok=True)
@@ -122,7 +125,7 @@ def main():
             ent_coef=0.01,
             verbose=1,
             seed=args.seed,
-            policy_kwargs=dict(net_arch=[128, 128]),
+            policy_kwargs=dict(net_arch=list(args.net_arch)),
         )
 
     print(f'Self-play PPO: {args.steps:,} steps × {args.envs} envs '

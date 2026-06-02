@@ -1215,31 +1215,249 @@ def calcEndTurn(fundraising):      #this will calculate the new resources availa
                             campaigningHours=campaign_hours,
                             adSpend=ad_spend)
 
+# Debug-mode print toggle. Enable by setting CAMPAIGN_DEBUG=1 in the
+# environment before launching, or by toggling the flag at runtime via
+# the Python console / a future menu option.
+DEBUG_MODE = os.environ.get('CAMPAIGN_DEBUG', '') not in ('', '0', 'false', 'False')
+
+# Each launch writes to its own timestamped log files under logs/ so
+# replays of an old game aren't muddled with a fresh session. The env
+# vars CAMPAIGN_DEBUG_LOG and CAMPAIGN_LAUNCH_LOG let you pin a specific
+# path if you want all sessions appending into one file again.
+_LOG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
+try:
+    os.makedirs(_LOG_DIR, exist_ok=True)
+except OSError:
+    _LOG_DIR = os.path.dirname(os.path.abspath(__file__))
+_LOG_TS = time.strftime('%Y%m%d_%H%M%S')
+
+DEBUG_LOG_PATH = os.environ.get(
+    'CAMPAIGN_DEBUG_LOG',
+    os.path.join(_LOG_DIR, 'campaign_debug_{}.log'.format(_LOG_TS)))
+LAUNCH_LOG_PATH = os.environ.get(
+    'CAMPAIGN_LAUNCH_LOG',
+    os.path.join(_LOG_DIR, 'launch_debug_{}.log'.format(_LOG_TS)))
+
+
+def _debug_print(*parts):
+    """Print to stdout AND append to the debug log file when DEBUG_MODE
+    is on. Silent no-op otherwise.
+
+    Accepts the same comma-separated args as print(). File writes are
+    best-effort — log-file I/O failures don't break gameplay."""
+    if not DEBUG_MODE:
+        return
+    line = ' '.join(str(p) for p in parts)
+    print(line)
+    try:
+        with open(DEBUG_LOG_PATH, 'a', encoding='utf-8') as f:
+            f.write(line + '\n')
+    except OSError:
+        pass
+
+
+if DEBUG_MODE:
+    try:
+        with open(DEBUG_LOG_PATH, 'a', encoding='utf-8') as _f:
+            _f.write('\n')
+            _f.write('#' * 70 + '\n')
+            _f.write('# Campaign Game debug session started {}\n'.format(time.strftime('%Y-%m-%d %H:%M:%S')))
+            _f.write('#' * 70 + '\n')
+    except OSError:
+        pass
+
+
+def _debug_player_label(player_id):
+    p = players.get(player_id)
+    if p is None:
+        return 'P{}'.format(player_id)
+    return getattr(p, 'publicName', None) or 'P{}'.format(player_id)
+
+
+def _debug_pre_support_snapshot():
+    """Snapshot every district's per-player support so we can compute
+    deltas for each player after calculateStateOpinions runs."""
+    snap = {}
+    for state_name, st in states.items():
+        for d in st.districts:
+            snap[(state_name, d.name)] = list(d.support)
+    return snap
+
+
+def _debug_week_summary(snap):
+    """Print per-player allocations + support gained this week, followed
+    by a state-by-state breakdown of resources spent and support gained
+    in each state that saw activity. Routes through _debug_print so
+    output goes to both stdout and the log file."""
+    if not DEBUG_MODE:
+        return
+    _debug_print('')
+    _debug_print('=' * 70)
+    _debug_print('[DEBUG] Week {} resolution'.format(currentDate))
+    _debug_print('=' * 70)
+
+    # Pre-compute per-state-per-player totals so we can serve both the
+    # player-summary section and the state-by-state section from one pass.
+    # state_data[state_name] = list-of-dict indexed by player slot (0..N-1)
+    state_data = {}
+    for state_name, st in states.items():
+        rows = []
+        for i in range(numPlayers):
+            camp = 0
+            ad = 0
+            sup_before = 0
+            sup_after = 0
+            for d in st.districts:
+                camp += d.campaigningThisTurn[i]
+                ad += d.adsThisTurn[i]
+                pre = snap.get((state_name, d.name), [0] * numPlayers)
+                sup_before += pre[i] if i < len(pre) else 0
+                sup_after += d.support[i]
+            rows.append({
+                'org': st.organizations[i],
+                'camp': camp,
+                'ad': ad,
+                'sup_before': sup_before,
+                'sup_after': sup_after,
+                'gained': sup_after - sup_before,
+            })
+        state_data[state_name] = rows
+
+    # --- Per-player summary ---
+    for i in range(numPlayers):
+        pid = i + 1
+        camp_total = 0
+        ad_total = 0
+        org_total = 0
+        gained_total = 0
+        states_with_org = []
+        for state_name, rows in state_data.items():
+            r = rows[i]
+            camp_total += r['camp']
+            ad_total += r['ad']
+            org_total += r['org']
+            gained_total += r['gained']
+            if r['org'] > 0:
+                states_with_org.append('{}(t{})'.format(state_name, r['org']))
+        _debug_print('  {:>16s}  camp_hrs={:>4d}  ads=${:>8,d}  '
+              'orgs_total={:>3d}  support_gained={:+,d}'.format(
+                  _debug_player_label(pid),
+                  int(camp_total), int(ad_total), int(org_total), int(gained_total)))
+        if states_with_org:
+            shown = ', '.join(states_with_org[:8])
+            more = '' if len(states_with_org) <= 8 else ' (+{} more)'.format(len(states_with_org) - 8)
+            _debug_print('       org tiers: {}{}'.format(shown, more))
+
+    # --- Per-state breakdown ---
+    # Only show states with some activity (any player spent or has an
+    # org), and order by total resources spent this week so the most
+    # contested ones come first.
+    def activity(rows):
+        return sum(r['camp'] + r['ad'] // 1000 + (10 if r['org'] > 0 else 0) for r in rows)
+
+    active = [(n, rows) for n, rows in state_data.items() if activity(rows) > 0]
+    active.sort(key=lambda kv: -activity(kv[1]))
+
+    if active:
+        _debug_print('')
+        _debug_print('  --- State-by-state (top {} with activity) ---'.format(
+            min(len(active), 30)))
+        for state_name, rows in active[:30]:
+            # Time-to-election for context.
+            tte = None
+            for ename, week in calendarOfContests:
+                if ename == state_name:
+                    tte = week - currentDate
+                    break
+            tte_label = '(tte={:+d})'.format(tte) if tte is not None else ''
+            _debug_print('  {} {}'.format(state_name, tte_label))
+            for i in range(numPlayers):
+                r = rows[i]
+                if (r['camp'] == 0 and r['ad'] == 0 and r['org'] == 0
+                        and r['gained'] == 0):
+                    continue  # idle in this state
+                _debug_print(
+                    '      {:>14s}  org={}  camp_hrs={:>3d}  ads=${:>6,d}  '
+                    'support {} -> {}  ({:+,d})'.format(
+                        _debug_player_label(i + 1), r['org'],
+                        int(r['camp']), int(r['ad']),
+                        int(r['sup_before']), int(r['sup_after']),
+                        int(r['gained'])))
+    _debug_print('')
+
+
+def _debug_state_resolved(state_name, stateVotes, district_winners,
+                          state_winner, total_state_votes):
+    """Inside decideContests: print per-state outcome and per-district
+    winners + support breakdown for the resolved state."""
+    if not DEBUG_MODE:
+        return
+    st = states[state_name]
+    _debug_print('  [{}] state winner: {}'.format(
+        state_name, _debug_player_label(state_winner)))
+    for i in range(numPlayers):
+        pid = i + 1
+        if total_state_votes > 0:
+            pct = float(stateVotes[i]) / float(total_state_votes) * 100
+        else:
+            pct = 0.0
+        org = st.organizations[i]
+        total_support = sum(d.support[i] for d in st.districts)
+        marker = '  <-- winner' if pid == state_winner else ''
+        _debug_print('      {:>14s}  org={}  support={:>6d}  vote%={:>5.1f}{}'.format(
+            _debug_player_label(pid), org, int(total_support), pct, marker))
+    if district_winners:
+        wins_str = '  '.join('{}:{}'.format(dn, _debug_player_label(w))
+                             for dn, w in district_winners)
+        _debug_print('      districts: {}'.format(wins_str))
+
+
 def calculateStateOpinions():       #this function will calculate the opinion of each player in each state
-    if currentDate == 0:       
+    if currentDate == 0:
         if players[1].isHuman == 'human':
             createNationalMap()
         else:
             calcAImove(players[1].isHuman)
 
     else:               #each turn after that the new support is calculated. a player must be on the ballot (organization level 1) to get any support
+        # Snapshot district.support before mutation so we can compute
+        # per-player support gain for this week in DEBUG_MODE.
+        _debug_snap = _debug_pre_support_snapshot() if DEBUG_MODE else None
         for i in range(len(players)):
             for state in states:
                 org = states[state].organizations[i]
+                # In the 2 weeks before the election, campaigning is more
+                # effective:
+                #   tte = 0 (election week)        : +20%
+                #   tte = 1 (one week before)      : +10%
+                # The previous implementation iterated through the whole
+                # calendar without breaking, so `mult` ended up reflecting
+                # whatever the LAST calendar entry happened to be — almost
+                # always 1, meaning the bonus essentially never fired. Also
+                # the prior comparison `currentDate - 1` checked PAST
+                # contests rather than upcoming ones. Both fixed.
+                contest_week = None
+                for date in calendarOfContests:
+                    if date[0] == state:
+                        contest_week = date[1]
+                        break
+                if contest_week == currentDate:
+                    time_mult = 1.2
+                elif contest_week == currentDate + 1:
+                    time_mult = 1.1
+                else:
+                    time_mult = 1.0
                 for district in states[state].districts:
-                    for date in calendarOfContests:             #in the 2 weeks before the election campaining is more effective
-                        mult = 1
-                        if date[0] == state and date[1] == currentDate - 1:
-                            mult = 1.1
-                        elif date[0] == state and date[1] == currentDate:
-                            mult = 1.2
                     campaingingTime = district.campaigningThisTurn[i]
                     adBuy = district.adsThisTurn[i]
                     adsTotal = sum(district.adsThisTurn)
                     # Momentum boost on support: 50 momentum ~= +30% bonus
                     # (calibrated so a strong but not dominant momentum lead
                     # is meaningful without snowballing past comeback range).
-                    mult = (1 + float(players[i + 1].momentum) / 167.0) * mult
+                    # Recompute from time_mult each district so the momentum
+                    # factor isn't applied cumulatively across the district
+                    # loop.
+                    mult = (1 + float(players[i + 1].momentum) / 167.0) * time_mult
 
                     # Issue-of-the-week alignment uses the STATE's position
                     # (one position per state for now). If the player's stance
@@ -1296,6 +1514,8 @@ def calculateStateOpinions():       #this function will calculate the opinion of
                     support = round(support)
                     district.setSupport(i, support)
                 states[state].updateSupport(numPlayers, calendarOfContests, currentDate)
+        if DEBUG_MODE:
+            _debug_week_summary(_debug_snap)
 
 def decideContests():
     global pastElections
@@ -1313,9 +1533,13 @@ def decideContests():
     # turn report renders this as a separate "Decided States" section.
     weekResults['_state_results'] = {}
     totalMomemtum = 50
+    decided_any = False
     for state in calendarOfContests:
         if state[1] + 1 == currentDate:
-            states[state[0]].calculatePollingAverage(calendarOfContests, currentDate)     #just in case it isn't up to date 
+            if DEBUG_MODE and not decided_any:
+                _debug_print('[DEBUG] Contests decided this week:')
+                decided_any = True
+            states[state[0]].calculatePollingAverage(calendarOfContests, currentDate)     #just in case it isn't up to date
 
             stateName = state[0]
             orgs = states[stateName].organizations
@@ -1323,6 +1547,7 @@ def decideContests():
             stateVotes = []
             for i in range(numPlayers):
                 stateVotes.append(0)
+            _debug_district_winners = []
             for district in states[stateName].districts:
                 districtDelegates = (district.population * 2) / 3
                 stateDelegates += district.population - districtDelegates
@@ -1355,6 +1580,7 @@ def decideContests():
                 players[winner].delegateCount += districtDelegates
                 weekDelegates[winner] += districtDelegates
 
+                _debug_district_winners.append((district.name, winner))
                 weekResults[winner]['delegates'] += districtDelegates
                 weekResults[winner]['districts'].append(district.name)
                 try:
@@ -1371,8 +1597,13 @@ def decideContests():
             players[stateWinner].delegateCount += stateDelegates
             weekDelegates[stateWinner] += stateDelegates
 
-            weekResults[winner]['delegates'] += stateDelegates
-            weekResults[winner]['states'].append(stateName)
+            # Credit the state-level delegates to the actual stateWinner
+            # (by aggregate vote share), NOT to `winner` (which is left over
+            # from the last district loop). Previously the Last Week Results
+            # report listed a state under whoever happened to take its
+            # final district, contradicting the per-state breakdown.
+            weekResults[stateWinner]['delegates'] += stateDelegates
+            weekResults[stateWinner]['states'].append(stateName)
 
             totalMomemtum += stateDelegates / 2.0
             momentums[winner - 1] += stateDelegates
@@ -1396,7 +1627,11 @@ def decideContests():
                 'winner': stateWinner,
                 'percentages': state_pct,
             }
-            
+            if DEBUG_MODE:
+                _debug_state_resolved(stateName, stateVotes,
+                                      _debug_district_winners,
+                                      stateWinner, stateVotesTotal)
+
 
     weekResultString = ''
     for person in weekDelegates:
@@ -1497,14 +1732,47 @@ AI_STRATEGIES = {
         '_random': True,
     },
     'NeuralPPO': {
-        'description': 'PPO-trained neural policy. Loads from runs/v2/model by default '
-                       '(override with $CAMPAIGN_RL_MODEL).',
+        'description': 'PPO-trained neural policy. Uses the current default '
+                       'model (override with $CAMPAIGN_RL_MODEL). For a '
+                       'specific checkpoint, pick a Neural: <vN> entry below.',
         # Marker — real game dispatches to rl.realgame_strategy when this is set.
         '_neural': True,
     },
 }
 
 DEFAULT_AI_STRATEGY = 'Default'
+
+
+def _discover_neural_checkpoints():
+    """Find every trained PPO checkpoint under runs/ and register each as
+    its own AI_STRATEGIES entry. That way the player can pick a specific
+    model (e.g. 'Neural: v8_rebalanced') from the AI dropdown at setup,
+    instead of all routing to the single default."""
+    base = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'runs')
+    if not os.path.isdir(base):
+        return
+    try:
+        entries = sorted(os.listdir(base))
+    except OSError:
+        return
+    for run_name in entries:
+        model_path = os.path.join(base, run_name, 'model')
+        if not os.path.isfile(model_path + '.zip'):
+            continue
+        # Skip throwaway smoke / scratch runs by name convention.
+        if run_name.lower().startswith(('smoke', 'tmp_', 'tmp.', '_')):
+            continue
+        label = 'Neural: {}'.format(run_name)
+        if label in AI_STRATEGIES:
+            continue
+        AI_STRATEGIES[label] = {
+            'description': 'PPO checkpoint at runs/{}/model.'.format(run_name),
+            '_neural': True,
+            '_model_path': model_path,
+        }
+
+
+_discover_neural_checkpoints()
 
 
 def _ai_personality(player_number, strategy_name=None):
@@ -1619,7 +1887,8 @@ def calcAImove(agent):
         import traceback
         try:
             from rl import realgame_strategy
-            fundraising = realgame_strategy.act(player)
+            model_path = AI_STRATEGIES[strategy_name].get('_model_path')
+            fundraising = realgame_strategy.act(player, model_path=model_path)
         except Exception as e:
             print(f'NeuralPPO strategy failed ({type(e).__name__}: {e!r})')
             traceback.print_exc()
@@ -1952,11 +2221,17 @@ menu_resume_state = {
     'selected_state': None,
 }
 
+# Persistent UI preferences that survive screen transitions (clear_root
+# wipes ui_state entries, so anything we want to remember sits here).
+ui_prefs = {
+    'calendar_filter': 'all',   # 'all' | 'this_week' | 'upcoming'
+}
+
 
 def debug_launch(message):
     try:
         line = '[launch] {}'.format(message)
-        with open('launch_debug.log', 'a') as debug_file:
+        with open(LAUNCH_LOG_PATH, 'a') as debug_file:
             debug_file.write(line + '\n')
     except Exception:
         pass
@@ -2674,8 +2949,13 @@ def main():
     global pastElections
     global weekResults
     global pixel_lookup
+    # Each launch already gets its own timestamped file via LAUNCH_LOG_PATH;
+    # the legacy zero-out here is harmless but no longer necessary. Touch
+    # the new file so debug_launch sees a valid handle even if the dir
+    # was just created.
     try:
-        Path('launch_debug.log').write_text('')
+        with open(LAUNCH_LOG_PATH, 'a'):
+            pass
     except Exception:
         pass
     debug_launch('main entered')
@@ -2908,13 +3188,14 @@ def setPositions(issues, name, isHuman, setUpPlayerWindow, mode, aiStrategy=None
     else:
         player = 1
         # State-level positions are loaded once in setUpStates() from
-        # state_issues.STATE_POSITIONS. If issues mode is off, blank them out
-        # so no issue alignment math triggers. District-level positions are
-        # initialized to zeros (district-level positions may be reintroduced
-        # later, but for now only state positions drive gameplay).
-        if not issuesMode:
-            for state in states:
-                states[state].positions = [0 for _ in range(len(issueNames))]
+        # state_issues.STATE_POSITIONS. We KEEP them around even when
+        # issues mode is off so the UI (state tooltip, state plan panel,
+        # turn report) can still show the state's stance on the current
+        # week's issue as informational context. The support math in
+        # calculateStateOpinions already gates issue alignment behind
+        # `if issuesMode`, so leaving the data populated has no effect
+        # on gameplay. District-level positions are still blanked since
+        # they aren't used.
         for state in states:
             for district in states[state].districts:
                 district.setPositions([0 for _ in range(len(issueNames))])
@@ -2960,13 +3241,18 @@ def render_selected_state(stateName):
         polling_lines.append('{} polling: {}'.format(players[person + 1].publicName, currentState.pollingAverage[person]))
     Label(state_card, text='\n'.join(polling_lines), bg='white', justify=LEFT, wraplength=360).pack(anchor='w', padx=12, pady=(0, 10))
 
-    # Issue-of-the-week alignment summary for this state.
+    # Issue-of-the-week alignment summary for this state. Shown in both
+    # Issues and No-Issues modes; in No-Issues mode the alignment is
+    # informational only since support gains don't actually scale by
+    # stance alignment.
     try:
         state_pos = currentState.positions[eventOfTheWeek]
     except (IndexError, AttributeError, TypeError):
         state_pos = 0
     your_pos = players[player].positions[eventOfTheWeek] if players[player].positions else 0
-    if state_pos == 0:
+    if not issuesMode:
+        align_text = "Issues mode is off - stance does not affect support this week."
+    elif state_pos == 0:
         align_text = "{} has no strong stance - no bonus or penalty this week.".format(stateName)
     elif your_pos == state_pos:
         align_text = "Your stance matches {} - support builds faster here this week.".format(stateName)
@@ -3034,6 +3320,38 @@ def render_selected_state(stateName):
             scale.set(base + (1 if index < remainder else 0))
         update_budget_label()
 
+    # Per-district delegate counts in slider order — used by the weighted
+    # split presets to allocate proportionally to the size of each
+    # district's prize.
+    district_weights = [int(d.population) for d in currentState.districts]
+
+    def weighted_split(scales, weights, resolution=1):
+        """Redistribute the current total across `scales` proportional to
+        `weights` (district delegate counts). Honors slider `resolution`
+        — 1 for campaign hours, 1000 for ad dollars — and re-injects
+        the rounding leftover into the largest-fractional districts so
+        the total stays exactly preserved."""
+        total = sum(scale.get() for scale in scales)
+        if total <= 0 or not scales:
+            return
+        weight_total = sum(weights) if weights else 0
+        if weight_total <= 0:
+            even_split(scales)
+            return
+        raw = [total * w / float(weight_total) for w in weights]
+        snapped = [int(r // resolution) * resolution for r in raw]
+        used = sum(snapped)
+        # Hand out the leftover one unit at a time to whichever district
+        # was closest to rounding up next.
+        n_extra = max(0, int((total - used) // resolution))
+        order = sorted(range(len(scales)),
+                       key=lambda i: -(raw[i] - snapped[i]))
+        for k in range(n_extra):
+            snapped[order[k % len(order)]] += resolution
+        for i, scale in enumerate(scales):
+            scale.set(snapped[i])
+        update_budget_label()
+
     Label(state_card, textvariable=summaryVar, bg='white', justify=LEFT, wraplength=360).pack(anchor='w', padx=12, pady=(0, 8))
 
     preset_bar = Frame(state_card, bg='white')
@@ -3041,6 +3359,15 @@ def render_selected_state(stateName):
     Button(preset_bar, text='Clear Plan', command=clear_plan).pack(side='left')
     Button(preset_bar, text='Even Time Split', command=lambda: even_split(campaigningTime)).pack(side='left', padx=6)
     Button(preset_bar, text='Even Ad Split', command=lambda: even_split(addBuys)).pack(side='left')
+
+    preset_bar_2 = Frame(state_card, bg='white')
+    preset_bar_2.pack(fill='x', padx=12, pady=(0, 8))
+    Button(preset_bar_2, text='Weighted Time Split',
+           command=lambda: weighted_split(campaigningTime, district_weights, 1)
+           ).pack(side='left')
+    Button(preset_bar_2, text='Weighted Ad Split',
+           command=lambda: weighted_split(addBuys, district_weights, 1000)
+           ).pack(side='left', padx=6)
 
     for district in currentState.districts:
         dBg = _get_district_leader_color(district)
@@ -3366,12 +3693,25 @@ def format_state_tooltip(stateName):
             lines.append('  {}: {:.1f}%'.format(name, pct))
     else:
         lines.append('No polling data yet')
-    if issuesMode:
-        try:
-            state_pos = st.positions[eventOfTheWeek]
-        except (IndexError, AttributeError, TypeError):
-            state_pos = 0
-        lines.append('{} on {}: {}'.format(stateName, issueNames[eventOfTheWeek], _format_position(state_pos, eventOfTheWeek)))
+    # Show the state's stance on the current week's issue regardless of
+    # game mode — the data is always loaded (state_issues defines a
+    # position for every state on every issue), and players generally
+    # want to see it for context even in No-Issues mode. In Issues mode
+    # the stance also affects support gain; in No-Issues mode it's
+    # purely informational.
+    try:
+        state_pos = st.positions[eventOfTheWeek]
+    except (IndexError, AttributeError, TypeError):
+        state_pos = 0
+    try:
+        issue_name = issueNames[eventOfTheWeek]
+    except (IndexError, NameError):
+        issue_name = ''
+    if issue_name:
+        suffix = '' if issuesMode else '  (informational; Issues mode is off)'
+        lines.append('{} on {}: {}{}'.format(
+            stateName, issue_name,
+            _format_position(state_pos, eventOfTheWeek), suffix))
     return '\n'.join(lines)
 
 
@@ -3454,6 +3794,24 @@ def createNationalMap(selected_state=None):
     Label(calendar_card, textvariable=statusVar, bg='white', fg='#555555', justify=LEFT, wraplength=220).pack(anchor='w', padx=12, pady=(6, 10))
 
     Label(calendar_card, text='Upcoming contests', bg='white').pack(anchor='w', padx=12)
+
+    # Filter selector — backed by ui_prefs so the user's choice survives
+    # screen transitions (clear_root wipes ui_state on every rebuild).
+    filter_var = StringVar(value=ui_prefs.get('calendar_filter', 'all'))
+
+    def _on_filter_change():
+        ui_prefs['calendar_filter'] = filter_var.get()
+        rebuild_calendar_list()
+
+    filter_bar = Frame(calendar_card, bg='white')
+    filter_bar.pack(fill='x', padx=12, pady=(2, 6))
+    for value, label in (('all', 'All'),
+                         ('this_week', 'This week'),
+                         ('upcoming', 'Still to vote')):
+        Radiobutton(filter_bar, text=label, variable=filter_var, value=value,
+                    bg='white', anchor='w',
+                    command=_on_filter_change).pack(side='left', padx=2)
+
     list_outer = Frame(calendar_card, bg='white')
     list_outer.pack(fill='both', expand=True, padx=12, pady=(6, 12))
     list_canvas = Canvas(list_outer, bg='white', highlightthickness=0)
@@ -3471,51 +3829,79 @@ def createNationalMap(selected_state=None):
     ui_state['calendar_items'] = []
     ui_state['calendar_rows'] = {}       # state_name -> row Frame for highlight
 
-    for contest in calendarOfContests:
-        stateName = contest[0]
-        date = contest[1]
-        if stateName in states:
-            delegates = int(sum(d.population for d in states[stateName].districts))
-            try:
-                org_level = states[stateName].organizations[player - 1]
-            except (IndexError, TypeError):
-                org_level = 0
-        else:
-            delegates = 0
-            org_level = 0
-        on_ballot = org_level > 0
-        past = date < currentDate
-        this_week = date == currentDate
+    def contest_passes_filter(date):
+        mode = filter_var.get()
+        if mode == 'this_week':
+            return date == currentDate
+        if mode == 'upcoming':
+            return date >= currentDate
+        return True  # 'all'
 
-        bg = '#d6f0c2' if on_ballot else 'white'
-        if past:
-            bg = '#e6e6e6'
-        row = Frame(list_inner, bg=bg, bd=1, relief='solid')
-        row.pack(fill='x', pady=1)
-        ui_state['calendar_rows'][stateName] = row
-
-        prefix = '[Done] ' if past else ('[Now] ' if this_week else '')
-        ballot_marker = '* ' if on_ballot else ''
-        label_text = '{}{}{} - wk {} ({} del)'.format(prefix, ballot_marker, stateName, date, delegates)
-        # Click anywhere on the label opens the state.
-        name_btn = Button(row, text=label_text, anchor='w', relief='flat',
-                          bg=bg, activebackground='#cbe2c2',
-                          command=lambda s=stateName: select_state_from_calendar(state_name=s))
-        name_btn.pack(side='left', fill='x', expand=True)
-
-        # Right-side action button: build organization. Skipped for past contests.
-        if not past and stateName in states:
-            cost = max(10000, 10000 * org_level)
-            if org_level == 0:
-                action_text = 'Ballot $10k'
-            elif org_level == 1:
-                action_text = 'Office $10k'
+    def rebuild_calendar_list():
+        # Wipe and re-render the rows according to the current filter.
+        for child in list_inner.winfo_children():
+            child.destroy()
+        ui_state['calendar_items'] = []
+        ui_state['calendar_rows'] = {}
+        rendered_any = False
+        for contest in calendarOfContests:
+            stateName = contest[0]
+            date = contest[1]
+            if not contest_passes_filter(date):
+                continue
+            rendered_any = True
+            if stateName in states:
+                delegates = int(sum(d.population for d in states[stateName].districts))
+                try:
+                    org_level = states[stateName].organizations[player - 1]
+                except (IndexError, TypeError):
+                    org_level = 0
             else:
-                action_text = 'Build ${}k'.format(int(cost / 1000))
-            Button(row, text=action_text, padx=2,
-                   command=lambda s=stateName, c=cost: _build_org_from_sidebar(s, c)).pack(side='right', padx=2, pady=1)
+                delegates = 0
+                org_level = 0
+            on_ballot = org_level > 0
+            past = date < currentDate
+            this_week = date == currentDate
 
-        ui_state['calendar_items'].append(stateName)
+            bg = '#d6f0c2' if on_ballot else 'white'
+            if past:
+                bg = '#e6e6e6'
+            row = Frame(list_inner, bg=bg, bd=1, relief='solid')
+            row.pack(fill='x', pady=1)
+            ui_state['calendar_rows'][stateName] = row
+
+            prefix = '[Done] ' if past else ('[Now] ' if this_week else '')
+            ballot_marker = '* ' if on_ballot else ''
+            label_text = '{}{}{} - wk {} ({} del)'.format(prefix, ballot_marker, stateName, date, delegates)
+            # Click anywhere on the label opens the state.
+            name_btn = Button(row, text=label_text, anchor='w', relief='flat',
+                              bg=bg, activebackground='#cbe2c2',
+                              command=lambda s=stateName: select_state_from_calendar(state_name=s))
+            name_btn.pack(side='left', fill='x', expand=True)
+
+            # Right-side action button: build organization. Skipped for past contests.
+            if not past and stateName in states:
+                cost = max(10000, 10000 * org_level)
+                if org_level == 0:
+                    action_text = 'Ballot $10k'
+                elif org_level == 1:
+                    action_text = 'Office $10k'
+                else:
+                    action_text = 'Build ${}k'.format(int(cost / 1000))
+                Button(row, text=action_text, padx=2,
+                       command=lambda s=stateName, c=cost: _build_org_from_sidebar(s, c)).pack(side='right', padx=2, pady=1)
+
+            ui_state['calendar_items'].append(stateName)
+
+        if not rendered_any:
+            # Friendly placeholder so the user knows the filter did
+            # something instead of staring at a blank list.
+            Label(list_inner,
+                  text='(no contests match the current filter)',
+                  bg='white', fg='#777777',
+                  justify=LEFT, wraplength=220).pack(anchor='w', pady=8)
+
+    rebuild_calendar_list()
 
     map_title = 'National Map'
     map_note = 'Click a state to edit district spending. The selected state plan will appear in the right panel instead of opening a separate window.'

@@ -30,12 +30,25 @@ from .opponent import Opponent
 REWARD_DELEGATE_SCALE = 1.0 / 100.0   # +1 per ~100 delegates won that turn
 REWARD_WIN_BONUS = 5.0
 REWARD_LOSS_PENALTY = -5.0
-# Shaping: reward each state-primary won (encourages contesting early small
-# states whose delegate count alone wouldn't move the delegate-scale reward)
-REWARD_STATE_WON = 0.5
-# Shaping: reward momentum gain per turn (encourages the snowballing dynamic
-# the heuristic agents exploit via early wins)
-REWARD_MOMENTUM_SCALE = 1.0 / 30.0     # ~1 reward per +30 momentum
+# Shaping: reward each state-primary won. Bumped from 0.5 -> 0.75 alongside
+# the momentum-reward reduction so that winning states stays meaningful
+# under the new balance (momentum is weaker now, so state wins are
+# proportionally more important).
+REWARD_STATE_WON = 0.75
+# Shaping: reward momentum gain per turn. Originally 1/30 under the old
+# balance where 50 momentum = +100% support. Now 50 momentum = +30% support
+# AND momentum decays to 1/4 each week (was 1/2), so a unit of momentum
+# is roughly 4-6x less valuable than it used to be. Calibrate the shaping
+# accordingly so the policy doesn't chase momentum that has minimal
+# downstream effect.
+REWARD_MOMENTUM_SCALE = 1.0 / 120.0    # ~1 reward per +120 momentum
+
+# Shaping (v12+): penalty for "ghost orgs" — states where the agent has
+# at least one org tier but very little support to back it up. Discourages
+# the v11 pattern of building tier-1 orgs in 30+ states without follow-up
+# campaign / ad investment.
+REWARD_GHOST_ORG_PENALTY = -0.02       # per ghost-org state, every turn
+GHOST_ORG_SUPPORT_FLOOR = 20           # 'meaningful support' threshold
 
 
 class CampaignGameEnv:
@@ -49,7 +62,7 @@ class CampaignGameEnv:
         """
         if not opponents:
             raise ValueError('CampaignGameEnv needs at least one opponent.')
-        if action_kind not in ('discrete', 'continuous'):
+        if action_kind not in ('discrete', 'continuous', 'coupled'):
             raise ValueError(f'unknown action_kind: {action_kind}')
         self.opponents = list(opponents)
         self.num_players = 1 + len(self.opponents)
@@ -98,7 +111,9 @@ class CampaignGameEnv:
             raise RuntimeError('episode already ended; call reset().')
 
         # 1. Apply agent action and book its end-of-turn fundraising.
-        if self.action_kind == 'continuous':
+        if self.action_kind == 'coupled':
+            agent_fundraising = _actions.decode_coupled_action(sim, 0, action)
+        elif self.action_kind == 'continuous':
             agent_fundraising = _actions.decode_continuous_action(sim, 0, action)
         else:
             agent_fundraising = _actions.decode_action(sim, 0, action)
@@ -139,6 +154,22 @@ class CampaignGameEnv:
         d_mom = cur_mom - self.last_momentum
         self.last_momentum = cur_mom
         reward += d_mom * REWARD_MOMENTUM_SCALE
+
+        # Shaping: penalize ghost orgs (org tier > 0 but trivial support).
+        # Computed AFTER calc_state_opinions so support reflects this
+        # turn's investment. Only counts states whose primary is still
+        # upcoming — past contests are sunk cost.
+        ghost_count = 0
+        upcoming_states = {n for n, w in sim.calendar if w >= sim.current_date}
+        for state_name, st in sim.states.items():
+            if state_name not in upcoming_states:
+                continue
+            if st.organizations[0] <= 0:
+                continue
+            total_support = sum(d.support[0] for d in st.districts)
+            if total_support < GHOST_ORG_SUPPORT_FLOOR:
+                ghost_count += 1
+        reward += ghost_count * REWARD_GHOST_ORG_PENALTY
 
         # 5. Advance.
         sim.current_date += 1

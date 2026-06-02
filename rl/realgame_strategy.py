@@ -27,7 +27,7 @@ def _default_model_path():
     return os.environ.get(
         'CAMPAIGN_RL_MODEL',
         os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                     'runs', 'v7_shaped', 'model'),
+                     'runs', 'v17_decoder_fixed', 'model'),
     )
 
 
@@ -77,18 +77,24 @@ def act(real_player_idx, model_path=None):
             f'player {real_player_idx} not found in players_dict '
             f'(keys present: {sim_view._player_keys})')
 
-    # Surface org investments to stdout so the user can see what the AI
-    # is doing during play.
+    # Surface org investments AND post-turn spend breakdown to stdout so
+    # the user can see exactly where the neural agent is allocating —
+    # any state with non-zero spend and org=0 will print a [LEAK] tag.
     _actions.set_log_org_builds(True)
+    _actions.set_log_spend(True)
 
     obs_vec = _obs.encode_obs(sim_view, agent_idx=p_idx)
     action, _ = model.predict(obs_vec, deterministic=True)
 
-    # Detect whether this is a continuous or discrete model by inspecting
-    # the action space; pick the right decoder accordingly.
+    # Dispatch on the model's action-space shape — Box with 53 floats is
+    # the v12+ coupled space; Box with 151 is the original continuous;
+    # MultiDiscrete is the discrete bootstrap.
     from gymnasium.spaces import Box
     if isinstance(model.action_space, Box):
-        fundraising = _actions.decode_continuous_action(sim_view, p_idx, action)
+        if model.action_space.shape[0] == _actions.COUPLED_ACTION_DIM:
+            fundraising = _actions.decode_coupled_action(sim_view, p_idx, action)
+        else:
+            fundraising = _actions.decode_continuous_action(sim_view, p_idx, action)
     else:
         fundraising = _actions.decode_action(sim_view, p_idx, action)
     return int(fundraising)

@@ -1,0 +1,23 @@
+# Core game UI (CampaignGame.py)
+#   tkinter ships with Python on Windows / macOS / most Linux distros
+#   so it is not listed here.
+Pillow>=10.0
+
+# Networked save server (optional — only needed on the machine running
+# server/campaign_save_server.py). Also pulled in by server/requirements.txt.
+flask>=2.0
+
+# RL training + inference for the NeuralPPO opponent
+#   torch: PyTorch (CPU build is fine — a GPU isn't required for this
+#          model size).
+#   gymnasium: env API used by stable-baselines3.
+#   stable-baselines3: PPO implementation used to train all the rl/
+#          policies.
+#   numpy: dense tensor ops in the obs / action encoders.
+torch>=2.0
+gymnasium>=1.0
+stable-baselines3>=2.0
+numpy>=1.24
+
+# Balance analysis plots (balance_analysis.py)
+matplotlib>=3.7

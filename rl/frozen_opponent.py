@@ -34,10 +34,14 @@ class FrozenPolicyOpponent(Opponent):
         model = self._ensure_model()
         obs = _obs.encode_obs(sim, agent_idx=p_idx)
         action, _ = model.predict(obs, deterministic=True)
-        # Dispatch on the frozen model's own action space so a continuous
-        # checkpoint and a discrete checkpoint can sit in the same pool.
+        # Dispatch on the frozen model's own action-space shape so
+        # discrete, continuous, and coupled checkpoints can all sit in
+        # the same pool. Box with 53 floats -> coupled; Box with 151 ->
+        # continuous; MultiDiscrete -> discrete.
         from gymnasium.spaces import Box
         if isinstance(model.action_space, Box):
+            if model.action_space.shape[0] == _actions.COUPLED_ACTION_DIM:
+                return _actions.decode_coupled_action(sim, p_idx, action)
             return _actions.decode_continuous_action(sim, p_idx, action)
         return _actions.decode_action(sim, p_idx, action)
 

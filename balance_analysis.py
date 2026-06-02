@@ -33,7 +33,22 @@ def time_multiplier(weeks_to_election):
 
 
 def momentum_multiplier(momentum):
-    return 1.0 + momentum / 50.0
+    # 2026 rebalance: divisor 50 -> 167 so 50 momentum gives ~+30% support
+    # instead of +100%. Matches CampaignGame.calculateStateOpinions.
+    return 1.0 + momentum / 167.0
+
+
+def momentum_after_decay(starting_momentum, weeks, weekly_gain=0):
+    """Trace momentum across `weeks` end-of-turns. Each turn keeps 1/4 of
+    last week's momentum (post-rebalance, was 1/2), then adds any wins
+    from contests decided that week. `weekly_gain` is a constant per-week
+    add to model 'I keep winning small primaries each week'."""
+    m = starting_momentum
+    out = [m]
+    for _ in range(weeks):
+        m = m / 4.0 + weekly_gain
+        out.append(m)
+    return out
 
 
 def issue_multiplier(state_pos, player_pos):
@@ -45,8 +60,11 @@ def issue_multiplier(state_pos, player_pos):
     return max(0.25, 1.0 - 0.16 * abs(player_pos - state_pos))
 
 
-def support_from_org(org_level, mult=1.0):
-    return org_level * 2 * mult
+def support_from_org(org_level, mult=1.0, num_turns=10):
+    """Live formula: org * (5/numTurns) * mult — so cumulative org payoff
+    is roughly constant across 8/10/20-turn games. Default num_turns=10
+    matches the rebalanced canonical game length."""
+    return org_level * (5.0 / num_turns) * mult
 
 
 def support_from_campaign(hours, mult=1.0):
@@ -223,7 +241,9 @@ def plot_resource_comparison():
 
 
 def plot_issue_alignment():
-    """How issueMult and momentum scale the underlying support gain."""
+    """How issueMult and momentum scale the underlying support gain.
+    Post-rebalance: momentum is much milder (1 + m/167) and overlaid
+    with the old curve (1 + m/50) for context."""
     fig, axes = plt.subplots(1, 2, figsize=(12, 5))
 
     ax = axes[0]
@@ -242,18 +262,76 @@ def plot_issue_alignment():
     plt.colorbar(im, ax=ax, fraction=0.046)
 
     ax = axes[1]
-    momentums = list(range(-50, 151, 10))
-    mults = [momentum_multiplier(m) for m in momentums]
-    ax.plot(momentums, mults, marker='o')
-    ax.axhline(1.0, color='gray', linestyle='--', alpha=0.5)
+    momentums = list(range(-50, 201, 10))
+    new_mults = [momentum_multiplier(m) for m in momentums]
+    old_mults = [1.0 + m / 50.0 for m in momentums]
+    ax.plot(momentums, new_mults, marker='o', color='tab:blue',
+            label='Current: 1 + m/167')
+    ax.plot(momentums, old_mults, marker='.', color='tab:gray', alpha=0.6,
+            linestyle='--', label='Pre-rebalance: 1 + m/50')
+    ax.axhline(1.0, color='gray', linestyle='--', alpha=0.4)
+    # Annotate the 50-momentum data point.
+    ax.annotate('50 mom -> {:.2f}x'.format(momentum_multiplier(50)),
+                xy=(50, momentum_multiplier(50)),
+                xytext=(70, momentum_multiplier(50) - 0.4),
+                arrowprops=dict(arrowstyle='->', color='black'),
+                fontsize=9)
     ax.set_xlabel('Momentum')
     ax.set_ylabel('Support multiplier')
     ax.set_title('Momentum -> support multiplier')
     ax.grid(True, alpha=0.3)
+    ax.legend(fontsize=9, loc='upper left')
 
-    fig.suptitle('Multipliers stacked on top of base support', fontsize=13)
+    fig.suptitle('Multipliers stacked on top of base support (rebalanced)',
+                 fontsize=13)
     fig.tight_layout()
     out = os.path.join(OUT_DIR, 'multipliers.png')
+    fig.savefig(out, dpi=110)
+    plt.close(fig)
+    return out
+
+
+def plot_momentum_decay():
+    """How momentum decays week-to-week under the new 1/4-retain rule,
+    compared with the old 1/2-retain rule. Also shows the steady-state
+    of consistent weekly wins."""
+    fig, axes = plt.subplots(1, 2, figsize=(13, 5))
+
+    ax = axes[0]
+    weeks = list(range(0, 11))
+    for start, color in [(50, 'tab:blue'), (100, 'tab:orange'),
+                         (200, 'tab:red')]:
+        new = momentum_after_decay(start, len(weeks) - 1, weekly_gain=0)
+        old = [start * (0.5 ** w) for w in weeks]
+        ax.plot(weeks, new, marker='o', color=color,
+                label='Start {} (1/4 decay)'.format(start))
+        ax.plot(weeks, old, marker='.', color=color, alpha=0.5,
+                linestyle='--', label='Start {} (1/2 decay, old)'.format(start))
+    ax.set_xlabel('Weeks elapsed (no new wins)')
+    ax.set_ylabel('Momentum remaining')
+    ax.set_title('Decay: no wins after the first burst')
+    ax.grid(True, alpha=0.3)
+    ax.legend(fontsize=8)
+
+    ax = axes[1]
+    # Steady-state momentum if you grab `gain` momentum each week:
+    # m_{t+1} = m_t/4 + gain  ->  steady-state m* = gain * 4/3.
+    weeks = list(range(0, 12))
+    for gain in [10, 25, 50, 100]:
+        traj = momentum_after_decay(0, len(weeks) - 1, weekly_gain=gain)
+        ss = gain * 4.0 / 3.0
+        ax.plot(weeks, traj, marker='o',
+                label='+{}/wk  (steady-state {:.0f})'.format(gain, ss))
+    ax.set_xlabel('Weeks of consistent wins')
+    ax.set_ylabel('Momentum')
+    ax.set_title('Steady state with constant weekly wins')
+    ax.grid(True, alpha=0.3)
+    ax.legend(fontsize=8)
+
+    fig.suptitle('Momentum decay (rebalance: keep 1/4 each week, was 1/2)',
+                 fontsize=13)
+    fig.tight_layout()
+    out = os.path.join(OUT_DIR, 'momentum_decay.png')
     fig.savefig(out, dpi=110)
     plt.close(fig)
     return out
@@ -302,6 +380,7 @@ def main():
         plot_org_value(),
         plot_resource_comparison(),
         plot_issue_alignment(),
+        plot_momentum_decay(),
         plot_fundraising_income(),
     ]
     for p in paths:
