@@ -105,18 +105,41 @@ You should get `[]` on a fresh server.
 
 ## Play a networked game
 
-1. **Host** clicks **New Networked Game** in the main menu, runs through
-   normal new-game setup configuring all the players (this includes
-   picking AI/human and stances for everyone). On the seat-picker screen,
-   they check the boxes for whichever seats they'll play.
+1. **Host** clicks **New Networked Game** in the main menu and picks a
+   **turn mode** (see below), then runs through normal new-game setup
+   configuring all the players (this includes picking AI/human and stances
+   for everyone). On the seat-picker screen, they check the boxes for
+   whichever seats they'll play.
 2. **Host** notes the 6-character match ID shown on the seat-picker and
-   shares it with the other player.
-3. **Joiner** clicks **Join Networked Game**, types in the match ID, and
-   on the seat-picker checks off whichever seats are theirs (different
-   from the host's).
-4. Whichever side has the active seat plays first; the other waits on the
-   *Waiting for Opponent* screen, which polls the server every 3 seconds
-   for an updated state.
+   shares it — along with the chosen mode — with the other players.
+3. **Joiner** clicks **Join Networked Game**, types in the match ID,
+   selects the *same* turn mode the host chose, and on the seat-picker
+   checks off whichever seats are theirs (different from the host's).
+   Every seat must be claimed by exactly one computer, and none twice.
+
+### Turn modes
+
+- **Sequential** — players take their turns one after another. Whichever
+  side has the active seat plays first; the others wait on the *Waiting
+  for Opponent* screen, which polls the server every 3 seconds for an
+  updated state, then take their turn. The full game state is relayed
+  through the server as `lan_<id>.save`.
+
+- **Live (simultaneous)** — everyone plays the same week at the same time.
+  Nothing a candidate does affects anyone else until the week is scored,
+  so there's no waiting for a turn: each player plays their whole week and
+  hits **End Turn**, which uploads their moves as a per-seat submission
+  file. **The host is the resolver** — its *Collecting Moves* screen polls
+  until every non-local seat has submitted, then it merges everyone's
+  moves into the week-start state, decides that week's contests, and
+  publishes the combined result as the new `lan_<id>.save`. The other
+  clients poll for that resolved state and roll into the next week
+  together. Resolution happens only on the host, which is why one machine
+  must be designated (the host always fills that role).
+
+  If the host's *Collecting Moves* screen sits waiting on a player that
+  never submits, the likely cause is an unclaimed seat — make sure every
+  seat is covered across the machines.
 
 ## Notes
 
@@ -124,6 +147,11 @@ You should get `[]` on a fresh server.
   the server is up, but they can't read or write saves without the key.
 - **Multiple concurrent games** are fine; each match has a unique ID and
   lives at `lan_<id>.save` in the saves directory.
+- **Live-mode submission files** are named
+  `lan_<id>_w<week>_s<seats>.save` (e.g. `lan_AB12CD_w3_s2-3.save` for a
+  client playing seats 2 and 3 in week 3). The host deletes each week's
+  submissions after it merges them, so normally only the combined
+  `lan_<id>.save` persists.
 - **Stale saves** accumulate forever right now. To clean up, delete the
   files in `server/saves/` (or hit `DELETE /campaign_saves/<name>` with
   the API key).

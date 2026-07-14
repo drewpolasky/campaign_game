@@ -269,6 +269,17 @@ _TUTORIAL_PAGES = [
         ),
     },
     {
+        'title': 'Networked Games',
+        'image': None,
+        'body': (
+            "You can play against people on other computers over the network. One player picks 'New Networked Game', which generates a short Match ID; everyone else picks 'Join Networked Game' and enters that ID. Each computer then chooses which player seat(s) it controls - coordinate so that every seat is claimed by exactly one computer and none is claimed twice. (This uses the remote save server configured in remote_config.json.)\n\n"
+            "There are two turn modes, chosen by the host when creating the match. Everyone joining must pick the same one:\n\n"
+            "  * Sequential - players take their turns one after another. When it's someone else's turn you'll see a 'Waiting for Opponent' screen that polls until they finish and hand off.\n\n"
+            "  * Live (simultaneous) - everyone plays the same week at the same time, then the moves are combined. Because nothing you do affects another candidate until the week is scored, there's no need to wait your turn: play your whole week, and when you hit 'End Turn' your moves are submitted. The host's computer collects everyone's submissions, combines them, decides that week's contests, and publishes the result; then everyone rolls into the next week together.\n\n"
+            "In a Live game the host is the one that resolves each week, so its 'Collecting Moves' screen lists exactly which players it's still waiting on. If a seat was never claimed, it'll wait there forever - make sure every seat is covered."
+        ),
+    },
+    {
         'title': 'Strategy Tips',
         'image': None,
         'body': (
@@ -2005,6 +2016,12 @@ def calcAImove(agent):
 def _ai_advance_turn():
     """Advance to the next player or roll the week, mirroring endTurn() side effects."""
     global player, numPlayers, currentDate, eventOfTheWeek, states, players, numTurns
+    # In a simultaneous (Live) networked game, seat advancement and the
+    # week rollover are driven by the sim loop / resolver instead. An AI
+    # seat we own has just finished its allocations + calcEndTurn; leave
+    # `player` where it is so _sim_advance_and_play() can move on.
+    if is_networked_game() and network_state.get('mode') == 'simultaneous':
+        return
     if player < numPlayers:
         player += 1
         return
@@ -2751,6 +2768,10 @@ def resume_current_game():
         return
     if currentDate > numTurns:
         show_final_results()
+        return
+    if is_networked_game() and network_state.get('mode') == 'simultaneous':
+        # Continue playing whatever owned seat we were on this week.
+        _sim_advance_and_play()
         return
     if players[player].isHuman == 'human':
         createNationalMap(menu_resume_state.get('selected_state'))
@@ -4131,6 +4152,13 @@ def endTurn(window, fundraising):
     fundraising += players[player].resources[0]
     calcEndTurn(fundraising)
 
+    # Live (simultaneous) networked game: this human seat is done, but the
+    # week does NOT roll over here. Hand off to the sim loop, which plays
+    # any other seats we own and then submits our moves for merging.
+    if is_networked_game() and network_state.get('mode') == 'simultaneous':
+        _sim_end_seat_turn()
+        return
+
     if player < numPlayers:
         player += 1
     else:
@@ -4241,6 +4269,8 @@ network_state = {
     'local_players': set(),     # 1-based seat numbers this client owns
     'last_save_mtime': 0.0,     # last mtime we've already loaded
     'poll_job': None,           # tk after() id for the polling loop
+    'mode': 'sequential',       # 'sequential' (relay) or 'simultaneous' (Live)
+    'is_resolver': False,       # in Live mode, this client merges + resolves
 }
 
 
@@ -4414,6 +4444,8 @@ def leave_networked_match():
     network_state['match_id'] = None
     network_state['local_players'] = set()
     network_state['last_save_mtime'] = 0.0
+    network_state['mode'] = 'sequential'
+    network_state['is_resolver'] = False
     mainMenu()
 
 
@@ -4436,16 +4468,339 @@ def network_after_turn():
     return True
 
 
+# --- SIMULTANEOUS ("LIVE") NETWORKED MULTIPLAYER ---
+# In Live mode every client plays its own seat(s) for the same week at the
+# same time, starting from an identical week-start state that the host (the
+# "resolver") published. A player only ever touches its own slots during a
+# week:
+#     players[seat]                          (resources, momentum, stats)
+#     states[s].organizations[seat-1]        (org / ballot access)
+#     district.campaigningThisTurn[seat-1]
+#     district.adsThisTurn[seat-1]
+# so once everyone has moved, the resolver can splice each seat's slice into
+# its base copy and run the normal week rollover (calculateStateOpinions +
+# decideContests) exactly once. Each client uploads a per-seat submission
+# file named  lan_<match>_w<week>_s<seat1>-<seat2>...  ; the resolver waits
+# for every non-local seat to appear, merges, resolves, and re-publishes the
+# full state under the usual lan_<match> name for the next week.
+
+
+def _sim_owned_seats():
+    return sorted(network_state['local_players'])
+
+
+def _sim_needed_seats():
+    """Seats the resolver must wait on: everything it doesn't own itself."""
+    return sorted(set(range(1, numPlayers + 1)) - set(network_state['local_players']))
+
+
+def _sim_submit_name(match_id, week, seats):
+    return 'lan_{}_w{}_s{}'.format(match_id, week, '-'.join(str(s) for s in sorted(seats)))
+
+
+def _sim_begin_week():
+    """Position `player` at this client's first owned seat and start play."""
+    global player
+    seats = _sim_owned_seats()
+    if not seats:
+        # We own no seats (spectator). Just wait for the resolver's next state.
+        _sim_wait_for_resolution(currentDate)
+        return
+    player = seats[0]
+    _sim_advance_and_play()
+
+
+def _sim_advance_and_play():
+    """Walk this client's owned seats for the current week: AI seats are
+    computed inline; the first human seat shows the board and returns
+    (control resumes through endTurn -> _sim_end_seat_turn). When we run out
+    of owned seats, submit our moves for the week."""
+    global player
+    seats = _sim_owned_seats()
+    while True:
+        if player not in network_state['local_players']:
+            later = [s for s in seats if s > player]
+            if not later:
+                _sim_submit_and_resolve()
+                return
+            player = later[0]
+            continue
+        if players[player].isHuman == 'human':
+            # Interactive seat: hand the board to the human and wait.
+            if currentDate > 1:
+                showStartOfTurnReport()
+            else:
+                createNationalMap(menu_resume_state.get('selected_state'))
+            return
+        # AI seat we own: compute its full week (calcEndTurn included). The
+        # sequential advance inside calcAImove is suppressed in Live mode.
+        calcAImove(players[player].isHuman)
+        later = [s for s in seats if s > player]
+        if not later:
+            _sim_submit_and_resolve()
+            return
+        player = later[0]
+
+
+def _sim_end_seat_turn():
+    """Called from endTurn() after a human seat locks in its Live-mode week."""
+    global player
+    autoSave()
+    later = [s for s in _sim_owned_seats() if s > player]
+    if later:
+        player = later[0]
+        _sim_advance_and_play()
+    else:
+        _sim_submit_and_resolve()
+
+
+def _sim_upload_submission(week):
+    """Save our full state and upload it under this week's per-seat name so
+    the resolver can splice out our seats' slices."""
+    cfg = RemoteSaveLoad.load_config()
+    if not cfg.get('server_url') or not cfg.get('api_key'):
+        messagebox.showwarning('Live Game', 'Configure remote_config.json before starting a networked game.')
+        return False
+    seats = _sim_owned_seats()
+    name = _sim_submit_name(network_state['match_id'], week, seats)
+    path = os.path.join(os.getcwd(), 'CampaignSaves', name + '.save')
+    saveGameSecond(path, None, True, True)
+    try:
+        with open(path, 'rb') as f:
+            RemoteSaveLoad.upload_save(cfg['server_url'], cfg['api_key'], name, f.read())
+    except Exception as e:
+        messagebox.showerror('Live Game', 'Submitting your moves failed: {}'.format(e))
+        return False
+    return True
+
+
+def _sim_submit_and_resolve():
+    """We've played all of our seats for the week. The resolver waits for the
+    other seats and merges; everyone else uploads and waits for the result."""
+    week = currentDate
+    if network_state.get('is_resolver'):
+        _sim_resolve_screen(week)
+    elif _sim_upload_submission(week):
+        _sim_wait_for_resolution(week)
+    else:
+        _sim_submit_error_screen(week)
+
+
+def _sim_collect_submissions(week):
+    """List the server and return {seat: server_name_without_ext} for every
+    submission uploaded for `week`. Returns None if the listing failed."""
+    cfg = RemoteSaveLoad.load_config()
+    if not cfg.get('server_url') or not cfg.get('api_key'):
+        return None
+    try:
+        saves = RemoteSaveLoad.list_remote_saves(cfg['server_url'], cfg['api_key'])
+    except Exception:
+        return None
+    prefix = 'lan_{}_w{}_s'.format(network_state['match_id'], week)
+    found = {}
+    for s in saves:
+        nm = s['name']
+        if not nm.endswith('.save'):
+            continue
+        base = nm[:-len('.save')]
+        if not base.startswith(prefix):
+            continue
+        seat_part = base[len(prefix):]
+        for tok in seat_part.split('-'):
+            try:
+                found[int(tok)] = base
+            except ValueError:
+                pass
+    return found
+
+
+def _merge_seat_from_submission(path, seat):
+    """Splice one seat's week slice out of a submission save into our live
+    globals. Only that seat's own indices are copied, so it never clobbers
+    another player's moves."""
+    saveFile = pickle.load(open(path, 'rb'))
+    sub_players = pickle.loads(saveFile[0])
+    sub_states = pickle.loads(saveFile[1])
+    idx = seat - 1
+    if seat in sub_players:
+        players[seat] = sub_players[seat]
+    for name, st in states.items():
+        sub_st = sub_states.get(name)
+        if sub_st is None:
+            continue
+        try:
+            st.organizations[idx] = sub_st.organizations[idx]
+        except (IndexError, AttributeError):
+            pass
+        for di, d in enumerate(st.districts):
+            try:
+                sub_d = sub_st.districts[di]
+                d.campaigningThisTurn[idx] = sub_d.campaigningThisTurn[idx]
+                d.adsThisTurn[idx] = sub_d.adsThisTurn[idx]
+            except (IndexError, AttributeError):
+                pass
+
+
+def _sim_cleanup_submissions(found):
+    """Best-effort delete of this week's submission files once merged."""
+    cfg = RemoteSaveLoad.load_config()
+    for name in set(found.values()):
+        try:
+            RemoteSaveLoad.delete_remote_save(cfg['server_url'], cfg['api_key'], name)
+        except Exception:
+            pass
+
+
+def _sim_do_resolution(week, found):
+    """Resolver: merge every non-local seat, run the week rollover, publish
+    the resolved state, then start our own next week."""
+    global player, currentDate, eventOfTheWeek
+    cfg = RemoteSaveLoad.load_config()
+    for seat in _sim_needed_seats():
+        name = found[seat]
+        try:
+            data = RemoteSaveLoad.download_save(cfg['server_url'], cfg['api_key'], name)
+        except Exception as e:
+            messagebox.showerror('Live Game', 'Could not fetch seat {}: {}'.format(seat, e))
+            _sim_resolve_screen(week)
+            return
+        path = os.path.join(os.getcwd(), 'CampaignSaves', name + '.save')
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, 'wb') as f:
+            f.write(data)
+        _merge_seat_from_submission(path, seat)
+
+    # Same rollover the sequential endTurn() runs when the last seat ends.
+    calculateStateOpinions()
+    currentDate += 1
+    decideContests()
+    player = 1
+    eventOfTheWeek = random.randint(0, len(issueNames) - 1)
+    _refresh_headline()
+    for state in states:
+        for district in states[state].districts:
+            for person in players:
+                district.setCampaigningThisTurn(person - 1, 0)
+                district.setAdsThisTurn(person - 1, 0)
+
+    upload_networked_state()          # publish the resolved week for everyone
+    _sim_cleanup_submissions(found)
+    autoSave()
+
+    if currentDate > numTurns:
+        show_final_results()
+        return
+    _sim_begin_week()
+
+
+def _sim_resolve_screen(week):
+    """Resolver's between-week screen: poll until every needed seat has
+    submitted, then merge + resolve."""
+    _net_cancel_polling()
+    root, body = build_screen('Collecting Moves',
+                              'You have locked in week {}. Waiting for the other players to submit, then this computer combines everyone\'s moves.'.format(week))
+    card = make_card(body, 'Match Status')
+    card.pack(fill='x', pady=(0, 12))
+    Label(card, text='Match ID: {}   (Live game)'.format(network_state['match_id']),
+          bg='white', font=('TkDefaultFont', 12, 'bold'), justify=LEFT).pack(anchor='w', padx=12, pady=(0, 4))
+    status_var = StringVar(value='Waiting for submissions...')
+    Label(card, textvariable=status_var, bg='white', fg='#555555',
+          justify=LEFT, wraplength=880).pack(anchor='w', padx=12, pady=(0, 8))
+
+    def tick():
+        found = _sim_collect_submissions(week)
+        needed = _sim_needed_seats()
+        if found is not None:
+            waiting_on = [s for s in needed if s not in found]
+            if not waiting_on:
+                _net_cancel_polling()
+                status_var.set('All moves in. Resolving week {}...'.format(week))
+                _sim_do_resolution(week, found)
+                return
+            names = ', '.join('Player {} ({})'.format(s, players[s].publicName or '?') for s in waiting_on)
+            status_var.set('Waiting on: {}   [last check {}]'.format(names, time.strftime('%H:%M:%S')))
+        else:
+            status_var.set('Could not reach the server. Retrying... [{}]'.format(time.strftime('%H:%M:%S')))
+        network_state['poll_job'] = init_app_root().after(3000, tick)
+
+    actions = Frame(body, bg='#f3efe2')
+    actions.pack(anchor='w', pady=(8, 0))
+    Button(actions, text='Check Now', command=tick, padx=12).pack(side='left')
+    Button(actions, text='Leave Match', command=leave_networked_match, padx=12).pack(side='left', padx=8)
+    network_state['poll_job'] = init_app_root().after(1000, tick)
+
+
+def _sim_wait_for_resolution(week):
+    """Non-resolver's between-week screen: poll for the resolved full state
+    (a newer lan_<match> whose week has advanced), then start the next week."""
+    _net_cancel_polling()
+    root, body = build_screen('Waiting for Resolution',
+                              'Your week {} moves are submitted. Waiting for the host to combine everyone\'s moves.'.format(week))
+    card = make_card(body, 'Match Status')
+    card.pack(fill='x', pady=(0, 12))
+    Label(card, text='Match ID: {}   (Live game)'.format(network_state['match_id']),
+          bg='white', font=('TkDefaultFont', 12, 'bold'), justify=LEFT).pack(anchor='w', padx=12, pady=(0, 4))
+    Label(card, text='Your seat(s): {}'.format(', '.join(str(p) for p in _sim_owned_seats())),
+          bg='white', justify=LEFT).pack(anchor='w', padx=12, pady=(0, 4))
+    status_var = StringVar(value='Waiting for the host to resolve week {}...'.format(week))
+    Label(card, textvariable=status_var, bg='white', fg='#555555',
+          justify=LEFT, wraplength=880).pack(anchor='w', padx=12, pady=(0, 8))
+
+    def tick():
+        if network_check_for_update() and currentDate > week:
+            _net_cancel_polling()
+            if currentDate > numTurns:
+                show_final_results()
+                return
+            _sim_begin_week()
+            return
+        status_var.set('Last check {}. Host has not resolved week {} yet.'.format(time.strftime('%H:%M:%S'), week))
+        network_state['poll_job'] = init_app_root().after(3000, tick)
+
+    actions = Frame(body, bg='#f3efe2')
+    actions.pack(anchor='w', pady=(8, 0))
+    Button(actions, text='Check Now', command=tick, padx=12).pack(side='left')
+    Button(actions, text='Leave Match', command=leave_networked_match, padx=12).pack(side='left', padx=8)
+    network_state['poll_job'] = init_app_root().after(2000, tick)
+
+
+def _sim_submit_error_screen(week):
+    """Shown when uploading our week submission failed, so the player can retry."""
+    root, body = build_screen('Submit Failed',
+                              'Your week {} moves could not be uploaded. Check your connection and try again.'.format(week))
+    actions = Frame(body, bg='#f3efe2')
+    actions.pack(anchor='w', pady=(8, 0))
+    Button(actions, text='Retry Submit', command=lambda: _sim_submit_and_resolve(), padx=12).pack(side='left')
+    Button(actions, text='Leave Match', command=leave_networked_match, padx=12).pack(side='left', padx=8)
+
+
 # --- Networked game setup screens ---
 
 def host_networked_setup():
-    """Entry point: create a new networked match. The host runs the normal
-    new-game flow, then picks which seats they'll play locally; the rest are
-    handed off to whoever joins."""
-    network_state['match_id'] = _generate_match_id()
-    network_state['local_players'] = set()
-    network_state['last_save_mtime'] = 0.0
-    setUpGame()
+    """Entry point: create a new networked match. First pick the turn mode,
+    then run the normal new-game flow and choose which seats to play."""
+    root, body = build_screen('New Networked Game',
+                              'Choose how turns are played, then set up the match.')
+    card = make_card(body, 'Turn Mode')
+    card.pack(fill='x', pady=(0, 16))
+    mode_var = StringVar(value='sequential')
+    Radiobutton(card, text='Sequential - players take their turns one after another',
+                variable=mode_var, value='sequential', bg='white').pack(anchor='w', padx=12, pady=2)
+    Radiobutton(card, text='Live - everyone plays the same week at once, then moves are combined',
+                variable=mode_var, value='simultaneous', bg='white').pack(anchor='w', padx=12, pady=2)
+    Label(card, text="In a Live game this computer (the host) collects every player's moves each week and resolves them. Tell the other players to pick \"Live\" and enter this match's ID.",
+          bg='white', fg='#555555', justify=LEFT, wraplength=820).pack(anchor='w', padx=12, pady=(4, 8))
+
+    def go():
+        network_state['match_id'] = _generate_match_id()
+        network_state['local_players'] = set()
+        network_state['last_save_mtime'] = 0.0
+        network_state['mode'] = mode_var.get()
+        network_state['is_resolver'] = True   # the host always resolves in Live mode
+        setUpGame()
+
+    Button(body, text='Continue to Game Setup', command=go, padx=14).pack(anchor='w', pady=(8, 0))
+    Button(body, text='Back', command=mainMenu, padx=12).pack(anchor='w', pady=(8, 0))
 
 
 def join_networked_setup():
@@ -4457,6 +4812,10 @@ def join_networked_setup():
     Label(card, text='Match ID', bg='white').pack(anchor='w', padx=12, pady=(8, 0))
     match_id_var = StringVar()
     Entry(card, textvariable=match_id_var, width=18).pack(anchor='w', padx=12, pady=(0, 12))
+    Label(card, text='Turn mode (match what the host chose)', bg='white').pack(anchor='w', padx=12, pady=(4, 0))
+    mode_var = StringVar(value='sequential')
+    Radiobutton(card, text='Sequential', variable=mode_var, value='sequential', bg='white').pack(anchor='w', padx=16)
+    Radiobutton(card, text='Live (simultaneous)', variable=mode_var, value='simultaneous', bg='white').pack(anchor='w', padx=16, pady=(0, 8))
     status_var = StringVar(value='')
     Label(card, textvariable=status_var, bg='white',
           fg='#555555', justify=LEFT, wraplength=900).pack(anchor='w', padx=12, pady=(0, 8))
@@ -4469,6 +4828,8 @@ def join_networked_setup():
         network_state['match_id'] = mid
         network_state['local_players'] = set()
         network_state['last_save_mtime'] = 0.0
+        network_state['mode'] = mode_var.get()
+        network_state['is_resolver'] = False   # joiners never resolve
         if not download_networked_state(mid):
             status_var.set('Could not download a save for that ID. Check the ID and your network.')
             network_state['match_id'] = None
@@ -4492,8 +4853,15 @@ def join_networked_setup():
 def choose_local_seats():
     """After the host completes setup or the joiner downloads, pick which
     seats this machine will play."""
+    live = network_state.get('mode') == 'simultaneous'
+    coordinate = ('Every seat must be claimed by exactly one computer, and no seat twice.'
+                  if live else
+                  'Coordinate with your opponent so you do not pick the same ones.')
     root, body = build_screen('Pick your seats',
-                              'Match {} - choose which player slot(s) this computer plays. Coordinate with your opponent so you do not pick the same ones.'.format(network_state['match_id']))
+                              'Match {} ({}) - choose which player slot(s) this computer plays. {}'.format(
+                                  network_state['match_id'],
+                                  'Live' if live else 'Sequential',
+                                  coordinate))
     card = make_card(body, 'Seats')
     card.pack(fill='x', pady=(0, 16))
     seat_vars = {}
@@ -4510,12 +4878,18 @@ def choose_local_seats():
             messagebox.showwarning('Pick your seats', 'Pick at least one seat to play.')
             return
         network_state['local_players'] = chosen
-        # Upload the current state so the other side gets a stable starting
-        # point and the seen-mtime is initialized.
-        upload_networked_state()
         Label(body,
-              text='Match started. Match ID is {}. Share this with the other player.'.format(network_state['match_id']),
+              text='Match started. Match ID is {}. Share this with the other player(s).'.format(network_state['match_id']),
               bg='#f3efe2', justify=LEFT, wraplength=900).pack(anchor='w', pady=(8, 8))
+        if network_state.get('mode') == 'simultaneous':
+            # Only the host publishes the authoritative week-start state; the
+            # joiners already downloaded it. Then everyone plays at once.
+            if network_state.get('is_resolver'):
+                upload_networked_state()
+            _sim_begin_week()
+            return
+        # Sequential relay: upload a stable starting point and hand off.
+        upload_networked_state()
         if network_my_turn():
             start_active_turn_flow(False)
         else:
