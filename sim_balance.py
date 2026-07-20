@@ -22,6 +22,7 @@ import numpy as np
 
 from State import State, District
 import state_issues
+import engine
 
 OUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'balance_plots')
 os.makedirs(OUT_DIR, exist_ok=True)
@@ -99,6 +100,38 @@ class SimPlayer:
         self.states_won = []
         self.districts_won = 0
 
+    # --- engine compatibility -------------------------------------------
+    # engine.py drives players through the canonical Player API. SimPlayer
+    # keeps its own (snake_case, 0-based) fields for the tournament/plots,
+    # and exposes the handful of Player-shaped hooks the engine writes to.
+    @property
+    def delegateCount(self):
+        return self.delegate_count
+
+    @delegateCount.setter
+    def delegateCount(self, value):
+        self.delegate_count = value
+
+    def addStat(self, key, amount):
+        if key == 'support_from_org':
+            self.support_from_org += amount
+        elif key == 'support_from_campaign':
+            self.support_from_camp += amount
+        elif key == 'support_from_ads':
+            self.support_from_ads += amount
+        elif key == 'districts_won':
+            self.districts_won += amount
+        elif key == 'states_won':
+            self.states_won.append(amount)
+
+    def endTurn(self, turn, fundraisingIncome, localIncome,
+                fundraisingHours=0, campaigningHours=0, adSpend=0):
+        # Money bookkeeping the sim's tournament reads. campaign_hours is
+        # tracked by the run loops (unchanged), so it's not double-counted
+        # here; money_on_ads/org are tracked at spend time.
+        self.income_total += fundraisingIncome + localIncome
+        self.fundraising_hours_total += fundraisingHours
+
 
 class Sim:
     def __init__(self, strategies, num_turns=20, seed=0, randomize_positions=True):
@@ -140,117 +173,44 @@ def time_to_election(sim, state_name):
     return 99
 
 
-def calc_state_opinions(sim):
-    """Apply support gains for the past turn (mirrors calculateStateOpinions)."""
-    for i, p in enumerate(sim.players):
-        for state_name, st in sim.states.items():
-            org = st.organizations[i]
-            if org == 0:
-                # Not on the ballot, no support gain.
-                continue
-            # Election-week bonus.
-            tte = time_to_election(sim, state_name)
-            mult_time = 1.2 if tte == 0 else (1.1 if tte == 1 else 1.0)
-            # 50 momentum -> ~+30% support bonus (matches CampaignGame.py).
-            mult_mom = 1.0 + p.momentum / 167.0
-            # Issue alignment.
-            try:
-                state_pos = st.positions[sim.event_of_week]
-            except (IndexError, AttributeError):
-                state_pos = 0
-            player_pos = p.positions[sim.event_of_week]
-            if state_pos == 0:
-                issue_mult = 1.0
-            elif player_pos == state_pos:
-                issue_mult = 1.33
-            else:
-                issue_mult = max(0.25, 1.0 - 0.16 * abs(player_pos - state_pos))
-            mult = mult_time * mult_mom * issue_mult
+def _engine_state(sim):
+    """Bind a Sim into an engine.GameState. The engine expects players as a
+    1-based dict (its convention) while the sim keeps them 0-based; org/support
+    lists are 0-based in both, so only the player mapping differs. The engine
+    reads/mutates the same State/SimPlayer objects, so results write back to
+    the sim. ``issues_mode`` is True because the sim always applied issue
+    alignment. ``rng`` is the sim's seeded Random for reproducibility."""
+    return engine.GameState(
+        states=sim.states,
+        players={i + 1: p for i, p in enumerate(sim.players)},
+        calendar=sim.calendar,
+        current_date=sim.current_date,
+        num_turns=sim.num_turns,
+        event_of_week=sim.event_of_week,
+        issues_mode=True,
+        past_elections=sim.past_elections,
+        rng=sim.rng,
+    )
 
-            for d in st.districts:
-                hours = d.campaigningThisTurn[i]
-                ads = d.adsThisTurn[i]
-                ads_total = sum(d.adsThisTurn)
-                # Match the rebalanced game formula:
-                # - org tier -> +5/numTurns per turn (so cumulative passive is
-                #   ~5 per tier per district regardless of game length)
-                # - campaign hours -> +3.0 each (was 1.5)
-                # - ad intensity exponent back to 0.55
-                org_sup = org * (5.0 / sim.num_turns) * mult
-                camp_sup = hours * 3.0 * mult
-                ad_sup = (ads / float(ads_total + 1)) * (ads_total / 100.0) ** 0.55 * mult
-                gain = org_sup + camp_sup + ad_sup
-                p.support_from_org += org_sup
-                p.support_from_camp += camp_sup
-                p.support_from_ads += ad_sup
-                d.setSupport(i, d.support[i] + int(round(gain)))
-        for st in sim.states.values():
-            st.updateSupport(sim.num_players, sim.calendar, sim.current_date)
+
+# The rules now live in engine.py (the single source of truth shared with the
+# real game). These wrappers keep the sim's historical (sim, ...) signatures so
+# every caller — the tournament, rl/env.py, rl/sim.py — gets canonical behavior
+# unchanged. Note p_idx here is 0-based (sim convention); the engine is 1-based.
+def calc_state_opinions(sim):
+    engine.calc_state_opinions(_engine_state(sim))
 
 
 def calc_end_turn(sim, p_idx, fundraising_hours):
-    """Mirrors calcEndTurn. Mutates player's resources for next week."""
-    p = sim.players[p_idx]
-    p.resources[0] = 80
-    local = 0.0
-    for st in sim.states.values():
-        for d in st.districts:
-            org = st.organizations[p_idx]
-            base = (1.5 + org / 10.0)
-            number = 1 - base ** (d.support[p_idx] / -50.0)
-            mom_factor = 2 - math.exp(p.momentum / -50.0)
-            local += number * d.population * 500 * mom_factor
-    local = round(local)
-    fundraising_income = fundraising_hours * 4000 + 20000
-    p.resources[1] += fundraising_income + local
-    p.income_total += fundraising_income + local
-    p.fundraising_hours_total += fundraising_hours
-    # Decay 3/4 of momentum each week; wins added later in decide_contests.
-    p.momentum /= 4.0
+    engine.calc_end_turn(_engine_state(sim), p_idx + 1, fundraising_hours)
 
 
 def decide_contests(sim):
-    """Mirrors decideContests. Awards delegates for any contest that voted."""
-    for state_name, week in sim.calendar:
-        if week + 1 != sim.current_date:
-            continue
-        st = sim.states[state_name]
-        st.calculatePollingAverage(sim.calendar, sim.current_date)
-        state_votes = [0] * sim.num_players
-        state_delegates = 0
-        for d in st.districts:
-            district_delegates = (d.population * 2) / 3
-            state_delegates += d.population - district_delegates
-            winner = -1
-            most_votes = 0
-            for i in range(sim.num_players):
-                if st.organizations[i] > 0:
-                    votes = sim.rng.gauss(d.pollingAverage[i], 3) * d.population * 150000
-                    if votes < 0:
-                        votes = 1
-                        sim.players[i].momentum -= 2
-                    if votes > most_votes:
-                        winner = i
-                        most_votes = votes
-                    state_votes[i] += votes * d.population
-            if winner < 0:
-                winner = sim.rng.randrange(sim.num_players)
-            sim.players[winner].delegate_count += district_delegates
-            sim.players[winner].momentum += district_delegates / 4.0
-            sim.players[winner].districts_won += 1
-        state_winner = state_votes.index(max(state_votes))
-        sim.players[state_winner].delegate_count += state_delegates
-        sim.players[state_winner].momentum += state_delegates / 2.0
-        sim.players[state_winner].states_won.append(state_name)
-        sim.past_elections[state_name] = state_winner
+    engine.decide_contests(_engine_state(sim))
 
 
 def reset_weekly(sim):
-    for st in sim.states.values():
-        for d in st.districts:
-            for i in range(sim.num_players):
-                d.setCampaigningThisTurn(i, 0)
-                d.setAdsThisTurn(i, 0)
+    engine.reset_weekly(_engine_state(sim))
 
 
 def run_game(strategies, num_turns=20, seed=0):
@@ -262,8 +222,12 @@ def run_game(strategies, num_turns=20, seed=0):
             p.campaign_hours_total += sum(
                 d.campaigningThisTurn[p.idx] for st in sim.states.values() for d in st.districts)
         calc_state_opinions(sim)
-        decide_contests(sim)
+        # Advance the week BEFORE resolving contests, matching the real game's
+        # rollover order (CampaignGame.endTurn): a contest for week W resolves
+        # right after week-W campaigning is applied. (This is the timing fix
+        # that removes the old off-by-one vs the real game.)
         sim.current_date += 1
+        decide_contests(sim)
         sim.event_of_week = sim.rng.randint(0, len(state_issues.ISSUES) - 1)
         reset_weekly(sim)
     return sim

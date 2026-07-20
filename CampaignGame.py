@@ -21,6 +21,7 @@ from State import State, District
 from Player import Player
 from tooltip import CreateToolTip
 import RemoteSaveLoad
+import engine
 import state_issues
 
 sys.setrecursionlimit(5000)
@@ -1191,40 +1192,10 @@ def next_player_button(top):
     return
 
 def calcEndTurn(fundraising):      #this will calculate the new resources available to the player
-    resources = players[player].resources
-
-    #time
-    resources[0] = 80
-    #money: remaining + fundraising + baseline + momentum + from states organization
-    localFundraising = 0
-    for state in states:
-        #calculate % of population donating
-        for district in states[state].districts:
-            #expected range for number donating 0-.45 given support from 0-150
-            numberDonating = 1 - (1.5 + states[state].organizations[player-1] / 10.0) ** (district.support[player - 1] / -50.0)
-            localFundraising += numberDonating * district.population * 500 * (2 - math.exp(players[player].momentum / -50.0))
-
-    localFundraising = round(localFundraising)
-    resources[1] = resources[1] + fundraising * 4000 + 20000 + localFundraising
-    # Momentum decays steeply each week — keep only the last 1/4. Wins from
-    # the contests decided later this week are added on top in decideContests.
-    players[player].momentum = players[player].momentum / 4.0
-    # Compute the time/money this player actually committed to campaigning
-    # and ads this turn (district allocations are reset only when the week
-    # rolls over, so they're still accurate here).
-    campaign_hours = 0
-    ad_spend = 0
-    for s in states:
-        for d in states[s].districts:
-            try:
-                campaign_hours += d.campaigningThisTurn[player - 1]
-                ad_spend += d.adsThisTurn[player - 1]
-            except (IndexError, TypeError):
-                pass
-    players[player].endTurn(currentDate, fundraising * 4000 + 20000, localFundraising,
-                            fundraisingHours=fundraising,
-                            campaigningHours=campaign_hours,
-                            adSpend=ad_spend)
+    # Money/fundraising rule lives in engine.calc_end_turn now (single source
+    # of truth shared with the RL/balance sim). `player` is the global 1-based
+    # index of whose turn just ended.
+    engine.calc_end_turn(_engine_state(), player, fundraising)
 
 # Debug-mode print toggle. Enable by setting CAMPAIGN_DEBUG=1 in the
 # environment before launching, or by toggling the flag at runtime via
@@ -1423,6 +1394,52 @@ def _debug_state_resolved(state_name, stateVotes, district_winners,
         _debug_print('      districts: {}'.format(wins_str))
 
 
+def _engine_state():
+    """Bind the current module globals into an engine.GameState. Cheap to
+    build; the engine reads/mutates the same State/Player/dict objects, so
+    changes propagate straight back to the globals. `rng` is the stdlib
+    `random` module (matching the game's historical use of module-level
+    random)."""
+    return engine.GameState(
+        states=states,
+        players=players,
+        calendar=calendarOfContests,
+        current_date=currentDate,
+        num_turns=numTurns,
+        event_of_week=eventOfTheWeek,
+        issues_mode=issuesMode,
+        past_elections=pastElections,
+        rng=random,
+    )
+
+
+class _EngineHooks:
+    """Routes the engine's diagnostic callbacks to the existing DEBUG logging.
+    The _debug_* helpers read module globals (states/players/etc.), which are
+    exactly what the engine is operating on, so they need no arguments beyond
+    what's passed."""
+
+    def pre_support_snapshot(self, gs):
+        return _debug_pre_support_snapshot() if DEBUG_MODE else None
+
+    def week_summary(self, gs, snap):
+        if DEBUG_MODE:
+            _debug_week_summary(snap)
+
+    def contests_header(self, gs):
+        if DEBUG_MODE:
+            _debug_print('[DEBUG] Contests decided this week:')
+
+    def state_resolved(self, gs, state_name, state_votes, district_winners,
+                       state_winner, total_state_votes):
+        if DEBUG_MODE:
+            _debug_state_resolved(state_name, state_votes, district_winners,
+                                  state_winner, total_state_votes)
+
+
+_ENGINE_HOOKS = _EngineHooks()
+
+
 def calculateStateOpinions():       #this function will calculate the opinion of each player in each state
     if currentDate == 0:
         if players[1].isHuman == 'human':
@@ -1430,229 +1447,16 @@ def calculateStateOpinions():       #this function will calculate the opinion of
         else:
             calcAImove(players[1].isHuman)
 
-    else:               #each turn after that the new support is calculated. a player must be on the ballot (organization level 1) to get any support
-        # Snapshot district.support before mutation so we can compute
-        # per-player support gain for this week in DEBUG_MODE.
-        _debug_snap = _debug_pre_support_snapshot() if DEBUG_MODE else None
-        for i in range(len(players)):
-            for state in states:
-                org = states[state].organizations[i]
-                # In the 2 weeks before the election, campaigning is more
-                # effective:
-                #   tte = 0 (election week)        : +20%
-                #   tte = 1 (one week before)      : +10%
-                # The previous implementation iterated through the whole
-                # calendar without breaking, so `mult` ended up reflecting
-                # whatever the LAST calendar entry happened to be — almost
-                # always 1, meaning the bonus essentially never fired. Also
-                # the prior comparison `currentDate - 1` checked PAST
-                # contests rather than upcoming ones. Both fixed.
-                contest_week = None
-                for date in calendarOfContests:
-                    if date[0] == state:
-                        contest_week = date[1]
-                        break
-                if contest_week == currentDate:
-                    time_mult = 1.2
-                elif contest_week == currentDate + 1:
-                    time_mult = 1.1
-                else:
-                    time_mult = 1.0
-                for district in states[state].districts:
-                    campaingingTime = district.campaigningThisTurn[i]
-                    adBuy = district.adsThisTurn[i]
-                    adsTotal = sum(district.adsThisTurn)
-                    # Momentum boost on support: 50 momentum ~= +30% bonus
-                    # (calibrated so a strong but not dominant momentum lead
-                    # is meaningful without snowballing past comeback range).
-                    # Recompute from time_mult each district so the momentum
-                    # factor isn't applied cumulatively across the district
-                    # loop.
-                    mult = (1 + float(players[i + 1].momentum) / 167.0) * time_mult
-
-                    # Issue-of-the-week alignment uses the STATE's position
-                    # (one position per state for now). If the player's stance
-                    # matches the state, building support is easier this week;
-                    # if it clashes, harder. Disabled in non-issues mode.
-                    issueMult = 1
-                    state_pos = 0
-                    if issuesMode:
-                        try:
-                            state_pos = states[state].positions[eventOfTheWeek]
-                        except (IndexError, AttributeError, TypeError):
-                            state_pos = 0
-                    pp_list = players[i + 1].positions or []
-                    player_pos = pp_list[eventOfTheWeek] if 0 <= eventOfTheWeek < len(pp_list) else 0
-                    if state_pos == 0:
-                        pass  # state has no strong stance, no bonus or penalty
-                    elif player_pos == state_pos:
-                        issueMult += 0.33
-                    else:
-                        issueMult -= 0.16 * abs(player_pos - state_pos)
-
-                    if issueMult <= 0.25:
-                        issueMult = 0.25
-                    mult = issueMult * mult
-                    # Break support into its three sources so we can show a
-                    # per-source breakdown in the end-of-game report.
-                    # Org passive support: each tier adds 0.5 per district per
-                    # turn (was 2). Tuning data showed org build was strictly
-                    # dominant at higher rates, leaving ads / campaigning as
-                    # cosmetic choices.
-                    # Org passive support per tier per district per turn,
-                    # scaled inversely with game length so cumulative org
-                    # payoff is roughly the same in 8/10/20-turn games:
-                    #   8 turns -> 0.625 (5/8)
-                    #  10 turns -> 0.500 (5/10)
-                    #  20 turns -> 0.250 (5/20)
-                    nt = numTurns if numTurns and numTurns > 0 else 10
-                    org_support = org * (5.0 / nt) * mult
-                    # Campaigning support: bumped from 1.5 to 3.0 per hour to
-                    # make in-person time a meaningful alternative to ad spend.
-                    campaign_support = campaingingTime * 3.0 * mult
-                    # Ad support: share of the district's ad market times a
-                    # sub-linear intensity term. Back to the original 0.55
-                    # exponent so big buys still scale, just sub-linearly.
-                    ad_support = (float(adBuy) / float(adsTotal + 1)) * (adsTotal / 100.0) ** 0.55 * mult
-                    support = org_support + campaign_support + ad_support
-                    try:
-                        players[i + 1].addStat('support_from_org', org_support)
-                        players[i + 1].addStat('support_from_campaign', campaign_support)
-                        players[i + 1].addStat('support_from_ads', ad_support)
-                    except AttributeError:
-                        pass
-                    #the plus 1 is to avoid dividing by 0 when there is no advertising in a state
-                    support = round(support)
-                    district.setSupport(i, support)
-                states[state].updateSupport(numPlayers, calendarOfContests, currentDate)
-        if DEBUG_MODE:
-            _debug_week_summary(_debug_snap)
+    else:
+        # Support rule lives in engine.calc_state_opinions now.
+        engine.calc_state_opinions(_engine_state(), hooks=_ENGINE_HOOKS)
 
 def decideContests():
-    global pastElections
     global weekResults
-    momentums = []
-    weekDelegates = {}
-    weekResults = {}
-    for i in range(numPlayers):
-        momentums.append(0)
-        weekDelegates[i+1] = 0
-        weekResults[i+1] = {'delegates':0, 'states':[],'districts':[]}
-    # Per-state vote-share breakdowns, populated for each state decided
-    # this week. Stored under a string key so it doesn't collide with the
-    # 1-based player IDs that own the rest of weekResults. The start-of-
-    # turn report renders this as a separate "Decided States" section.
-    weekResults['_state_results'] = {}
-    totalMomemtum = 50
-    decided_any = False
-    for state in calendarOfContests:
-        if state[1] + 1 == currentDate:
-            if DEBUG_MODE and not decided_any:
-                _debug_print('[DEBUG] Contests decided this week:')
-                decided_any = True
-            states[state[0]].calculatePollingAverage(calendarOfContests, currentDate)     #just in case it isn't up to date
-
-            stateName = state[0]
-            orgs = states[stateName].organizations
-            stateDelegates = 0
-            stateVotes = []
-            for i in range(numPlayers):
-                stateVotes.append(0)
-            _debug_district_winners = []
-            for district in states[stateName].districts:
-                districtDelegates = (district.population * 2) / 3
-                stateDelegates += district.population - districtDelegates
-                winner = 0
-                mostVotes = 0
-                totalVotes = 0
-                for i in range(numPlayers):
-                    if orgs[i] > 0:     #checking that player is on the ballot
-                        votes = random.gauss(district.pollingAverage[i], 3)
-                        votes = votes * district.population * 150000
-                        totalVotes += votes
-                        if votes < 0:
-                            votes = 1
-                            players[i + 1].momentum -= 2
-                        if votes > mostVotes:
-                            if winner != 0:
-                                players[winner].momentum -= 1
-                            winner = i + 1
-                            mostVotes = votes
-                        elif votes == mostVotes:
-                            winner = random.randint(1, numPlayers)
-                        stateVotes[i] += votes * district.population
-                    else:
-                        votes = 0
-
-                if winner == 0:
-                    winner = random.randint(1, numPlayers)
-                    stateVotes[winner - 1] += 1
-
-                players[winner].delegateCount += districtDelegates
-                weekDelegates[winner] += districtDelegates
-
-                _debug_district_winners.append((district.name, winner))
-                weekResults[winner]['delegates'] += districtDelegates
-                weekResults[winner]['districts'].append(district.name)
-                try:
-                    players[winner].addStat('districts_won', 1)
-                except AttributeError:
-                    pass
-
-                totalMomemtum += districtDelegates / 4.0
-                momentums[winner - 1] += districtDelegates
-
-            stateWinner = stateVotes.index(max(stateVotes)) + 1
-            stateMostVotes = max(stateVotes)
-
-            players[stateWinner].delegateCount += stateDelegates
-            weekDelegates[stateWinner] += stateDelegates
-
-            # Credit the state-level delegates to the actual stateWinner
-            # (by aggregate vote share), NOT to `winner` (which is left over
-            # from the last district loop). Previously the Last Week Results
-            # report listed a state under whoever happened to take its
-            # final district, contradicting the per-state breakdown.
-            weekResults[stateWinner]['delegates'] += stateDelegates
-            weekResults[stateWinner]['states'].append(stateName)
-
-            totalMomemtum += stateDelegates / 2.0
-            momentums[winner - 1] += stateDelegates
-
-            pastElections[stateName] = stateWinner
-            try:
-                players[stateWinner].addStat('states_won', stateName)
-            except AttributeError:
-                pass
-
-
-            stateVotesTotal = sum(stateVotes)
-            state_pct = {}
-            for i in range(numPlayers):
-                if stateVotesTotal > 0:
-                    pct = round(float(stateVotes[i]) / float(stateVotesTotal) * 100, 1)
-                else:
-                    pct = 0.0
-                state_pct[i + 1] = pct
-            weekResults['_state_results'][stateName] = {
-                'winner': stateWinner,
-                'percentages': state_pct,
-            }
-            if DEBUG_MODE:
-                _debug_state_resolved(stateName, stateVotes,
-                                      _debug_district_winners,
-                                      stateWinner, stateVotesTotal)
-
-
-    weekResultString = ''
-    for person in weekDelegates:
-        weekResultString += players[person].publicName + ' with ' +str(weekDelegates[person]) + ' delegates; '
-
-
-    #divy up the base momentum to the players based on how much of the state by state they won
-    for i in range(len(momentums)):
-        players[i+1].momentum += momentums[i] / float(sum(momentums)+.01) * totalMomemtum
-    return
+    # Contest resolution rule lives in engine.decide_contests now. It mutates
+    # pastElections (same dict object) and each Player's momentum/delegates in
+    # place, and returns the weekResults report we stash on the global.
+    weekResults = engine.decide_contests(_engine_state(), hooks=_ENGINE_HOOKS)
 
 # Hand-tuned AI strategy presets. Each row is one selectable AI personality;
 # the order is the order they appear in the dropdown at player setup.

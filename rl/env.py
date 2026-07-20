@@ -130,8 +130,13 @@ class CampaignGameEnv:
                 d.campaigningThisTurn[slot]
                 for st in sim.states.values() for d in st.districts)
 
-        # 3. World physics for the week.
+        # 3. World physics for the week. Advance the week BEFORE resolving
+        # contests, matching the real game's rollover order
+        # (CampaignGame.endTurn): a contest for week W is decided right after
+        # week-W campaigning is applied. The reward/ghost-org logic below then
+        # sees the post-rollover date, same as the real game.
         _sim.calc_state_opinions(sim)
+        sim.current_date += 1
         _sim.decide_contests(sim)
 
         # 4. Compute reward.
@@ -171,8 +176,8 @@ class CampaignGameEnv:
                 ghost_count += 1
         reward += ghost_count * REWARD_GHOST_ORG_PENALTY
 
-        # 5. Advance.
-        sim.current_date += 1
+        # 5. Roll the new event and reset per-district counters. (The date was
+        # already advanced in step 3, before contest resolution.)
         import state_issues
         sim.event_of_week = sim.rng.randint(0, len(state_issues.ISSUES) - 1)
         _sim.reset_weekly(sim)
