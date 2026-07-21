@@ -509,8 +509,8 @@ function StateDetail({ name, state, idx, move, onClose, setCampaign, setAd, setO
           <button className="secondary small" onClick={clearState}>Clear</button>
         </div>
       )}
-      <table>
-        <thead><tr><th>District</th><th>Del.</th><th>Support by candidate</th>{!past && <><th>Campaign hrs</th><th>Ad $</th></>}</tr></thead>
+      <table className="dtable">
+        <thead><tr><th>District</th><th>Del.</th><th>Support</th>{!past && <><th>Hrs</th><th>Ad $</th></>}</tr></thead>
         <tbody>
           {st.districts.map((d) => (
             <tr key={d.name}
@@ -529,10 +529,10 @@ function StateDetail({ name, state, idx, move, onClose, setCampaign, setAd, setO
               </td>
               {!past && (
                 <>
-                  <td><input type="number" min="0" placeholder="0" style={{ width: 70 }}
+                  <td><input type="number" min="0" placeholder="0"
                     value={move.campaigning[name]?.[d.name] || ''}
                     onChange={(e) => setCampaign(name, d.name, Math.max(0, parseInt(e.target.value) || 0))} /></td>
-                  <td><input type="number" min="0" step="1000" placeholder="0" style={{ width: 90 }}
+                  <td><input type="number" min="0" step="1000" placeholder="0"
                     value={move.ads[name]?.[d.name] || ''}
                     onChange={(e) => setAd(name, d.name, Math.max(0, parseInt(e.target.value) || 0))} /></td>
                 </>
