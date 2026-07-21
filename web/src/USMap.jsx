@@ -6,6 +6,15 @@ import { seatName, supportPercents } from './players.js'
 
 const W = 960, H = 600
 
+// Multiply a hex color toward black — used to dim states that have voted.
+function darken(hex, f) {
+  const n = parseInt(hex.slice(1), 16)
+  const r = Math.round(((n >> 16) & 255) * f)
+  const g = Math.round(((n >> 8) & 255) * f)
+  const b = Math.round((n & 255) * f)
+  return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)
+}
+
 // Hover tooltip for a state — mirrors CampaignGame.format_state_tooltip:
 // name + delegates + when it votes, the leader, each candidate's support %,
 // and the state's stance on the week's issue.
@@ -21,6 +30,8 @@ function stateTooltip(state, name) {
     else when = `  (votes week ${week}, in ${week - state.current_date})`
   }
   const lines = [`${name} (${delegates} delegates)${when}`]
+  const winner = state.past_elections?.[name]
+  if (winner != null) lines.push(`Won by: ${seatName(state, winner)}`)
   const pcts = supportPercents(st.support)
   if (pcts.length) {
     const leader = st.support.indexOf(Math.max(...st.support))
@@ -75,15 +86,26 @@ export default function USMap({ state, selected, onSelect, seatColors, zoomTo })
         const d = path(f)
         if (!d) return null
         const inGame = !!state.states[name]
-        const fill = leaderColor(name)
         const isSel = selected === name
         const soon = votesSoon(name)
+        // A decided state is colored by its actual winner and dimmed; an
+        // undecided one by the current poll leader.
+        const winner = state.past_elections?.[name]
+        let fill, fillOpacity
+        if (winner != null) {
+          fill = darken(seatColors[winner - 1] || '#39445c', 0.5)
+          fillOpacity = 1
+        } else {
+          const lc = leaderColor(name)
+          fill = lc || (inGame ? '#39445c' : '#222a3a')
+          fillOpacity = inGame ? 0.9 : 0.3
+        }
         return (
           <path
             key={f.id}
             d={d}
-            fill={fill || (inGame ? '#39445c' : '#222a3a')}
-            fillOpacity={inGame ? 0.9 : 0.3}
+            fill={fill}
+            fillOpacity={fillOpacity}
             stroke={isSel ? '#ffffff' : soon ? '#ffb23e' : '#0f1420'}
             strokeWidth={isSel ? 2.2 : soon ? 1.6 : 0.6}
             style={{ cursor: inGame ? 'pointer' : 'default', transition: 'fill .2s' }}
