@@ -455,6 +455,31 @@ function StateDetail({ name, state, idx, move, onClose, setCampaign, setAd, setO
     }
   }
 
+  // Redistribute the state's currently-allocated time/ads across its districts
+  // — evenly, or weighted by each district's delegates — preserving the total
+  // (mirrors the desktop Even/Weighted split presets). res honors the input
+  // step (1h for time, $1000 for ads).
+  function redistribute(kind, weighted) {
+    const isTime = kind === 'time'
+    const res = isTime ? 1 : 1000
+    const alloc = (isTime ? move.campaigning : move.ads)[name] || {}
+    const total = Object.values(alloc).reduce((a, b) => a + b, 0)
+    const dists = st.districts
+    if (total < res || !dists.length) return
+    const weights = weighted ? dists.map((d) => d.population) : dists.map(() => 1)
+    const wtot = weights.reduce((a, b) => a + b, 0)
+    const units = Math.floor(total / res)
+    const raw = weights.map((w) => (units * w) / wtot)
+    const snapped = raw.map((r) => Math.floor(r))
+    const leftover = units - snapped.reduce((a, b) => a + b, 0)
+    const order = raw.map((r, i) => [r - snapped[i], i]).sort((a, b) => b[0] - a[0]).map((x) => x[1])
+    for (let k = 0; k < leftover; k++) snapped[order[k % order.length]]++
+    dists.forEach((d, i) => (isTime ? setCampaign : setAd)(name, d.name, snapped[i] * res))
+  }
+  function clearState() {
+    for (const d of st.districts) { setCampaign(name, d.name, 0); setAd(name, d.name, 0) }
+  }
+
   return (
     <div className="panel">
       <div className="spread">
@@ -474,8 +499,18 @@ function StateDetail({ name, state, idx, move, onClose, setCampaign, setAd, setO
           {!canBuildBallot && <span className="muted small">contest already voted</span>}
         </div>
       )}
+      {!past && (
+        <div className="row small" style={{ marginBottom: 8, gap: 6 }}>
+          <span className="muted">Split what's allocated:</span>
+          <button className="secondary small" onClick={() => redistribute('time', false)}>Even time</button>
+          <button className="secondary small" onClick={() => redistribute('ads', false)}>Even $</button>
+          <button className="secondary small" onClick={() => redistribute('time', true)}>Weighted time</button>
+          <button className="secondary small" onClick={() => redistribute('ads', true)}>Weighted $</button>
+          <button className="secondary small" onClick={clearState}>Clear</button>
+        </div>
+      )}
       <table>
-        <thead><tr><th>District</th><th>Support by candidate</th>{!past && <><th>Campaign hrs</th><th>Ad $</th></>}</tr></thead>
+        <thead><tr><th>District</th><th>Del.</th><th>Support by candidate</th>{!past && <><th>Campaign hrs</th><th>Ad $</th></>}</tr></thead>
         <tbody>
           {st.districts.map((d) => (
             <tr key={d.name}
@@ -483,6 +518,7 @@ function StateDetail({ name, state, idx, move, onClose, setCampaign, setAd, setO
               onClick={() => onSelectDistrict?.(d.name.trim())}
               style={{ cursor: 'pointer', background: selectedDistrict === d.name.trim() ? 'rgba(79,140,255,.15)' : undefined }}>
               <td>{d.name}</td>
+              <td>{d.population}</td>
               <td>
                 {d.support.map((s, i) => (
                   <span key={i} title={state.config.seats.find((x) => x.seat === i + 1)?.name}
