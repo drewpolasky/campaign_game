@@ -24,6 +24,29 @@ body {
 a { color: var(--accent); }
 
 .wrap { max-width: 1100px; margin: 0 auto; padding: 24px 20px 64px; }
+.wrap-wide { max-width: 1440px; }
+
+/* Play screen: calendar | map | dashboard+detail (mirrors the desktop GUI). */
+.play-grid { display: grid; grid-template-columns: 320px minmax(0, 1fr) 400px; gap: 14px; align-items: start; }
+.play-grid .col-left, .play-grid .col-right, .play-grid .col-center { min-width: 0; }
+.play-grid .col-center { position: sticky; top: 12px; }
+.col-scroll { max-height: 80vh; overflow-y: auto; }
+
+.cal-list { display: flex; flex-direction: column; gap: 3px; }
+.cal-row { display: flex; justify-content: space-between; align-items: center; gap: 6px;
+  padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; cursor: pointer;
+  background: var(--panel-2); }
+.cal-row:hover { border-color: var(--accent); }
+.cal-row.sel { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.cal-row.past { opacity: .5; }
+.cal-row.ballot { border-left: 3px solid var(--good); }
+.cal-main { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+@media (max-width: 1040px) {
+  .play-grid { grid-template-columns: 1fr; }
+  .play-grid .col-center { position: static; }
+  .col-scroll { max-height: 340px; }
+}
 
 h1, h2, h3 { margin: 0 0 .5em; line-height: 1.2; }
 h1 { font-size: 1.7rem; }

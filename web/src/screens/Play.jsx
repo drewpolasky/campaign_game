@@ -141,27 +141,16 @@ export default function Play() {
   const iSubmitted = status?.seats?.find((s) => s.seat === seat)?.submitted
   const gameOver = status?.game_over
 
-  // Group states by contest week for the browse list.
-  const groups = {}
-  for (const name of Object.keys(state.states)) {
-    const w = contestWeekOf(state, name)
-    ;(groups[w] ??= []).push(name)
-  }
-  const weeks = Object.keys(groups).map(Number).sort((a, b) => a - b)
-
   return (
-    <div className="wrap">
+    <div className="wrap wrap-wide">
       <div className="spread">
         <h1>{me.public_name || `Seat ${seat}`}</h1>
         <span className="pill">Week {state.current_date} / {state.config.num_turns}</span>
       </div>
 
-      <Dashboard me={me} timeLeft={timeLeft} moneyLeft={moneyLeft} over={overBudget} />
-      <SeatBar status={status} seat={seat} />
       {state.config.issues_mode && state.config.issues?.[state.event_of_week] && (
         <IssueBanner issue={state.config.issues[state.event_of_week]} me={me} eventIdx={state.event_of_week} />
       )}
-
       {Object.keys(state.week_results?._state_results || {}).length > 0 && (
         <LastWeek results={state.week_results} seats={state.config.seats} />
       )}
@@ -169,52 +158,115 @@ export default function Play() {
       {gameOver ? (
         <FinalResults state={state} />
       ) : (
-        <>
-          {!iSubmitted && (
-            <div className="panel spread" style={{ position: 'sticky', top: 0, zIndex: 5 }}>
-              <div className="muted small">Unused time auto-fundraises. Leftover money carries over.</div>
-              <button onClick={submit} disabled={busy || overBudget}>
-                {busy ? 'Submitting…' : overBudget ? 'Over budget' : 'End Turn'}
-              </button>
-            </div>
-          )}
+        <div className="play-grid">
+          {/* LEFT — vote calendar + search (mirrors the desktop sidebar) */}
+          <aside className="col-left">
+            <CalendarPanel state={state} idx={idx} move={move} selected={selected}
+              onSelect={setSelected} setOrg={setOrg} disabled={iSubmitted} />
+          </aside>
 
-          <div className="panel">
-            <USMap state={state} selected={selected} onSelect={setSelected} seatColors={SEAT_COLORS} />
-            <p className="muted small" style={{ textAlign: 'center', marginTop: 6 }}>
-              Colored by current leader · <span style={{ color: '#ffb23e' }}>orange outline</span> = votes this/next week · click a state to campaign there
-            </p>
-          </div>
-
-          {iSubmitted ? (
-            <div className="panel"><p className="muted">✓ Turn submitted. Waiting for the other players… (auto-refreshing)</p></div>
-          ) : selected ? (
-            <StateDetail name={selected} state={state} idx={idx} move={move}
-              onClose={() => setSelected(null)}
-              setCampaign={setCampaign} setAd={setAd} setOrg={setOrg} />
-          ) : (
-            <p className="muted" style={{ textAlign: 'center' }}>Pick a state on the map (or below) to allocate time and money.</p>
-          )}
-
-          {!iSubmitted && (
+          {/* CENTER — national map, zooms into the selected state */}
+          <main className="col-center">
             <div className="panel">
-              {weeks.map((w) => (
-                <div key={w}>
-                  <div className="week-header">
-                    {w < state.current_date ? `Voted (week ${w})` : w === state.current_date ? 'Voting this week' : `Votes week ${w}`}
-                  </div>
-                  {groups[w].sort().map((name) => (
-                    <StateRow key={name} name={name} state={state} idx={idx} move={move}
-                      selected={selected === name} onSelect={() => setSelected(name)} />
-                  ))}
+              {selected && (
+                <div className="spread" style={{ marginBottom: 8 }}>
+                  <strong>{selected}</strong>
+                  <button className="secondary small" onClick={() => setSelected(null)}>← National map</button>
                 </div>
-              ))}
+              )}
+              <USMap state={state} selected={selected} onSelect={setSelected}
+                seatColors={SEAT_COLORS} zoomTo={selected} />
+              <p className="muted small" style={{ textAlign: 'center', marginTop: 6 }}>
+                Colored by current leader · <span style={{ color: '#ffb23e' }}>orange</span> = votes this/next week · click a state to zoom in
+              </p>
             </div>
-          )}
-        </>
+          </main>
+
+          {/* RIGHT — dashboard + the selected state's districts */}
+          <aside className="col-right">
+            <Dashboard me={me} timeLeft={timeLeft} moneyLeft={moneyLeft} over={overBudget} />
+            {!iSubmitted && (
+              <div className="panel">
+                <div className="muted small" style={{ marginBottom: 8 }}>Unused time auto-fundraises. Leftover money carries over.</div>
+                <button onClick={submit} disabled={busy || overBudget} style={{ width: '100%' }}>
+                  {busy ? 'Submitting…' : overBudget ? 'Over budget' : 'End Turn'}
+                </button>
+              </div>
+            )}
+            <SeatBar status={status} seat={seat} />
+            {iSubmitted ? (
+              <div className="panel"><p className="muted">✓ Turn submitted. Waiting for the other players… (auto-refreshing)</p></div>
+            ) : selected ? (
+              <StateDetail name={selected} state={state} idx={idx} move={move}
+                onClose={() => setSelected(null)}
+                setCampaign={setCampaign} setAd={setAd} setOrg={setOrg} />
+            ) : (
+              <div className="panel"><p className="muted">Pick a state — from the calendar or the map — to zoom in and campaign, buy ads, and build organization district by district.</p></div>
+            )}
+          </aside>
+        </div>
       )}
 
       {error && <p className="error">{error}</p>}
+    </div>
+  )
+}
+
+function CalendarPanel({ state, idx, move, selected, onSelect, setOrg, disabled }) {
+  const [q, setQ] = useState('')
+  const [filter, setFilter] = useState('all')  // all | this | upcoming
+  const cur = state.current_date
+
+  const rows = state.config.calendar
+    .filter(([name]) => state.states[name])
+    .filter(([name]) => name.toLowerCase().includes(q.toLowerCase()))
+    .filter(([, week]) => filter === 'all' || (filter === 'this' ? week === cur : week >= cur))
+
+  return (
+    <div className="panel col-scroll">
+      <h3 style={{ marginBottom: 6 }}>Calendar</h3>
+      <input placeholder="Search state…" value={q} onChange={(e) => setQ(e.target.value)}
+        style={{ width: '100%', marginBottom: 8 }} />
+      <div className="row small" style={{ marginBottom: 8, gap: 10 }}>
+        {[['all', 'All'], ['this', 'This week'], ['upcoming', 'Still to vote']].map(([v, l]) => (
+          <label key={v} style={{ display: 'flex', gap: 4, alignItems: 'center', cursor: 'pointer', margin: 0 }}>
+            <input type="radio" name="calfilter" checked={filter === v} onChange={() => setFilter(v)} />{l}
+          </label>
+        ))}
+      </div>
+      <div className="cal-list">
+        {rows.map(([name, week]) => {
+          const st = state.states[name]
+          const org = st.organizations[idx]
+          const pending = move.orgs[name] || 0
+          const delegates = st.districts.reduce((a, d) => a + d.population, 0)
+          const past = week < cur, now = week === cur
+          const onBallot = org > 0
+          const tier = org + pending
+          const cost = tier <= 1 ? 10000 : 10000 * tier
+          const canBuild = org > 0 || cur <= week
+          const leader = leaderSeat(st)
+          return (
+            <div key={name}
+              className={'cal-row' + (selected === name ? ' sel' : '') + (past ? ' past' : '') + (onBallot ? ' ballot' : '')}
+              onClick={() => onSelect(name)}>
+              <div className="cal-main">
+                {leader && <span className="leader-dot" style={{ background: SEAT_COLORS[leader - 1] }} />}
+                {now && <span className="pill warn small" style={{ marginRight: 4 }}>now</span>}
+                {onBallot && '★ '}{name}
+                <span className="muted small"> · wk {week} · {delegates} del{pending ? ` · +${pending} org` : ''}</span>
+              </div>
+              {!disabled && !past && canBuild && (
+                <button className="secondary small" style={{ whiteSpace: 'nowrap' }}
+                  onClick={(e) => { e.stopPropagation(); setOrg(name, pending + 1) }}>
+                  {tier === 0 ? 'Ballot $10k' : tier === 1 ? 'Office $10k' : `+$${Math.round(cost / 1000)}k`}
+                </button>
+              )}
+            </div>
+          )
+        })}
+        {rows.length === 0 && <p className="muted small">No states match.</p>}
+      </div>
     </div>
   )
 }
@@ -300,27 +352,6 @@ function IssueBanner({ issue, me, eventIdx }) {
     <div className="panel" style={{ borderColor: 'var(--accent)' }}>
       <strong>📣 Issue this week: {issue.name}</strong>
       <span className="muted"> · your stance: <b style={{ color: 'var(--text)' }}>{sideLabel(issue, myPos)}</b>. States that share your stance are easier to win support in this week; states that clash are harder.</span>
-    </div>
-  )
-}
-
-function StateRow({ name, state, idx, move, selected, onSelect }) {
-  const st = state.states[name]
-  const myOrg = st.organizations[idx]
-  const mySupport = st.districts.reduce((a, d) => a + (d.support[idx] || 0), 0)
-  const leader = leaderSeat(st)
-  const pendingOrg = move.orgs[name] || 0
-  const allocated = move.campaigning[name] || move.ads[name] || pendingOrg
-  return (
-    <div className="head" onClick={onSelect}
-      style={{ borderRadius: 8, marginBottom: 4, border: selected ? '1px solid #4f8cff' : '1px solid transparent' }}>
-      <div>
-        {leader && <span className="leader-dot" style={{ background: SEAT_COLORS[leader - 1] }} />}
-        <strong>{name}</strong>
-        <span className="muted small"> · org {myOrg}{pendingOrg ? `(+${pendingOrg})` : ''} · support {Math.round(mySupport)}</span>
-        {allocated ? <span className="pill good small" style={{ marginLeft: 8 }}>planned</span> : null}
-      </div>
-      <span className="muted">›</span>
     </div>
   )
 }

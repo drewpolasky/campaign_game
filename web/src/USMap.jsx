@@ -9,8 +9,18 @@ const W = 960, H = 600
 // Albers-USA (handles the Alaska/Hawaii insets; drops territories off-canvas).
 const FC = feature(statesTopo, statesTopo.objects.states)
 
-export default function USMap({ state, selected, onSelect, seatColors }) {
+export default function USMap({ state, selected, onSelect, seatColors, zoomTo }) {
   const path = useMemo(() => geoPath(geoAlbersUsa().fitSize([W, H], FC)), [])
+
+  // Zoom the viewBox to a single state's bounds (with padding) when requested.
+  const viewBox = useMemo(() => {
+    if (!zoomTo) return `0 0 ${W} ${H}`
+    const f = FC.features.find((x) => x.properties.name === zoomTo)
+    if (!f) return `0 0 ${W} ${H}`
+    const [[x0, y0], [x1, y1]] = path.bounds(f)
+    const pad = Math.max((x1 - x0), (y1 - y0)) * 0.15 + 8
+    return `${x0 - pad} ${y0 - pad} ${(x1 - x0) + 2 * pad} ${(y1 - y0) + 2 * pad}`
+  }, [zoomTo, path])
 
   function leaderColor(name) {
     const st = state.states[name]
@@ -25,7 +35,7 @@ export default function USMap({ state, selected, onSelect, seatColors }) {
   }
 
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} className="usmap" role="img" aria-label="US map">
+    <svg viewBox={viewBox} className="usmap" role="img" aria-label="US map">
       {FC.features.map((f) => {
         const name = f.properties.name
         const d = path(f)
