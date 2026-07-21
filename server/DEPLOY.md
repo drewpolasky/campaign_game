@@ -45,7 +45,8 @@ Environment variables:
 | Var | Default | Purpose |
 |---|---|---|
 | `CAMPAIGN_DB` | `server/game.db` | SQLite match database (put it on a persistent, local disk — WAL needs a real filesystem). |
-| `CAMPAIGN_API_KEY` | `changeme` | Shared secret for the legacy `/campaign_saves` blob endpoints (desktop client). The `/api` match endpoints use per-seat tokens instead. |
+| `CAMPAIGN_ENABLE_BLOB` | (unset → off) | Legacy `/campaign_saves` blob endpoints are disabled unless this is set. The web game doesn't need them; leave off. |
+| `CAMPAIGN_API_KEY` | `changeme` | Shared secret for the legacy `/campaign_saves` blob endpoints (only when `CAMPAIGN_ENABLE_BLOB` is on). The `/api` match endpoints use per-seat tokens instead. |
 | `CAMPAIGN_CREATE_KEY` | (unset) | If set, a shared passphrase is required to **create** a match (the lobby shows a passphrase field). Playing an existing seat via its magic link is never gated by this. Leave unset to allow anyone who can reach the site to create games. |
 | `CAMPAIGN_RNG_SECRET` | (random per start) | Secret mixed into the per-week contest RNG so outcomes can't be predicted from the match id. A fresh random value each start is fine; pin it only if you want reproducible resolutions across restarts. |
 | `CAMPAIGN_MAX_BODY` | `8388608` (8 MB) | Max request body size; rejects oversized uploads. |
@@ -119,14 +120,11 @@ only parameterized SQL; request bodies are capped via `CAMPAIGN_MAX_BODY`,
 default 8 MB; the create endpoint can be gated — above.)
 
 - **Set `CAMPAIGN_CREATE_KEY`** so random visitors/bots can't spin up matches.
-- **Lock down the legacy blob endpoints.** `/campaign_saves` (the desktop
-  client's save relay) is **not used by the web game** and defaults to the
-  weak API key `changeme`. Either set a strong `CAMPAIGN_API_KEY`, or — simpler
-  — block the path at nginx so it isn't exposed at all:
-
-  ```nginx
-  location /campaign_saves { return 404; }   # web game doesn't use this
-  ```
+  (This is the one thing you must actively turn on.)
+- **Legacy blob endpoints are already off.** `/campaign_saves` (the desktop
+  save relay, unused by the web game) returns 404 in this server unless you set
+  `CAMPAIGN_ENABLE_BLOB=1` — so nothing to do here for a normal web deploy. If
+  you *do* enable them, also set a strong `CAMPAIGN_API_KEY`.
 
 - **Serve over HTTPS only** (you already have TLS) — tokens travel in URLs.
 - **Access logs capture tokens.** nginx logs the `?token=…` query and

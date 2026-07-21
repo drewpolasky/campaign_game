@@ -50,6 +50,13 @@ _WEB_DIST = os.path.join(_REPO_ROOT, 'web', 'dist')
 # means creation is open (fine for local dev / a private URL).
 CREATE_KEY = os.environ.get('CAMPAIGN_CREATE_KEY', '')
 
+# The legacy /campaign_saves blob endpoints (desktop LAN save relay) are NOT
+# used by the web game and default to a weak shared key, so they're disabled in
+# this unified server unless explicitly enabled. Run campaign_save_server.py
+# standalone, or set CAMPAIGN_ENABLE_BLOB=1 (with a strong CAMPAIGN_API_KEY), if
+# you actually need them.
+BLOB_ENABLED = os.environ.get('CAMPAIGN_ENABLE_BLOB', '') not in ('', '0', 'false', 'False')
+
 # Secret mixed into the per-week contest RNG so a player can't predict the
 # random vote draws from the (semi-guessable) match id. Each week resolves
 # exactly once and the result is persisted, so this need not survive restarts —
@@ -58,6 +65,13 @@ _RNG_SECRET = os.environ.get('CAMPAIGN_RNG_SECRET') or secrets.token_hex(16)
 
 
 # --- CORS (dev: the Vite dev server is a different origin) -----------------
+@app.before_request
+def _guard_blob():
+    # Legacy save-relay endpoints stay off unless explicitly enabled.
+    if not BLOB_ENABLED and request.path.startswith('/campaign_saves'):
+        return jsonify({'error': 'not found'}), 404
+
+
 @app.before_request
 def _cors_preflight():
     # Answer any CORS preflight uniformly (the client sends a JSON Content-Type
