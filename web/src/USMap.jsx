@@ -2,8 +2,42 @@ import { useMemo } from 'react'
 import { feature } from 'topojson-client'
 import { geoAlbersUsa, geoPath } from 'd3-geo'
 import statesTopo from 'us-atlas/states-10m.json'
+import { seatName, supportPercents } from './players.js'
 
 const W = 960, H = 600
+
+// Hover tooltip for a state — mirrors CampaignGame.format_state_tooltip:
+// name + delegates + when it votes, the leader, each candidate's support %,
+// and the state's stance on the week's issue.
+function stateTooltip(state, name) {
+  const st = state.states[name]
+  if (!st) return name
+  const delegates = st.districts.reduce((a, d) => a + d.population, 0)
+  const week = state.config.calendar.find((c) => c[0] === name)?.[1]
+  let when = ''
+  if (week != null) {
+    if (week < state.current_date) when = `  (voted week ${week})`
+    else if (week === state.current_date) when = '  (votes this week)'
+    else when = `  (votes week ${week}, in ${week - state.current_date})`
+  }
+  const lines = [`${name} (${delegates} delegates)${when}`]
+  const pcts = supportPercents(st.support)
+  if (pcts.length) {
+    const leader = st.support.indexOf(Math.max(...st.support))
+    lines.push(`Leader: ${seatName(state, leader + 1)}`)
+    pcts.forEach((p, i) => lines.push(`  ${seatName(state, i + 1)}: ${p.toFixed(1)}%`))
+  } else {
+    lines.push('No polling data yet')
+  }
+  const iss = state.config.issues?.[state.event_of_week]
+  if (iss) {
+    const pos = Math.round(st.positions?.[state.event_of_week] ?? 0)
+    const label = pos > 0 ? iss.pro : pos < 0 ? iss.con : iss.mid
+    const suffix = state.config.issues_mode ? '' : '  (informational; Issues mode off)'
+    lines.push(`${name} on ${iss.name}: ${label}${suffix}`)
+  }
+  return lines.join('\n')
+}
 // us-atlas states carry properties.name (full state names), which match the
 // game's state keys directly. Coordinates are lon/lat, so project with
 // Albers-USA (handles the Alaska/Hawaii insets; drops territories off-canvas).
@@ -55,7 +89,7 @@ export default function USMap({ state, selected, onSelect, seatColors, zoomTo })
             style={{ cursor: inGame ? 'pointer' : 'default', transition: 'fill .2s' }}
             onClick={() => inGame && onSelect(name)}
           >
-            <title>{name}{votesSoon(name) ? ' — votes soon' : ''}</title>
+            <title>{inGame ? stateTooltip(state, name) : name}</title>
           </path>
         )
       })}

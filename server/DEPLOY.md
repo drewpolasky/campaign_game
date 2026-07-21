@@ -134,10 +134,11 @@ default 8 MB; the create endpoint can be gated — above.)
   `*` is low-risk here since auth is a URL token, not a cookie — there's no
   ambient session to abuse via CSRF — but tightening it is good hygiene).
 
-Opponents' private info (cash on hand, issue positions, stats, and their moves
-this/prior weeks) is hidden from other players while a game is active and only
-revealed once it ends — public info (polling, delegate standings, momentum,
-decided-state results) stays visible throughout.
+Opponents' cash on hand, end-of-game stats, and their moves this/prior weeks are
+hidden from other players while a game is active, and revealed once it ends.
+Public info (polling, delegate standings, momentum, issue positions, and
+decided-state results) stays visible throughout — matching the desktop game's
+"View Opponents' Stances".
 
 Not covered (fine for friends): there's no rate limiting — add nginx
 `limit_req` if you expect abuse.

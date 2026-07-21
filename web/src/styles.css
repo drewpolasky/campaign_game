@@ -42,6 +42,12 @@ a { color: var(--accent); }
 .cal-row.ballot { border-left: 3px solid var(--good); }
 .cal-main { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
+.modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.55); display: flex;
+  align-items: flex-start; justify-content: center; padding: 40px 16px; z-index: 50; overflow-y: auto; }
+.modal { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 16px 18px; width: min(760px, 100%); max-height: 85vh; overflow-y: auto; }
+.opp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin-top: 12px; }
+
 @media (max-width: 1040px) {
   .play-grid { grid-template-columns: 1fr; }
   .play-grid .col-center { position: static; }

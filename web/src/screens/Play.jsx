@@ -34,6 +34,7 @@ export default function Play() {
   const [selected, setSelected] = useState(null)
   const [districtSel, setDistrictSel] = useState(null)
   const [showHistory, setShowHistory] = useState(false)
+  const [showOpponents, setShowOpponents] = useState(false)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
   const pollRef = useRef(null)
@@ -164,10 +165,13 @@ export default function Play() {
       <div className="spread">
         <h1>{me.public_name || `Seat ${seat}`}</h1>
         <div className="row">
+          <button className="secondary small" onClick={() => setShowOpponents(true)}>👥 Opponents</button>
           <button className="secondary small" onClick={() => setShowHistory(true)}>📜 History</button>
           <span className="pill">Week {state.current_date} / {state.config.num_turns}</span>
         </div>
       </div>
+
+      {showOpponents && <Opponents state={state} mySeat={seat} onClose={() => setShowOpponents(false)} />}
 
       {state.config.issues_mode && state.config.issues?.[state.event_of_week] && (
         <IssueBanner issue={state.config.issues[state.event_of_week]} me={me} eventIdx={state.event_of_week} />
@@ -377,6 +381,49 @@ function Spectator({ state, status }) {
   )
 }
 
+function Opponents({ state, mySeat, onClose }) {
+  const issues = state.config.issues || []
+  const showStances = state.config.issues_mode && issues.length > 0
+  const opps = Object.entries(state.players)
+    .map(([seat, p]) => ({ seat: Number(seat), p }))
+    .filter((o) => o.seat !== mySeat)
+    .sort((a, b) => a.seat - b.seat)
+  return (
+    <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal" onClick={(e) => e.stopPropagation()}>
+        <div className="spread">
+          <h3 style={{ margin: 0 }}>Opponents{showStances ? "' stances" : ''}</h3>
+          <button className="secondary small" onClick={onClose}>Close</button>
+        </div>
+        <div className="opp-grid">
+          {opps.map(({ seat, p }) => (
+            <div key={seat} className="panel" style={{ background: 'var(--panel-2)', marginBottom: 0 }}>
+              <div className="row" style={{ marginBottom: 2 }}>
+                <span className="leader-dot" style={{ background: SEAT_COLORS[seat - 1] }} />
+                <strong>{p.public_name || `Player ${seat}`}</strong>
+              </div>
+              <div className="muted small" style={{ marginBottom: showStances ? 8 : 0 }}>
+                Momentum {Math.round(p.momentum)} · Delegates {Math.round(p.delegate_count)}
+              </div>
+              {showStances && (
+                <table><tbody>
+                  {issues.map((iss, i) => (
+                    <tr key={iss.name}>
+                      <td className="muted small">{iss.name}</td>
+                      <td className="small">{sideLabel(iss, p.positions?.[i] ?? 0)}</td>
+                    </tr>
+                  ))}
+                </tbody></table>
+              )}
+            </div>
+          ))}
+          {opps.length === 0 && <p className="muted">No opponents in this game.</p>}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function IssueBanner({ issue, me, eventIdx }) {
   const myPos = me.positions?.[eventIdx] ?? 0
   return (
@@ -428,7 +475,7 @@ function StateDetail({ name, state, idx, move, onClose, setCampaign, setAd, setO
         </div>
       )}
       <table>
-        <thead><tr><th>District</th><th>Your support</th>{!past && <><th>Campaign hrs</th><th>Ad $</th></>}</tr></thead>
+        <thead><tr><th>District</th><th>Support by candidate</th>{!past && <><th>Campaign hrs</th><th>Ad $</th></>}</tr></thead>
         <tbody>
           {st.districts.map((d) => (
             <tr key={d.name}
@@ -436,7 +483,14 @@ function StateDetail({ name, state, idx, move, onClose, setCampaign, setAd, setO
               onClick={() => onSelectDistrict?.(d.name.trim())}
               style={{ cursor: 'pointer', background: selectedDistrict === d.name.trim() ? 'rgba(79,140,255,.15)' : undefined }}>
               <td>{d.name}</td>
-              <td>{Math.round(d.support[idx] || 0)}</td>
+              <td>
+                {d.support.map((s, i) => (
+                  <span key={i} title={state.config.seats.find((x) => x.seat === i + 1)?.name}
+                    style={{ color: SEAT_COLORS[i], fontWeight: i === idx ? 700 : 400, marginRight: 8 }}>
+                    {Math.round(s)}
+                  </span>
+                ))}
+              </td>
               {!past && (
                 <>
                   <td><input type="number" min="0" placeholder="0" style={{ width: 70 }}

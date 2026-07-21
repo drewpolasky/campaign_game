@@ -209,10 +209,10 @@ def resolve_token():
 
 
 # Fog-of-war: fields a player keeps private from opponents during an active
-# game. Positions are hidden too (there's no "view opponents' stances" in the
-# web UI). Momentum and delegate_count stay public (shown in standings /
-# spectator). Everything is revealed once the game is over, for the final report.
-_PRIVATE_PLAYER_FIELDS = ('resources', 'positions', 'history', 'stats')
+# game. Positions, momentum, and delegate_count stay public — the desktop game
+# exposes those ("View Opponents' Stances", standings) — but cash on hand and
+# end-of-game stats are hidden until the game is over.
+_PRIVATE_PLAYER_FIELDS = ('resources', 'history', 'stats')
 
 
 def _game_over(doc):
