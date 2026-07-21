@@ -20,6 +20,7 @@ blob endpoints keep their own X-API-Key auth.
 import hashlib
 import os
 import random
+import secrets
 import sys
 
 _REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -49,6 +50,12 @@ _WEB_DIST = os.path.join(_REPO_ROOT, 'web', 'dist')
 # means creation is open (fine for local dev / a private URL).
 CREATE_KEY = os.environ.get('CAMPAIGN_CREATE_KEY', '')
 
+# Secret mixed into the per-week contest RNG so a player can't predict the
+# random vote draws from the (semi-guessable) match id. Each week resolves
+# exactly once and the result is persisted, so this need not survive restarts —
+# a fresh random secret per process is fine; set CAMPAIGN_RNG_SECRET to pin it.
+_RNG_SECRET = os.environ.get('CAMPAIGN_RNG_SECRET') or secrets.token_hex(16)
+
 
 # --- CORS (dev: the Vite dev server is a different origin) -----------------
 @app.before_request
@@ -70,9 +77,10 @@ def _cors(resp):
 # --- helpers ---------------------------------------------------------------
 
 def _resolve_rng(match_id, week):
-    """Deterministic, reproducible rng per (match, week)."""
+    """Per-(match, week) rng, seeded with a server secret so the draws aren't
+    predictable from the match id."""
     seed = int.from_bytes(
-        hashlib.sha256('{}:{}'.format(match_id, week).encode()).digest()[:8], 'big')
+        hashlib.sha256('{}:{}:{}'.format(_RNG_SECRET, match_id, week).encode()).digest()[:8], 'big')
     return random.Random(seed)
 
 
@@ -186,6 +194,36 @@ def resolve_token():
     })
 
 
+# Fog-of-war: fields a player keeps private from opponents during an active
+# game. Positions are hidden too (there's no "view opponents' stances" in the
+# web UI). Momentum and delegate_count stay public (shown in standings /
+# spectator). Everything is revealed once the game is over, for the final report.
+_PRIVATE_PLAYER_FIELDS = ('resources', 'positions', 'history', 'stats')
+
+
+def _game_over(doc):
+    return doc['current_date'] > doc['config']['num_turns']
+
+
+def _redact_state_for_seat(doc, viewer_seat):
+    if _game_over(doc):
+        return doc
+    players = {}
+    for sid, p in doc['players'].items():
+        players[sid] = p if int(sid) == viewer_seat else {
+            k: v for k, v in p.items() if k not in _PRIVATE_PLAYER_FIELDS}
+    return {**doc, 'players': players}
+
+
+def _redact_log_for_seat(doc, log, viewer_seat):
+    """During play, a viewer sees only their own moves (plus the public results);
+    opponents' past moves are revealed once the game ends."""
+    if _game_over(doc):
+        return log
+    key = str(viewer_seat)
+    return [{**e, 'moves': ({key: e['moves'][key]} if key in e['moves'] else {})} for e in log]
+
+
 @app.route('/api/matches/<match_id>/state', methods=['GET'])
 def get_state(match_id):
     seat, err = _auth(match_id)
@@ -197,7 +235,7 @@ def get_state(match_id):
     return jsonify({
         'you': {'seat': seat['seat_no'], 'controller': seat['controller'],
                 'name': seat['display_name']},
-        'state': match['doc'],
+        'state': _redact_state_for_seat(match['doc'], seat['seat_no']),
         'status': _public_status(match),
     })
 
@@ -251,11 +289,16 @@ def advance(match_id):
 
 @app.route('/api/matches/<match_id>/log', methods=['GET'])
 def game_log(match_id):
-    """Per-week history: each resolved week's results + every seat's moves."""
+    """Per-week history: each resolved week's results + moves. During an active
+    game a viewer sees only their own moves; opponents' are revealed at game end."""
     seat, err = _auth(match_id)
     if err:
         return err
-    return jsonify({'log': db.get_log(match_id)})
+    match = db.get_match(match_id)
+    if match is None:
+        return jsonify({'error': 'no such match'}), 404
+    log = _redact_log_for_seat(match['doc'], db.get_log(match_id), seat['seat_no'])
+    return jsonify({'log': log})
 
 
 @app.route('/api/matches/<match_id>/status', methods=['GET'])

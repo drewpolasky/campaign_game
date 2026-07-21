@@ -47,6 +47,8 @@ Environment variables:
 | `CAMPAIGN_DB` | `server/game.db` | SQLite match database (put it on a persistent, local disk — WAL needs a real filesystem). |
 | `CAMPAIGN_API_KEY` | `changeme` | Shared secret for the legacy `/campaign_saves` blob endpoints (desktop client). The `/api` match endpoints use per-seat tokens instead. |
 | `CAMPAIGN_CREATE_KEY` | (unset) | If set, a shared passphrase is required to **create** a match (the lobby shows a passphrase field). Playing an existing seat via its magic link is never gated by this. Leave unset to allow anyone who can reach the site to create games. |
+| `CAMPAIGN_RNG_SECRET` | (random per start) | Secret mixed into the per-week contest RNG so outcomes can't be predicted from the match id. A fresh random value each start is fine; pin it only if you want reproducible resolutions across restarts. |
+| `CAMPAIGN_MAX_BODY` | `8388608` (8 MB) | Max request body size; rejects oversized uploads. |
 | `CAMPAIGN_CORS_ORIGIN` | `*` | Only matters if you serve the frontend from a different origin; unused for same-origin prod. |
 
 Smoke test locally: `curl http://127.0.0.1:8080/` should return the app's
@@ -134,10 +136,13 @@ default 8 MB; the create endpoint can be gated — above.)
   `*` is low-risk here since auth is a URL token, not a cookie — there's no
   ambient session to abuse via CSRF — but tightening it is good hygiene).
 
-Not covered (fine for friends, worth knowing): every seat/spectator token can
-read the **full** game state, including opponents' money and positions — the
-game isn't hidden-information-secure between players. And there's no rate
-limiting; add nginx `limit_req` if you expect abuse.
+Opponents' private info (cash on hand, issue positions, stats, and their moves
+this/prior weeks) is hidden from other players while a game is active and only
+revealed once it ends — public info (polling, delegate standings, momentum,
+decided-state results) stays visible throughout.
+
+Not covered (fine for friends): there's no rate limiting — add nginx
+`limit_req` if you expect abuse.
 
 ## Notes / current limits
 
