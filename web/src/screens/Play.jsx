@@ -33,6 +33,7 @@ export default function Play() {
   const [move, setMove] = useState({ campaigning: {}, ads: {}, orgs: {} })
   const [selected, setSelected] = useState(null)
   const [districtSel, setDistrictSel] = useState(null)
+  const [showHistory, setShowHistory] = useState(false)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
   const pollRef = useRef(null)
@@ -146,11 +147,26 @@ export default function Play() {
   const iSubmitted = status?.seats?.find((s) => s.seat === seat)?.submitted
   const gameOver = status?.game_over
 
+  if (showHistory) {
+    return (
+      <div className="wrap wrap-wide">
+        <div className="spread">
+          <h1>{me.public_name || `Seat ${seat}`} <span className="muted small">· history</span></h1>
+          <button className="secondary small" onClick={() => setShowHistory(false)}>← Back to game</button>
+        </div>
+        <History matchId={info.match_id} token={token} seats={state.config.seats} />
+      </div>
+    )
+  }
+
   return (
     <div className="wrap wrap-wide">
       <div className="spread">
         <h1>{me.public_name || `Seat ${seat}`}</h1>
-        <span className="pill">Week {state.current_date} / {state.config.num_turns}</span>
+        <div className="row">
+          <button className="secondary small" onClick={() => setShowHistory(true)}>📜 History</button>
+          <span className="pill">Week {state.current_date} / {state.config.num_turns}</span>
+        </div>
       </div>
 
       {state.config.issues_mode && state.config.issues?.[state.event_of_week] && (
@@ -461,6 +477,82 @@ function LastWeek({ results, seats }) {
         </tbody>
       </table>
     </div>
+  )
+}
+
+function summarizeMove(mv) {
+  let camp = 0, ads = 0, orgs = 0
+  const states = new Set()
+  for (const [st, dists] of Object.entries(mv.campaigning || {})) {
+    for (const h of Object.values(dists)) camp += h
+    if (Object.keys(dists).length) states.add(st)
+  }
+  for (const [st, dists] of Object.entries(mv.ads || {})) {
+    for (const d of Object.values(dists)) ads += d
+    if (Object.keys(dists).length) states.add(st)
+  }
+  for (const [st, n] of Object.entries(mv.orgs || {})) { orgs += n; if (n) states.add(st) }
+  return { camp, ads, orgs, states: states.size }
+}
+
+function History({ matchId, token, seats }) {
+  const [log, setLog] = useState(null)
+  const [err, setErr] = useState('')
+  useEffect(() => {
+    api.getLog(matchId, token).then((r) => setLog(r.log)).catch((e) => setErr(e.message))
+  }, [matchId, token])
+  const nameOf = (s) => seats.find((x) => x.seat === Number(s))?.name || `Seat ${s}`
+
+  if (err) return <p className="error">{err}</p>
+  if (!log) return <p className="muted">Loading history…</p>
+  if (log.length === 0) return <div className="panel"><p className="muted">No weeks have resolved yet — come back after the first week.</p></div>
+
+  return (
+    <>
+      {log.slice().reverse().map((entry) => {
+        const stateResults = entry.results?._state_results || {}
+        return (
+          <div key={entry.week} className="panel">
+            <h3 style={{ marginBottom: 8 }}>Week {entry.week}</h3>
+            {Object.keys(stateResults).length > 0 && (
+              <div style={{ overflowX: 'auto' }}>
+                <table>
+                  <thead><tr><th>Decided state</th><th>Winner</th><th>Vote share</th></tr></thead>
+                  <tbody>
+                    {Object.entries(stateResults).map(([sname, r]) => (
+                      <tr key={sname}>
+                        <td>{sname}</td>
+                        <td><span className="leader-dot" style={{ background: SEAT_COLORS[r.winner - 1] }} />{nameOf(r.winner)}</td>
+                        <td className="muted small">{Object.entries(r.percentages).filter(([, p]) => p > 0).map(([s, p]) => `${nameOf(Number(s))} ${p}%`).join(' · ')}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+            <div style={{ overflowX: 'auto', marginTop: Object.keys(stateResults).length ? 10 : 0 }}>
+              <table>
+                <thead><tr><th>Candidate</th><th>Campaign hrs</th><th>Ad $</th><th>Orgs</th><th>States active</th></tr></thead>
+                <tbody>
+                  {Object.entries(entry.moves).sort((a, b) => Number(a[0]) - Number(b[0])).map(([seat, mv]) => {
+                    const s = summarizeMove(mv)
+                    return (
+                      <tr key={seat}>
+                        <td><span className="leader-dot" style={{ background: SEAT_COLORS[Number(seat) - 1] }} />{nameOf(seat)}</td>
+                        <td>{s.camp}</td>
+                        <td>${s.ads.toLocaleString()}</td>
+                        <td>{s.orgs}</td>
+                        <td>{s.states}</td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )
+      })}
+    </>
   )
 }
 

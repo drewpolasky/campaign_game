@@ -67,6 +67,14 @@ def init_db():
                 move_json TEXT NOT NULL,
                 PRIMARY KEY (match_id, seat_no, week)
             );
+            CREATE TABLE IF NOT EXISTS game_log (
+                match_id     TEXT NOT NULL,
+                week         INTEGER NOT NULL,
+                results_json TEXT NOT NULL,   -- week_results for the week that resolved
+                moves_json   TEXT NOT NULL,   -- {seat: move} every seat played that week
+                resolved_at  REAL NOT NULL,
+                PRIMARY KEY (match_id, week)
+            );
             """)
 
 
@@ -182,6 +190,25 @@ def clear_submissions(match_id, week):
                      (match_id, week))
 
 
+def log_week(match_id, week, results, moves):
+    """Record a resolved week's results and every seat's moves for the history."""
+    with _connect() as conn:
+        conn.execute(
+            'INSERT OR REPLACE INTO game_log (match_id, week, results_json, moves_json, resolved_at)'
+            ' VALUES (?, ?, ?, ?, ?)',
+            (match_id, week, json.dumps(results), json.dumps(moves), time.time()))
+
+
+def get_log(match_id):
+    with _connect() as conn:
+        rows = conn.execute(
+            'SELECT week, results_json, moves_json, resolved_at FROM game_log'
+            ' WHERE match_id = ? ORDER BY week', (match_id,)).fetchall()
+    return [{'week': r['week'], 'results': json.loads(r['results_json']),
+             'moves': json.loads(r['moves_json']), 'resolved_at': r['resolved_at']}
+            for r in rows]
+
+
 def prune_finished(max_age_days=14):
     """Delete finished matches (and their seats/submissions) created more than
     ``max_age_days`` ago. Called at startup; keeps the DB from growing forever.
@@ -194,6 +221,7 @@ def prune_finished(max_age_days=14):
         ids = [r['id'] for r in rows]
         for mid in ids:
             conn.execute('DELETE FROM submissions WHERE match_id = ?', (mid,))
+            conn.execute('DELETE FROM game_log WHERE match_id = ?', (mid,))
             conn.execute('DELETE FROM seats WHERE match_id = ?', (mid,))
             conn.execute('DELETE FROM matches WHERE id = ?', (mid,))
     return len(ids)

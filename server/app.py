@@ -114,12 +114,13 @@ def _maybe_resolve(match_id):
 
         human_moves = db.get_submissions(match_id, week)
         gs, _ = state_schema.match_from_dict(match['doc'])
-        week_results, _moves = game_service.resolve_turn(
+        week_results, all_moves = game_service.resolve_turn(
             gs, human_moves, _resolve_rng(match_id, week))
         status = 'finished' if game_service.is_game_over(gs) else 'active'
         new_doc = state_schema.match_to_dict(
             gs, match_id=match_id, week_results=week_results, whose_turn=None)
         db.save_match_state(match_id, new_doc, status)
+        db.log_week(match_id, week, week_results, all_moves)
         db.clear_submissions(match_id, week)
         return True
 
@@ -242,6 +243,15 @@ def advance(match_id):
     match = db.get_match(match_id)
     return jsonify({'result': 'resolved' if resolved else 'waiting',
                     'status': _public_status(match)})
+
+
+@app.route('/api/matches/<match_id>/log', methods=['GET'])
+def game_log(match_id):
+    """Per-week history: each resolved week's results + every seat's moves."""
+    seat, err = _auth(match_id)
+    if err:
+        return err
+    return jsonify({'log': db.get_log(match_id)})
 
 
 @app.route('/api/matches/<match_id>/status', methods=['GET'])

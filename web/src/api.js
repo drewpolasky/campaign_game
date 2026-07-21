@@ -39,6 +39,8 @@ export const api = {
     }),
   status: (matchId, token) =>
     req(`/api/matches/${matchId}/status?token=${encodeURIComponent(token)}`),
+  getLog: (matchId, token) =>
+    req(`/api/matches/${matchId}/log?token=${encodeURIComponent(token)}`),
   advance: (matchId, token) =>
     req(`/api/matches/${matchId}/advance?token=${encodeURIComponent(token)}`, {
       method: 'POST',
