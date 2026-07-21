@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { api } from '../api.js'
 import USMap from '../USMap.jsx'
+import StateDistrictMap from '../StateDistrictMap.jsx'
 import { sideLabel } from '../issues.js'
 
 const WEEKLY_TIME = 80
@@ -31,6 +32,7 @@ export default function Play() {
   const [status, setStatus] = useState(null)
   const [move, setMove] = useState({ campaigning: {}, ads: {}, orgs: {} })
   const [selected, setSelected] = useState(null)
+  const [districtSel, setDistrictSel] = useState(null)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
   const pollRef = useRef(null)
@@ -66,6 +68,9 @@ export default function Play() {
     const iv = setInterval(() => { load().catch(() => {}) }, 5000)
     return () => clearInterval(iv)
   }, [isSpectator])
+
+  // Clear the highlighted district whenever the selected state changes.
+  useEffect(() => { setDistrictSel(null) }, [selected])
 
   const totals = useMemo(() => {
     if (!state) return { time: 0, money: 0 }
@@ -165,20 +170,29 @@ export default function Play() {
               onSelect={setSelected} setOrg={setOrg} disabled={iSubmitted} />
           </aside>
 
-          {/* CENTER — national map, zooms into the selected state */}
+          {/* CENTER — national map; drills into a state's district map */}
           <main className="col-center">
             <div className="panel">
-              {selected && (
-                <div className="spread" style={{ marginBottom: 8 }}>
-                  <strong>{selected}</strong>
-                  <button className="secondary small" onClick={() => setSelected(null)}>← National map</button>
-                </div>
+              {selected ? (
+                <>
+                  <div className="spread" style={{ marginBottom: 8 }}>
+                    <strong>{selected} <span className="muted small">· districts</span></strong>
+                    <button className="secondary small" onClick={() => setSelected(null)}>← National map</button>
+                  </div>
+                  <StateDistrictMap stateName={selected} state={state} idx={idx}
+                    seatColors={SEAT_COLORS} selectedDistrict={districtSel} onSelectDistrict={setDistrictSel} />
+                  <p className="muted small" style={{ textAlign: 'center', marginTop: 6 }}>
+                    Districts colored by current leader · click one to highlight it in the panel →
+                  </p>
+                </>
+              ) : (
+                <>
+                  <USMap state={state} selected={selected} onSelect={setSelected} seatColors={SEAT_COLORS} />
+                  <p className="muted small" style={{ textAlign: 'center', marginTop: 6 }}>
+                    Colored by current leader · <span style={{ color: '#ffb23e' }}>orange</span> = votes this/next week · click a state to open its districts
+                  </p>
+                </>
               )}
-              <USMap state={state} selected={selected} onSelect={setSelected}
-                seatColors={SEAT_COLORS} zoomTo={selected} />
-              <p className="muted small" style={{ textAlign: 'center', marginTop: 6 }}>
-                Colored by current leader · <span style={{ color: '#ffb23e' }}>orange</span> = votes this/next week · click a state to zoom in
-              </p>
             </div>
           </main>
 
@@ -199,6 +213,7 @@ export default function Play() {
             ) : selected ? (
               <StateDetail name={selected} state={state} idx={idx} move={move}
                 onClose={() => setSelected(null)}
+                selectedDistrict={districtSel} onSelectDistrict={setDistrictSel}
                 setCampaign={setCampaign} setAd={setAd} setOrg={setOrg} />
             ) : (
               <div className="panel"><p className="muted">Pick a state — from the calendar or the map — to zoom in and campaign, buy ads, and build organization district by district.</p></div>
@@ -356,7 +371,7 @@ function IssueBanner({ issue, me, eventIdx }) {
   )
 }
 
-function StateDetail({ name, state, idx, move, onClose, setCampaign, setAd, setOrg }) {
+function StateDetail({ name, state, idx, move, onClose, setCampaign, setAd, setOrg, selectedDistrict, onSelectDistrict }) {
   const st = state.states[name]
   const myOrg = st.organizations[idx]
   const week = contestWeekOf(state, name)
@@ -400,7 +415,10 @@ function StateDetail({ name, state, idx, move, onClose, setCampaign, setAd, setO
         <thead><tr><th>District</th><th>Your support</th>{!past && <><th>Campaign hrs</th><th>Ad $</th></>}</tr></thead>
         <tbody>
           {st.districts.map((d) => (
-            <tr key={d.name}>
+            <tr key={d.name}
+              ref={(el) => { if (el && selectedDistrict === d.name.trim()) el.scrollIntoView({ block: 'nearest' }) }}
+              onClick={() => onSelectDistrict?.(d.name.trim())}
+              style={{ cursor: 'pointer', background: selectedDistrict === d.name.trim() ? 'rgba(79,140,255,.15)' : undefined }}>
               <td>{d.name}</td>
               <td>{Math.round(d.support[idx] || 0)}</td>
               {!past && (

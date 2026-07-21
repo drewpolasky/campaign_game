@@ -112,6 +112,8 @@ th { color: var(--muted); font-weight: 600; font-size: .8rem; text-transform: up
 
 .usmap { width: 100%; height: auto; max-height: 540px; display: block; }
 .usmap path:hover { fill-opacity: 1; }
+.district-map { width: 100%; height: auto; max-height: 540px; display: block; }
+.district-map polygon:hover { fill-opacity: 1; }
 
 /* Wide content (tables) never forces the page to scroll sideways. */
 .panel { overflow-wrap: anywhere; }
