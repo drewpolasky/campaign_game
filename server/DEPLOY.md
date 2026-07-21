@@ -46,6 +46,7 @@ Environment variables:
 |---|---|---|
 | `CAMPAIGN_DB` | `server/game.db` | SQLite match database (put it on a persistent, local disk — WAL needs a real filesystem). |
 | `CAMPAIGN_API_KEY` | `changeme` | Shared secret for the legacy `/campaign_saves` blob endpoints (desktop client). The `/api` match endpoints use per-seat tokens instead. |
+| `CAMPAIGN_CREATE_KEY` | (unset) | If set, a shared passphrase is required to **create** a match (the lobby shows a passphrase field). Playing an existing seat via its magic link is never gated by this. Leave unset to allow anyone who can reach the site to create games. |
 | `CAMPAIGN_CORS_ORIGIN` | `*` | Only matters if you serve the frontend from a different origin; unused for same-origin prod. |
 
 Smoke test locally: `curl http://127.0.0.1:8080/` should return the app's

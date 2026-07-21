@@ -14,11 +14,14 @@ export default function Lobby() {
   const [issuesMode, setIssuesMode] = useState(false)
   const [seats, setSeats] = useState([blankSeat(1, 'human'), blankSeat(2, 'ai')])
   const [issues, setIssues] = useState([])
+  const [gated, setGated] = useState(false)
+  const [createKey, setCreateKey] = useState(() => localStorage.getItem('campaign_create_key') || '')
   const [result, setResult] = useState(null)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
 
   useEffect(() => { api.getIssues().then(setIssues).catch(() => {}) }, [])
+  useEffect(() => { api.getConfig().then((c) => setGated(!!c.create_gated)).catch(() => {}) }, [])
 
   function setPos(i, issueIdx, val) {
     setSeats(seats.map((s, j) => {
@@ -65,7 +68,9 @@ export default function Lobby() {
             : null,
         })),
       }
-      setResult(await api.createMatch(config))
+      const res = await api.createMatch(config, createKey)
+      if (gated) localStorage.setItem('campaign_create_key', createKey)
+      setResult(res)
     } catch (e) {
       setError(e.message)
     } finally {
@@ -96,6 +101,13 @@ export default function Lobby() {
                 <option value="on">On</option>
               </select>
             </div>
+            {gated && (
+              <div>
+                <label>Create passphrase</label>
+                <input type="password" value={createKey} placeholder="required"
+                  onChange={(e) => setCreateKey(e.target.value)} />
+              </div>
+            )}
           </div>
 
           <table>

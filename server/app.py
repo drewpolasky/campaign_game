@@ -40,6 +40,11 @@ db.prune_finished()  # drop long-finished matches so the DB doesn't grow forever
 # the same host as the API.
 _WEB_DIST = os.path.join(_REPO_ROOT, 'web', 'dist')
 
+# Optional shared passphrase required to CREATE a match. Playing an existing
+# seat via its magic link is never gated by this — only creation. Unset/empty
+# means creation is open (fine for local dev / a private URL).
+CREATE_KEY = os.environ.get('CAMPAIGN_CREATE_KEY', '')
+
 
 # --- CORS (dev: the Vite dev server is a different origin) -----------------
 @app.before_request
@@ -121,6 +126,13 @@ def _maybe_resolve(match_id):
 
 # --- endpoints -------------------------------------------------------------
 
+@app.route('/api/config', methods=['GET'])
+def public_config():
+    """Client-visible server config: whether creating a match needs a passphrase
+    (so the lobby only shows the field when it's actually required)."""
+    return jsonify({'create_gated': bool(CREATE_KEY)})
+
+
 @app.route('/api/issues', methods=['GET'])
 def issues():
     """Static issue metadata (name + per-side labels), so the lobby can offer
@@ -131,6 +143,8 @@ def issues():
 @app.route('/api/matches', methods=['POST'])
 def create_match():
     body = request.get_json(silent=True) or {}
+    if CREATE_KEY and body.get('create_key', '') != CREATE_KEY:
+        return jsonify({'error': 'A valid create passphrase is required to start a game.'}), 403
     config = body.get('config')
     if not config or not config.get('seats'):
         return jsonify({'error': 'config with seats is required'}), 400

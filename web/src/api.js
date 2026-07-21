@@ -25,9 +25,10 @@ async function req(path, opts = {}) {
 
 export const api = {
   base: API_BASE,
+  getConfig: () => req('/api/config'),
   getIssues: () => req('/api/issues'),
-  createMatch: (config) =>
-    req('/api/matches', { method: 'POST', body: JSON.stringify({ config }) }),
+  createMatch: (config, createKey) =>
+    req('/api/matches', { method: 'POST', body: JSON.stringify({ config, create_key: createKey || '' }) }),
   resolveToken: (token) =>
     req(`/api/resolve-token?token=${encodeURIComponent(token)}`),
   getState: (matchId, token) =>
