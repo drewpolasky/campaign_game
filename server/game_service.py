@@ -32,6 +32,7 @@ if _REPO_ROOT not in sys.path:
     sys.path.insert(0, _REPO_ROOT)
 
 import engine  # noqa: E402
+import state_issues  # noqa: E402
 from server import ai, game_world, state_schema  # noqa: E402
 
 WEEKLY_TIME = 80
@@ -228,6 +229,9 @@ def resolve_turn(gs, human_moves, rng):
     gs.current_date += 1
     week_results = engine.decide_contests(gs)
     engine.reset_weekly(gs)
+    # Roll a fresh issue of the week for the upcoming week (matches the desktop
+    # game and the RL sim, both of which re-roll event_of_week each turn).
+    gs.event_of_week = rng.randint(0, len(state_issues.ISSUES) - 1)
 
     return week_results, all_moves
 
