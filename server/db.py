@@ -27,7 +27,13 @@ resolve_lock = threading.Lock()
 def _connect():
     conn = sqlite3.connect(_DB_PATH, timeout=30, check_same_thread=False)
     conn.row_factory = sqlite3.Row
-    conn.execute('PRAGMA journal_mode=WAL')
+    # WAL gives better concurrency, but some filesystems (e.g. the 9p mount
+    # used when a Windows process opens a \\wsl.localhost path) don't support
+    # it — fall back to the default journal there instead of crashing.
+    try:
+        conn.execute('PRAGMA journal_mode=WAL')
+    except sqlite3.OperationalError:
+        pass
     conn.execute('PRAGMA foreign_keys=ON')
     return conn
 

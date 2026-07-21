@@ -28,6 +28,8 @@ if _REPO_ROOT not in sys.path:
 
 from flask import request, jsonify  # noqa: E402
 
+from flask import Response  # noqa: E402
+
 from server.campaign_save_server import app  # noqa: E402  (reuse blob app + endpoints)
 from server import db, game_service, state_schema  # noqa: E402
 
@@ -35,18 +37,20 @@ db.init_db()
 
 
 # --- CORS (dev: the Vite dev server is a different origin) -----------------
+@app.before_request
+def _cors_preflight():
+    # Answer any CORS preflight uniformly (the client sends a JSON Content-Type
+    # header, which makes even GETs non-simple). after_request adds the headers.
+    if request.method == 'OPTIONS':
+        return Response(status=204)
+
+
 @app.after_request
 def _cors(resp):
     resp.headers['Access-Control-Allow-Origin'] = os.environ.get('CAMPAIGN_CORS_ORIGIN', '*')
     resp.headers['Access-Control-Allow-Headers'] = 'Content-Type'
     resp.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
     return resp
-
-
-@app.route('/api/matches/<path:_ignored>', methods=['OPTIONS'])
-@app.route('/api/matches', methods=['OPTIONS'])
-def _preflight(_ignored=None):
-    return ('', 204)
 
 
 # --- helpers ---------------------------------------------------------------
@@ -131,6 +135,22 @@ def create_match():
                        for seat, tok in seat_tokens.items()},
         'seat_tokens': {str(seat): tok for seat, tok in seat_tokens.items()},
     }), 201
+
+
+@app.route('/api/resolve-token', methods=['GET'])
+def resolve_token():
+    """A magic link carries only a seat token. This maps the token to its match
+    + seat so the client can drive the rest of the (match_id-based) API."""
+    token = request.args.get('token', '')
+    seat = db.seat_for_token(token)
+    if seat is None:
+        return jsonify({'error': 'invalid token'}), 403
+    return jsonify({
+        'match_id': seat['match_id'],
+        'seat': seat['seat_no'],
+        'controller': seat['controller'],
+        'name': seat['display_name'],
+    })
 
 
 @app.route('/api/matches/<match_id>/state', methods=['GET'])
