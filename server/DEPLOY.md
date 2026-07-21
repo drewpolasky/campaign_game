@@ -109,6 +109,36 @@ cd web && npm ci && npm run build && cd ..
 sudo systemctl restart campaign
 ```
 
+## Security checklist for a public URL
+
+The app is safe to put on an open URL for a small group, provided you do the
+following. (Seat/spectator links use 128-bit unguessable tokens; the DB uses
+only parameterized SQL; request bodies are capped via `CAMPAIGN_MAX_BODY`,
+default 8 MB; the create endpoint can be gated — above.)
+
+- **Set `CAMPAIGN_CREATE_KEY`** so random visitors/bots can't spin up matches.
+- **Lock down the legacy blob endpoints.** `/campaign_saves` (the desktop
+  client's save relay) is **not used by the web game** and defaults to the
+  weak API key `changeme`. Either set a strong `CAMPAIGN_API_KEY`, or — simpler
+  — block the path at nginx so it isn't exposed at all:
+
+  ```nginx
+  location /campaign_saves { return 404; }   # web game doesn't use this
+  ```
+
+- **Serve over HTTPS only** (you already have TLS) — tokens travel in URLs.
+- **Access logs capture tokens.** nginx logs the `?token=…` query and
+  `/play/<token>` paths, so anyone who can read the logs can hijack a seat.
+  Keep log access restricted, or drop the query string from the log format.
+- Optionally set **`CAMPAIGN_CORS_ORIGIN`** to your exact origin (the default
+  `*` is low-risk here since auth is a URL token, not a cookie — there's no
+  ambient session to abuse via CSRF — but tightening it is good hygiene).
+
+Not covered (fine for friends, worth knowing): every seat/spectator token can
+read the **full** game state, including opponents' money and positions — the
+game isn't hidden-information-secure between players. And there's no rate
+limiting; add nginx `limit_req` if you expect abuse.
+
 ## Notes / current limits
 
 - **Match cleanup**: finished matches accumulate in the DB. Prune old ones

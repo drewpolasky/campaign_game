@@ -63,8 +63,8 @@ def build_match(config, rng=None):
 
     seats = config['seats']
     num_players = len(seats)
-    if num_players < 2:
-        raise ValueError('a match needs at least 2 seats')
+    if num_players < 2 or num_players > 10:
+        raise ValueError('a match needs between 2 and 10 seats')
 
     num_turns = config.get('num_turns', 20)
     if num_turns not in VALID_TURN_LENGTHS:

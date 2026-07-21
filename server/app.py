@@ -35,6 +35,10 @@ import state_issues  # noqa: E402
 db.init_db()
 db.prune_finished()  # drop long-finished matches so the DB doesn't grow forever
 
+# Reject oversized request bodies (JSON moves/configs are tiny; this just caps
+# a memory-exhaustion vector on a public URL).
+app.config['MAX_CONTENT_LENGTH'] = int(os.environ.get('CAMPAIGN_MAX_BODY', str(8 * 1024 * 1024)))
+
 # Built React bundle (produced by `cd web && npm run build`). Served
 # same-origin in production so there's no CORS and magic links resolve against
 # the same host as the API.
@@ -277,7 +281,8 @@ def status(match_id):
 def spa(reqpath):
     if reqpath:
         candidate = os.path.normpath(os.path.join(_WEB_DIST, reqpath))
-        if candidate.startswith(_WEB_DIST) and os.path.isfile(candidate):
+        # Stay strictly inside the bundle dir (guards ../ traversal).
+        if (candidate == _WEB_DIST or candidate.startswith(_WEB_DIST + os.sep)) and os.path.isfile(candidate):
             return send_from_directory(_WEB_DIST, reqpath)
     if os.path.isfile(os.path.join(_WEB_DIST, 'index.html')):
         return send_from_directory(_WEB_DIST, 'index.html')
