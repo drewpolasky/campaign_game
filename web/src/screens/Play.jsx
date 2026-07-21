@@ -286,10 +286,12 @@ function CalendarPanel({ state, idx, move, selected, onSelect, setOrg, disabled 
               className={'cal-row' + (selected === name ? ' sel' : '') + (past ? ' past' : '') + (onBallot ? ' ballot' : '')}
               onClick={() => onSelect(name)}>
               <div className="cal-main">
-                {leader && <span className="leader-dot" style={{ background: SEAT_COLORS[leader - 1] }} />}
-                {now && <span className="pill warn small" style={{ marginRight: 4 }}>now</span>}
-                {onBallot && '★ '}{name}
-                <span className="muted small"> · wk {week} · {delegates} del{pending ? ` · +${pending} org` : ''}</span>
+                <div className="cal-name">
+                  {leader && <span className="leader-dot" style={{ background: SEAT_COLORS[leader - 1] }} />}
+                  {now && <span className="pill warn small" style={{ marginRight: 4 }}>now</span>}
+                  {onBallot && '★ '}{name}
+                </div>
+                <div className="muted small">wk {week} · {delegates} del{pending ? ` · +${pending} org` : ''}</div>
               </div>
               {!disabled && !past && canBuild && (
                 <button className="secondary small" style={{ whiteSpace: 'nowrap' }}

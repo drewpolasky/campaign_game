@@ -47,7 +47,9 @@ a { color: var(--accent); }
 .cal-row.sel { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
 .cal-row.past { opacity: .5; }
 .cal-row.ballot { border-left: 3px solid var(--good); }
-.cal-main { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cal-main { min-width: 0; flex: 1; }
+.cal-name { line-height: 1.25; }
+.cal-row > button { flex: none; }
 
 .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.55); display: flex;
   align-items: flex-start; justify-content: center; padding: 40px 16px; z-index: 50; overflow-y: auto; }
