@@ -28,6 +28,14 @@ export default function Lobby() {
     }))
   }
 
+  const randomStance = () => issues.map(() => [-1, 0, 1][Math.floor(Math.random() * 3)])
+  function randomizeSeat(i) {
+    setSeats(seats.map((s, j) => (j === i ? { ...s, positions: randomStance() } : s)))
+  }
+  function randomizeAll() {
+    setSeats(seats.map((s) => (s.controller === 'human' ? { ...s, positions: randomStance() } : s)))
+  }
+
   function setSeat(i, patch) {
     setSeats(seats.map((s, j) => (j === i ? { ...s, ...patch } : s)))
   }
@@ -122,11 +130,17 @@ export default function Lobby() {
 
           {issuesMode && issues.length > 0 && (
             <div style={{ marginTop: 18 }}>
-              <h3 style={{ marginBottom: 4 }}>Platforms</h3>
+              <div className="spread" style={{ marginBottom: 4 }}>
+                <h3 style={{ margin: 0 }}>Platforms</h3>
+                <button className="secondary small" onClick={randomizeAll}>🎲 Randomize all</button>
+              </div>
               <p className="muted small">Each human candidate's stance per issue. Matching a state's stance on the week's issue boosts your support there; clashing hurts. AI candidates get randomized platforms.</p>
               {seats.map((s, i) => s.controller === 'human' && (
                 <div key={i} className="panel" style={{ background: 'var(--panel-2)', marginBottom: 8 }}>
-                  <strong>{s.name}</strong>
+                  <div className="spread">
+                    <strong>{s.name}</strong>
+                    <button className="secondary small" onClick={() => randomizeSeat(i)}>🎲 Randomize</button>
+                  </div>
                   <div style={{ overflowX: 'auto' }}>
                     <table>
                       <thead><tr>{issues.map((iss) => <th key={iss.name}>{iss.name}</th>)}</tr></thead>
