@@ -1,1 +1,4 @@
 flask>=2.0
+# Production WSGI server. The Flask dev server is fine for local play; use
+# gunicorn behind nginx for a real deployment (see server/DEPLOY.md).
+gunicorn>=21.0

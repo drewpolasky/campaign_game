@@ -26,14 +26,17 @@ _REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _REPO_ROOT not in sys.path:
     sys.path.insert(0, _REPO_ROOT)
 
-from flask import request, jsonify  # noqa: E402
-
-from flask import Response  # noqa: E402
+from flask import request, jsonify, send_from_directory, Response  # noqa: E402
 
 from server.campaign_save_server import app  # noqa: E402  (reuse blob app + endpoints)
 from server import db, game_service, state_schema  # noqa: E402
 
 db.init_db()
+
+# Built React bundle (produced by `cd web && npm run build`). Served
+# same-origin in production so there's no CORS and magic links resolve against
+# the same host as the API.
+_WEB_DIST = os.path.join(_REPO_ROOT, 'web', 'dist')
 
 
 # --- CORS (dev: the Vite dev server is a different origin) -----------------
@@ -227,6 +230,23 @@ def status(match_id):
     out = _public_status(match)
     out['last_week_results'] = match['doc'].get('week_results', {})
     return jsonify(out)
+
+
+# --- Serve the built React SPA (production) --------------------------------
+# The API/blob routes above are more specific, so Werkzeug matches them first;
+# everything else falls through here. A real file in the bundle is served as-is
+# (JS/CSS/assets); any other path returns index.html so client-side routes like
+# /play/<token> work on refresh/deep-link.
+@app.route('/', defaults={'reqpath': ''})
+@app.route('/<path:reqpath>')
+def spa(reqpath):
+    if reqpath:
+        candidate = os.path.normpath(os.path.join(_WEB_DIST, reqpath))
+        if candidate.startswith(_WEB_DIST) and os.path.isfile(candidate):
+            return send_from_directory(_WEB_DIST, reqpath)
+    if os.path.isfile(os.path.join(_WEB_DIST, 'index.html')):
+        return send_from_directory(_WEB_DIST, 'index.html')
+    return ('Frontend not built. Run: cd web && npm run build', 404)
 
 
 if __name__ == '__main__':

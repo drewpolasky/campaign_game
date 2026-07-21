@@ -1,7 +1,11 @@
-// Thin client for the Flask match API. The server has open CORS in dev, so we
-// call it directly. Override the base with VITE_API_BASE when the server isn't
-// at http://localhost:8080.
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8080'
+// Thin client for the Flask match API.
+//   - dev:  the Vite dev server (:5173) and the API (:8080) are different
+//           origins, so call the API absolutely (CORS is open in dev).
+//   - prod: the built bundle is served same-origin by Flask, so use a relative
+//           base ('') and no CORS is involved.
+// Override with VITE_API_BASE to point at an API on another host.
+const API_BASE = import.meta.env.VITE_API_BASE
+  ?? (import.meta.env.DEV ? 'http://localhost:8080' : '')
 
 async function req(path, opts = {}) {
   let resp
