@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { api } from '../api.js'
+import USMap from '../USMap.jsx'
 
 const WEEKLY_TIME = 80
 const SEAT_COLORS = ['#ff5b5b', '#4f8cff', '#3ecf8e', '#b07bff', '#ffb23e', '#38d6d6',
@@ -12,12 +13,10 @@ function orgBuildCost(fromTier, count) {
   for (let i = 0; i < count; i++) { total += tier <= 1 ? 10000 : 10000 * tier; tier++ }
   return total
 }
-
 function contestWeekOf(state, name) {
   const e = state.config.calendar.find((c) => c[0] === name)
   return e ? e[1] : null
 }
-
 function leaderSeat(stateObj) {
   const p = stateObj.polling_average
   if (!p || !p.length || p.every((x) => x === 0)) return null
@@ -30,7 +29,7 @@ export default function Play() {
   const [state, setState] = useState(null)
   const [status, setStatus] = useState(null)
   const [move, setMove] = useState({ campaigning: {}, ads: {}, orgs: {} })
-  const [expanded, setExpanded] = useState(null)
+  const [selected, setSelected] = useState(null)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
   const pollRef = useRef(null)
@@ -59,7 +58,6 @@ export default function Play() {
   const idx = seat - 1
   const me = state && seat != null ? state.players[String(seat)] : null
 
-  // Budget math for the pending move.
   const totals = useMemo(() => {
     if (!state) return { time: 0, money: 0 }
     let time = 0, money = 0
@@ -132,15 +130,13 @@ export default function Play() {
   const iSubmitted = status?.seats?.find((s) => s.seat === seat)?.submitted
   const gameOver = status?.game_over
 
-  // Group states by contest week: upcoming first (soonest first), then past.
+  // Group states by contest week for the browse list.
   const groups = {}
   for (const name of Object.keys(state.states)) {
     const w = contestWeekOf(state, name)
     ;(groups[w] ??= []).push(name)
   }
   const weeks = Object.keys(groups).map(Number).sort((a, b) => a - b)
-  const upcoming = weeks.filter((w) => w >= state.current_date)
-  const past = weeks.filter((w) => w < state.current_date)
 
   return (
     <div className="wrap">
@@ -150,48 +146,56 @@ export default function Play() {
       </div>
 
       <Dashboard me={me} timeLeft={timeLeft} moneyLeft={moneyLeft} over={overBudget} />
-
       <SeatBar status={status} seat={seat} />
 
-      {state.week_results && Object.keys(state.week_results._state_results || {}).length > 0 && (
+      {Object.keys(state.week_results?._state_results || {}).length > 0 && (
         <LastWeek results={state.week_results} seats={state.config.seats} />
       )}
 
       {gameOver ? (
         <FinalResults state={state} />
-      ) : iSubmitted ? (
-        <div className="panel"><p className="muted">✓ Turn submitted. Waiting for the other players… (auto-refreshing every few seconds)</p></div>
       ) : (
         <>
-          <div className="panel spread" style={{ position: 'sticky', top: 0, zIndex: 5 }}>
-            <div className="muted small">Unused time auto-fundraises. Money left over carries to next week.</div>
-            <button onClick={submit} disabled={busy || overBudget}>
-              {busy ? 'Submitting…' : overBudget ? 'Over budget' : 'End Turn'}
-            </button>
+          {!iSubmitted && (
+            <div className="panel spread" style={{ position: 'sticky', top: 0, zIndex: 5 }}>
+              <div className="muted small">Unused time auto-fundraises. Leftover money carries over.</div>
+              <button onClick={submit} disabled={busy || overBudget}>
+                {busy ? 'Submitting…' : overBudget ? 'Over budget' : 'End Turn'}
+              </button>
+            </div>
+          )}
+
+          <div className="panel">
+            <USMap state={state} selected={selected} onSelect={setSelected} seatColors={SEAT_COLORS} />
+            <p className="muted small" style={{ textAlign: 'center', marginTop: 6 }}>
+              Colored by current leader · <span style={{ color: '#ffb23e' }}>orange outline</span> = votes this/next week · click a state to campaign there
+            </p>
           </div>
 
-          {upcoming.map((w) => (
-            <div key={w}>
-              <div className="week-header">{w === state.current_date ? 'Voting this week' : `Votes week ${w}`}</div>
-              {groups[w].sort().map((name) => (
-                <StateCard key={name} name={name} state={state} idx={idx}
-                  move={move} expanded={expanded === name}
-                  onToggle={() => setExpanded(expanded === name ? null : name)}
-                  setCampaign={setCampaign} setAd={setAd} setOrg={setOrg} />
+          {iSubmitted ? (
+            <div className="panel"><p className="muted">✓ Turn submitted. Waiting for the other players… (auto-refreshing)</p></div>
+          ) : selected ? (
+            <StateDetail name={selected} state={state} idx={idx} move={move}
+              onClose={() => setSelected(null)}
+              setCampaign={setCampaign} setAd={setAd} setOrg={setOrg} />
+          ) : (
+            <p className="muted" style={{ textAlign: 'center' }}>Pick a state on the map (or below) to allocate time and money.</p>
+          )}
+
+          {!iSubmitted && (
+            <div className="panel">
+              {weeks.map((w) => (
+                <div key={w}>
+                  <div className="week-header">
+                    {w < state.current_date ? `Voted (week ${w})` : w === state.current_date ? 'Voting this week' : `Votes week ${w}`}
+                  </div>
+                  {groups[w].sort().map((name) => (
+                    <StateRow key={name} name={name} state={state} idx={idx} move={move}
+                      selected={selected === name} onSelect={() => setSelected(name)} />
+                  ))}
+                </div>
               ))}
             </div>
-          ))}
-
-          {past.length > 0 && (
-            <>
-              <div className="week-header">Already voted</div>
-              {past.map((w) => groups[w].sort().map((name) => (
-                <StateCard key={name} name={name} state={state} idx={idx}
-                  move={move} expanded={expanded === name} past
-                  onToggle={() => setExpanded(expanded === name ? null : name)}
-                  setCampaign={setCampaign} setAd={setAd} setOrg={setOrg} />
-              )))}
-            </>
           )}
         </>
       )}
@@ -231,65 +235,73 @@ function SeatBar({ status, seat }) {
   )
 }
 
-function StateCard({ name, state, idx, move, expanded, past, onToggle, setCampaign, setAd, setOrg }) {
+function StateRow({ name, state, idx, move, selected, onSelect }) {
   const st = state.states[name]
   const myOrg = st.organizations[idx]
   const mySupport = st.districts.reduce((a, d) => a + (d.support[idx] || 0), 0)
   const leader = leaderSeat(st)
+  const pendingOrg = move.orgs[name] || 0
+  const allocated = move.campaigning[name] || move.ads[name] || pendingOrg
+  return (
+    <div className="head" onClick={onSelect}
+      style={{ borderRadius: 8, marginBottom: 4, border: selected ? '1px solid #4f8cff' : '1px solid transparent' }}>
+      <div>
+        {leader && <span className="leader-dot" style={{ background: SEAT_COLORS[leader - 1] }} />}
+        <strong>{name}</strong>
+        <span className="muted small"> · org {myOrg}{pendingOrg ? `(+${pendingOrg})` : ''} · support {Math.round(mySupport)}</span>
+        {allocated ? <span className="pill good small" style={{ marginLeft: 8 }}>planned</span> : null}
+      </div>
+      <span className="muted">›</span>
+    </div>
+  )
+}
+
+function StateDetail({ name, state, idx, move, onClose, setCampaign, setAd, setOrg }) {
+  const st = state.states[name]
+  const myOrg = st.organizations[idx]
   const week = contestWeekOf(state, name)
+  const past = week < state.current_date
   const pendingOrg = move.orgs[name] || 0
   const canBuildBallot = myOrg > 0 || week == null || state.current_date <= week
-
   return (
-    <div className="state-card" style={{ opacity: past ? 0.6 : 1 }}>
-      <div className="head" onClick={onToggle}>
-        <div>
-          {leader && <span className="leader-dot" style={{ background: SEAT_COLORS[leader - 1] }} />}
-          <strong>{name}</strong>
-          <span className="muted small"> · week {week} · your org {myOrg}{pendingOrg ? `(+${pendingOrg})` : ''} · your support {Math.round(mySupport)}</span>
-        </div>
-        <span className="muted">{expanded ? '▾' : '▸'}</span>
+    <div className="panel">
+      <div className="spread">
+        <h3 style={{ margin: 0 }}>{name} <span className="muted small">· votes week {week}</span></h3>
+        <button className="secondary small" onClick={onClose}>Close</button>
       </div>
-      {expanded && (
-        <div className="body">
-          {!past && (
-            <div className="row" style={{ marginBottom: 10 }}>
-              <span className="muted small">Organization tier {myOrg}{pendingOrg ? ` → ${myOrg + pendingOrg}` : ''}</span>
-              <button className="secondary small" disabled={!canBuildBallot}
-                onClick={() => setOrg(name, pendingOrg + 1)}>
-                {myOrg + pendingOrg === 0 ? 'Get on ballot' : 'Upgrade org'} (${orgBuildCost(myOrg + pendingOrg, 1).toLocaleString()})
-              </button>
-              {pendingOrg > 0 && <button className="secondary small" onClick={() => setOrg(name, pendingOrg - 1)}>Undo</button>}
-              {!canBuildBallot && <span className="muted small">contest already voted</span>}
-            </div>
-          )}
-          <table>
-            <thead><tr><th>District</th><th>Your support</th>{!past && <><th>Campaign hrs</th><th>Ad $</th></>}</tr></thead>
-            <tbody>
-              {st.districts.map((d) => (
-                <tr key={d.name}>
-                  <td>{d.name}</td>
-                  <td>{Math.round(d.support[idx] || 0)}</td>
-                  {!past && (
-                    <>
-                      <td>
-                        <input type="number" min="0" value={move.campaigning[name]?.[d.name] || ''}
-                          placeholder="0" style={{ width: 70 }}
-                          onChange={(e) => setCampaign(name, d.name, Math.max(0, parseInt(e.target.value) || 0))} />
-                      </td>
-                      <td>
-                        <input type="number" min="0" step="1000" value={move.ads[name]?.[d.name] || ''}
-                          placeholder="0" style={{ width: 90 }}
-                          onChange={(e) => setAd(name, d.name, Math.max(0, parseInt(e.target.value) || 0))} />
-                      </td>
-                    </>
-                  )}
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      {past && <p className="muted small">This state has already voted.</p>}
+      {!past && (
+        <div className="row" style={{ margin: '10px 0' }}>
+          <span className="muted small">Organization tier {myOrg}{pendingOrg ? ` → ${myOrg + pendingOrg}` : ''}</span>
+          <button className="secondary small" disabled={!canBuildBallot}
+            onClick={() => setOrg(name, pendingOrg + 1)}>
+            {myOrg + pendingOrg === 0 ? 'Get on ballot' : 'Upgrade org'} (${orgBuildCost(myOrg + pendingOrg, 1).toLocaleString()})
+          </button>
+          {pendingOrg > 0 && <button className="secondary small" onClick={() => setOrg(name, pendingOrg - 1)}>Undo</button>}
+          {!canBuildBallot && <span className="muted small">contest already voted</span>}
         </div>
       )}
+      <table>
+        <thead><tr><th>District</th><th>Your support</th>{!past && <><th>Campaign hrs</th><th>Ad $</th></>}</tr></thead>
+        <tbody>
+          {st.districts.map((d) => (
+            <tr key={d.name}>
+              <td>{d.name}</td>
+              <td>{Math.round(d.support[idx] || 0)}</td>
+              {!past && (
+                <>
+                  <td><input type="number" min="0" placeholder="0" style={{ width: 70 }}
+                    value={move.campaigning[name]?.[d.name] || ''}
+                    onChange={(e) => setCampaign(name, d.name, Math.max(0, parseInt(e.target.value) || 0))} /></td>
+                  <td><input type="number" min="0" step="1000" placeholder="0" style={{ width: 90 }}
+                    value={move.ads[name]?.[d.name] || ''}
+                    onChange={(e) => setAd(name, d.name, Math.max(0, parseInt(e.target.value) || 0))} /></td>
+                </>
+              )}
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   )
 }

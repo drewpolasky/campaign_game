@@ -86,3 +86,6 @@ th { color: var(--muted); font-weight: 600; font-size: .8rem; text-transform: up
 .state-card .body { padding: 10px 12px; }
 .leader-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 6px; vertical-align: middle; }
 .week-header { color: var(--muted); font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; margin: 14px 0 6px; }
+
+.usmap { width: 100%; height: auto; max-height: 540px; display: block; }
+.usmap path:hover { fill-opacity: 1; }
