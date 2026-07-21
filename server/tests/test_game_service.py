@@ -26,7 +26,7 @@ BASE_CONFIG = {
 
 
 def _fresh_gs():
-    doc, tokens = game_service.create_match(BASE_CONFIG)
+    doc, tokens, _spectator = game_service.create_match(BASE_CONFIG)
     gs, meta = state_schema.match_from_dict(doc)
     return gs, doc, tokens
 

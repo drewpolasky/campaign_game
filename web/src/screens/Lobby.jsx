@@ -1,20 +1,32 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { api } from '../api.js'
+import { POSITION_CHOICES } from '../issues.js'
 
 const AI_STRATEGIES = ['Default', 'Aggressive', 'BigState', 'CloseOnly', 'MoneyMachine', 'Balanced']
 const TURN_OPTIONS = [8, 10, 20]
 
 function blankSeat(n, controller = 'human') {
-  return { name: `Candidate ${n}`, controller, ai_strategy: 'Default' }
+  return { name: `Candidate ${n}`, controller, ai_strategy: 'Default', positions: [] }
 }
 
 export default function Lobby() {
   const [numTurns, setNumTurns] = useState(10)
   const [issuesMode, setIssuesMode] = useState(false)
   const [seats, setSeats] = useState([blankSeat(1, 'human'), blankSeat(2, 'ai')])
+  const [issues, setIssues] = useState([])
   const [result, setResult] = useState(null)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
+
+  useEffect(() => { api.getIssues().then(setIssues).catch(() => {}) }, [])
+
+  function setPos(i, issueIdx, val) {
+    setSeats(seats.map((s, j) => {
+      if (j !== i) return s
+      const positions = issues.map((_, k) => (k === issueIdx ? val : (s.positions?.[k] ?? 0)))
+      return { ...s, positions }
+    }))
+  }
 
   function setSeat(i, patch) {
     setSeats(seats.map((s, j) => (j === i ? { ...s, ...patch } : s)))
@@ -38,6 +50,11 @@ export default function Lobby() {
           name: s.name,
           controller: s.controller,
           ai_strategy: s.controller === 'ai' ? s.ai_strategy : null,
+          // Human platforms only matter in issues mode; AI seats get randomized
+          // positions server-side, so send null for them.
+          positions: (s.controller === 'human' && issuesMode)
+            ? issues.map((_, k) => s.positions?.[k] ?? 0)
+            : null,
         })),
       }
       setResult(await api.createMatch(config))
@@ -103,6 +120,34 @@ export default function Lobby() {
             </tbody>
           </table>
 
+          {issuesMode && issues.length > 0 && (
+            <div style={{ marginTop: 18 }}>
+              <h3 style={{ marginBottom: 4 }}>Platforms</h3>
+              <p className="muted small">Each human candidate's stance per issue. Matching a state's stance on the week's issue boosts your support there; clashing hurts. AI candidates get randomized platforms.</p>
+              {seats.map((s, i) => s.controller === 'human' && (
+                <div key={i} className="panel" style={{ background: 'var(--panel-2)', marginBottom: 8 }}>
+                  <strong>{s.name}</strong>
+                  <div style={{ overflowX: 'auto' }}>
+                    <table>
+                      <thead><tr>{issues.map((iss) => <th key={iss.name}>{iss.name}</th>)}</tr></thead>
+                      <tbody>
+                        <tr>
+                          {issues.map((iss, k) => (
+                            <td key={iss.name}>
+                              <select value={s.positions?.[k] ?? 0} onChange={(e) => setPos(i, k, Number(e.target.value))}>
+                                {POSITION_CHOICES.map((c) => <option key={c.value} value={c.value}>{iss[c.key]}</option>)}
+                              </select>
+                            </td>
+                          ))}
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
           <div className="row" style={{ marginTop: 14 }}>
             <button className="secondary" onClick={addSeat} disabled={seats.length >= 10}>+ Add seat</button>
             <button onClick={create} disabled={busy}>{busy ? 'Creating…' : 'Create match'}</button>
@@ -138,6 +183,14 @@ export default function Lobby() {
               })}
             </tbody>
           </table>
+          {result.spectator_link && (
+            <div className="row" style={{ marginTop: 12 }}>
+              <span className="muted small">Spectator link (read-only):</span>
+              <a href={result.spectator_link}>{origin}{result.spectator_link}</a>
+              <button className="secondary small" onClick={() => navigator.clipboard.writeText(origin + result.spectator_link)}>Copy</button>
+            </div>
+          )}
+
           <div className="row" style={{ marginTop: 14 }}>
             <button className="secondary" onClick={() => setResult(null)}>Create another</button>
           </div>

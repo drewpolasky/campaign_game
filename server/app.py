@@ -30,8 +30,10 @@ from flask import request, jsonify, send_from_directory, Response  # noqa: E402
 
 from server.campaign_save_server import app  # noqa: E402  (reuse blob app + endpoints)
 from server import db, game_service, state_schema  # noqa: E402
+import state_issues  # noqa: E402
 
 db.init_db()
+db.prune_finished()  # drop long-finished matches so the DB doesn't grow forever
 
 # Built React bundle (produced by `cd web && npm run build`). Served
 # same-origin in production so there's no CORS and magic links resolve against
@@ -119,6 +121,13 @@ def _maybe_resolve(match_id):
 
 # --- endpoints -------------------------------------------------------------
 
+@app.route('/api/issues', methods=['GET'])
+def issues():
+    """Static issue metadata (name + per-side labels), so the lobby can offer
+    per-issue position pickers before a match exists."""
+    return jsonify(state_issues.ISSUES)
+
+
 @app.route('/api/matches', methods=['POST'])
 def create_match():
     body = request.get_json(silent=True) or {}
@@ -126,10 +135,10 @@ def create_match():
     if not config or not config.get('seats'):
         return jsonify({'error': 'config with seats is required'}), 400
     try:
-        doc, seat_tokens = game_service.create_match(config)
+        doc, seat_tokens, spectator_token = game_service.create_match(config)
     except (ValueError, KeyError) as e:
         return jsonify({'error': str(e)}), 400
-    db.create_match(doc, seat_tokens)
+    db.create_match(doc, seat_tokens, spectator_token)
     return jsonify({
         'match_id': doc['match_id'],
         'seats': doc['config']['seats'],
@@ -137,6 +146,8 @@ def create_match():
         'seat_links': {str(seat): '/play/{}'.format(tok)
                        for seat, tok in seat_tokens.items()},
         'seat_tokens': {str(seat): tok for seat, tok in seat_tokens.items()},
+        'spectator_link': '/play/{}'.format(spectator_token),
+        'spectator_token': spectator_token,
     }), 201
 
 

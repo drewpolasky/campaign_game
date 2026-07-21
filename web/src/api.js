@@ -25,6 +25,7 @@ async function req(path, opts = {}) {
 
 export const api = {
   base: API_BASE,
+  getIssues: () => req('/api/issues'),
   createMatch: (config) =>
     req('/api/matches', { method: 'POST', body: JSON.stringify({ config }) }),
   resolveToken: (token) =>

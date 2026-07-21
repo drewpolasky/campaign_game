@@ -70,9 +70,10 @@ def init_db():
             """)
 
 
-def create_match(doc, seat_tokens):
-    """Insert a new match: its state doc, and one seat row per configured seat.
-    ``seat_tokens`` is {seat_no: token} for human seats."""
+def create_match(doc, seat_tokens, spectator_token=None):
+    """Insert a new match: its state doc, one seat row per configured seat, and
+    a read-only spectator row (seat_no 0). ``seat_tokens`` is {seat_no: token}
+    for human seats."""
     match_id = doc['match_id']
     seats = doc['config']['seats']
     with _connect() as conn:
@@ -87,7 +88,20 @@ def create_match(doc, seat_tokens):
                 ' VALUES (?, ?, ?, ?, ?, 0)',
                 (match_id, s['seat'], s['controller'],
                  seat_tokens.get(s['seat']), s['name']))
+        if spectator_token:
+            conn.execute(
+                'INSERT INTO seats (match_id, seat_no, controller, token, display_name, submitted_week)'
+                ' VALUES (?, 0, ?, ?, ?, 0)',
+                (match_id, 'spectator', spectator_token, 'Spectator'))
     return match_id
+
+
+def get_seats(match_id):
+    with _connect() as conn:
+        rows = conn.execute(
+            'SELECT seat_no, controller, display_name, submitted_week FROM seats'
+            ' WHERE match_id = ? AND seat_no > 0 ORDER BY seat_no', (match_id,)).fetchall()
+    return [dict(r) for r in rows]
 
 
 def get_match(match_id):
@@ -130,14 +144,6 @@ def seat_for_token(token):
             'controller': row['controller'], 'display_name': row['display_name']}
 
 
-def get_seats(match_id):
-    with _connect() as conn:
-        rows = conn.execute(
-            'SELECT seat_no, controller, display_name, submitted_week FROM seats'
-            ' WHERE match_id = ? ORDER BY seat_no', (match_id,)).fetchall()
-    return [dict(r) for r in rows]
-
-
 def human_seats(match_id):
     return [s['seat_no'] for s in get_seats(match_id) if s['controller'] == 'human']
 
@@ -174,3 +180,20 @@ def clear_submissions(match_id, week):
     with _connect() as conn:
         conn.execute('DELETE FROM submissions WHERE match_id = ? AND week = ?',
                      (match_id, week))
+
+
+def prune_finished(max_age_days=14):
+    """Delete finished matches (and their seats/submissions) created more than
+    ``max_age_days`` ago. Called at startup; keeps the DB from growing forever.
+    Returns the number of matches removed."""
+    cutoff = time.time() - max_age_days * 86400
+    with _connect() as conn:
+        rows = conn.execute(
+            "SELECT id FROM matches WHERE status = 'finished' AND created < ?",
+            (cutoff,)).fetchall()
+        ids = [r['id'] for r in rows]
+        for mid in ids:
+            conn.execute('DELETE FROM submissions WHERE match_id = ?', (mid,))
+            conn.execute('DELETE FROM seats WHERE match_id = ?', (mid,))
+            conn.execute('DELETE FROM matches WHERE id = ?', (mid,))
+    return len(ids)

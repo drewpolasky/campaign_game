@@ -73,7 +73,7 @@ th { color: var(--muted); font-weight: 600; font-size: .8rem; text-transform: up
 .pill.good { color: var(--good); border-color: var(--good); }
 .pill.warn { color: var(--warn); border-color: var(--warn); }
 
-.budget { display: flex; gap: 20px; font-variant-numeric: tabular-nums; }
+.budget { display: flex; gap: 20px; flex-wrap: wrap; font-variant-numeric: tabular-nums; }
 .budget .val { font-size: 1.25rem; font-weight: 700; }
 .budget .val.over { color: var(--bad); }
 
@@ -89,3 +89,17 @@ th { color: var(--muted); font-weight: 600; font-size: .8rem; text-transform: up
 
 .usmap { width: 100%; height: auto; max-height: 540px; display: block; }
 .usmap path:hover { fill-opacity: 1; }
+
+/* Wide content (tables) never forces the page to scroll sideways. */
+.panel { overflow-wrap: anywhere; }
+
+@media (max-width: 640px) {
+  .wrap { padding: 14px 12px 48px; }
+  h1 { font-size: 1.35rem; }
+  .panel { padding: 12px; }
+  .budget { gap: 14px; }
+  .budget .val { font-size: 1.05rem; }
+  .usmap { max-height: 60vh; }
+  th, td { padding: 6px 6px; }
+  input[type=number] { width: 64px; }
+}

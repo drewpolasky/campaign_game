@@ -50,9 +50,9 @@ def generate_match_id(rng=secrets):
 def create_match(config):
     """Build a fresh match from ``config`` (see game_world.build_match).
 
-    Returns (doc, seat_tokens) where doc is the JSON match document and
-    seat_tokens is {seat: token} for **human** seats (the magic-link secrets).
-    AI seats get no token.
+    Returns (doc, seat_tokens, spectator_token) where doc is the JSON match
+    document, seat_tokens is {seat: token} for **human** seats (the magic-link
+    secrets; AI seats get none), and spectator_token is a read-only link secret.
     """
     gs = game_world.build_match(config)
     match_id = generate_match_id()
@@ -62,7 +62,8 @@ def create_match(config):
     for seat_cfg in doc['config']['seats']:
         if seat_cfg['controller'] == 'human':
             seat_tokens[seat_cfg['seat']] = secrets.token_urlsafe(16)
-    return doc, seat_tokens
+    spectator_token = secrets.token_urlsafe(16)
+    return doc, seat_tokens, spectator_token
 
 
 # --- move cost / validation ----------------------------------------------

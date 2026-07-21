@@ -49,6 +49,7 @@ if _REPO_ROOT not in sys.path:
 from State import State, District  # noqa: E402
 from Player import Player  # noqa: E402
 import engine  # noqa: E402
+import state_issues  # noqa: E402
 
 
 # --- Player ---------------------------------------------------------------
@@ -163,6 +164,10 @@ def match_to_dict(gs, match_id=None, week_results=None, whose_turn=None):
             'issues_mode': gs.issues_mode,
             'calendar': [list(c) for c in gs.calendar],
             'seats': _seats_config(players),
+            # Static issue metadata (name + per-side labels), so the client can
+            # render the issue-of-the-week and each player/state stance in plain
+            # English. Index order matches Player.positions / State.positions.
+            'issues': [dict(i) for i in state_issues.ISSUES],
         },
         'current_date': gs.current_date,
         'event_of_week': gs.event_of_week,

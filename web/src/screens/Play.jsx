@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { api } from '../api.js'
 import USMap from '../USMap.jsx'
+import { sideLabel } from '../issues.js'
 
 const WEEKLY_TIME = 80
 const SEAT_COLORS = ['#ff5b5b', '#4f8cff', '#3ecf8e', '#b07bff', '#ffb23e', '#38d6d6',
@@ -54,9 +55,17 @@ export default function Play() {
     return () => pollRef.current && clearInterval(pollRef.current)
   }, [token])
 
+  const isSpectator = info?.controller === 'spectator'
   const seat = info?.seat
   const idx = seat - 1
-  const me = state && seat != null ? state.players[String(seat)] : null
+  const me = state && seat != null && !isSpectator ? state.players[String(seat)] : null
+
+  // Spectators just watch — poll for the latest state.
+  useEffect(() => {
+    if (!isSpectator) return
+    const iv = setInterval(() => { load().catch(() => {}) }, 5000)
+    return () => clearInterval(iv)
+  }, [isSpectator])
 
   const totals = useMemo(() => {
     if (!state) return { time: 0, money: 0 }
@@ -125,7 +134,9 @@ export default function Play() {
   }
 
   if (error && !state) return <div className="wrap"><p className="error">{error}</p></div>
-  if (!state || !me) return <div className="wrap"><p className="muted">Loading…</p></div>
+  if (!state || (!me && !isSpectator)) return <div className="wrap"><p className="muted">Loading…</p></div>
+
+  if (isSpectator) return <Spectator state={state} status={status} />
 
   const iSubmitted = status?.seats?.find((s) => s.seat === seat)?.submitted
   const gameOver = status?.game_over
@@ -147,6 +158,9 @@ export default function Play() {
 
       <Dashboard me={me} timeLeft={timeLeft} moneyLeft={moneyLeft} over={overBudget} />
       <SeatBar status={status} seat={seat} />
+      {state.config.issues_mode && state.config.issues?.[state.event_of_week] && (
+        <IssueBanner issue={state.config.issues[state.event_of_week]} me={me} eventIdx={state.event_of_week} />
+      )}
 
       {Object.keys(state.week_results?._state_results || {}).length > 0 && (
         <LastWeek results={state.week_results} seats={state.config.seats} />
@@ -235,6 +249,61 @@ function SeatBar({ status, seat }) {
   )
 }
 
+function Spectator({ state, status }) {
+  const players = Object.entries(state.players)
+    .map(([seat, p]) => ({ seat: Number(seat), name: p.public_name, delegates: Math.round(p.delegate_count), momentum: Math.round(p.momentum) }))
+    .sort((a, b) => b.delegates - a.delegates)
+  const gameOver = status?.game_over
+  return (
+    <div className="wrap">
+      <div className="spread">
+        <h1>Spectating</h1>
+        <span className="pill">Week {state.current_date} / {state.config.num_turns}{gameOver ? ' · finished' : ''}</span>
+      </div>
+      <div className="panel">
+        <h3>Standings</h3>
+        <div style={{ overflowX: 'auto' }}>
+          <table>
+            <thead><tr><th>#</th><th>Candidate</th><th>Delegates</th><th>Momentum</th><th>This turn</th></tr></thead>
+            <tbody>
+              {players.map((p, i) => {
+                const ss = status?.seats?.find((s) => s.seat === p.seat)
+                return (
+                  <tr key={p.seat}>
+                    <td>{i + 1}</td>
+                    <td><span className="leader-dot" style={{ background: SEAT_COLORS[p.seat - 1] }} />{p.name}</td>
+                    <td>{p.delegates.toLocaleString()}</td>
+                    <td>{p.momentum}</td>
+                    <td className="muted small">{ss ? (ss.controller === 'human' ? (ss.submitted ? 'submitted' : 'thinking') : 'AI') : ''}</td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div className="panel">
+        <USMap state={state} selected={null} onSelect={() => {}} seatColors={SEAT_COLORS} />
+        <p className="muted small" style={{ textAlign: 'center', marginTop: 6 }}>Colored by current leader · auto-refreshing</p>
+      </div>
+      {Object.keys(state.week_results?._state_results || {}).length > 0 && (
+        <LastWeek results={state.week_results} seats={state.config.seats} />
+      )}
+      {gameOver && <FinalResults state={state} />}
+    </div>
+  )
+}
+
+function IssueBanner({ issue, me, eventIdx }) {
+  const myPos = me.positions?.[eventIdx] ?? 0
+  return (
+    <div className="panel" style={{ borderColor: 'var(--accent)' }}>
+      <strong>📣 Issue this week: {issue.name}</strong>
+      <span className="muted"> · your stance: <b style={{ color: 'var(--text)' }}>{sideLabel(issue, myPos)}</b>. States that share your stance are easier to win support in this week; states that clash are harder.</span>
+    </div>
+  )
+}
+
 function StateRow({ name, state, idx, move, selected, onSelect }) {
   const st = state.states[name]
   const myOrg = st.organizations[idx]
@@ -263,12 +332,27 @@ function StateDetail({ name, state, idx, move, onClose, setCampaign, setAd, setO
   const past = week < state.current_date
   const pendingOrg = move.orgs[name] || 0
   const canBuildBallot = myOrg > 0 || week == null || state.current_date <= week
+
+  // Issue alignment for the current week (only in issues mode).
+  let align = null
+  if (state.config.issues_mode) {
+    const issue = state.config.issues?.[state.event_of_week]
+    const statePos = Math.round(st.positions?.[state.event_of_week] ?? 0)
+    const myPos = Math.round(state.players[String(idx + 1)]?.positions?.[state.event_of_week] ?? 0)
+    if (issue) {
+      if (statePos === 0) align = { cls: 'muted', text: `${name} is neutral on ${issue.name} this week.` }
+      else if (myPos === statePos) align = { cls: 'notice', text: `✓ You align with ${name} on ${issue.name} (${sideLabel(issue, statePos)}) — support is easier here this week.` }
+      else align = { cls: 'error', text: `✗ You clash with ${name} on ${issue.name} (they lean ${sideLabel(issue, statePos)}) — support is harder here this week.` }
+    }
+  }
+
   return (
     <div className="panel">
       <div className="spread">
         <h3 style={{ margin: 0 }}>{name} <span className="muted small">· votes week {week}</span></h3>
         <button className="secondary small" onClick={onClose}>Close</button>
       </div>
+      {align && <p className={align.cls + ' small'} style={{ marginTop: 6 }}>{align.text}</p>}
       {past && <p className="muted small">This state has already voted.</p>}
       {!past && (
         <div className="row" style={{ margin: '10px 0' }}>
@@ -333,23 +417,46 @@ function LastWeek({ results, seats }) {
 
 function FinalResults({ state }) {
   const players = Object.entries(state.players)
-    .map(([seat, p]) => ({ seat: Number(seat), name: p.public_name, delegates: Math.round(p.delegate_count) }))
+    .map(([seat, p]) => {
+      const st = p.stats || {}
+      const sup = (st.support_from_org || 0) + (st.support_from_campaign || 0) + (st.support_from_ads || 0)
+      return {
+        seat: Number(seat), name: p.public_name,
+        delegates: Math.round(p.delegate_count),
+        statesWon: (st.states_won || []).length,
+        districtsWon: st.districts_won || 0,
+        org: st.support_from_org || 0, camp: st.support_from_campaign || 0, ads: st.support_from_ads || 0, sup,
+      }
+    })
     .sort((a, b) => b.delegates - a.delegates)
+  const winner = players[0]
+  const pct = (v, total) => (total > 0 ? Math.round((v / total) * 100) : 0)
   return (
-    <div className="panel">
-      <h2>Final results</h2>
-      <table>
-        <thead><tr><th>#</th><th>Candidate</th><th>Delegates</th></tr></thead>
-        <tbody>
-          {players.map((p, i) => (
-            <tr key={p.seat}>
-              <td>{i + 1}</td>
-              <td><span className="leader-dot" style={{ background: SEAT_COLORS[p.seat - 1] }} />{p.name}{i === 0 ? ' 🏆' : ''}</td>
-              <td>{p.delegates}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <>
+      <div className="panel" style={{ textAlign: 'center', borderColor: SEAT_COLORS[winner.seat - 1] }}>
+        <h2 style={{ margin: 0 }}>🏆 {winner.name} wins the nomination</h2>
+        <p className="muted">{winner.delegates.toLocaleString()} delegates · {winner.statesWon} states carried</p>
+      </div>
+      <div className="panel">
+        <h3>Final standings</h3>
+        <div style={{ overflowX: 'auto' }}>
+          <table>
+            <thead><tr><th>#</th><th>Candidate</th><th>Delegates</th><th>States</th><th>Districts</th><th>Support mix (org / campaign / ads)</th></tr></thead>
+            <tbody>
+              {players.map((p, i) => (
+                <tr key={p.seat}>
+                  <td>{i + 1}</td>
+                  <td><span className="leader-dot" style={{ background: SEAT_COLORS[p.seat - 1] }} />{p.name}{i === 0 ? ' 🏆' : ''}</td>
+                  <td>{p.delegates.toLocaleString()}</td>
+                  <td>{p.statesWon}</td>
+                  <td>{p.districtsWon}</td>
+                  <td className="muted small">{pct(p.org, p.sup)}% / {pct(p.camp, p.sup)}% / {pct(p.ads, p.sup)}%</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </>
   )
 }
