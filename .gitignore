@@ -23,3 +23,8 @@ runs/**/snapshots/
 runs/**/pool_manifest.txt
 runs/smoke/
 balance_plots/
+
+# Server match database (SQLite) — runtime state, not source.
+server/*.db
+server/*.db-wal
+server/*.db-shm
