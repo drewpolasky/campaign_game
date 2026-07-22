@@ -87,13 +87,20 @@ def build_match(config, rng=None):
         controller = seat_cfg.get('controller', 'human')
         p.isHuman = 'human' if controller == 'human' else 'AI'
         p.aiStrategy = seat_cfg.get('ai_strategy') or DEFAULT_AI_STRATEGY
-        # Issue positions: explicit > randomized (issues mode) > neutral.
+        # Issue positions:
+        #   explicit config          -> use as given
+        #   no issues mode           -> neutral
+        #   AI in issues mode        -> randomized server-side
+        #   human in issues mode     -> LEFT EMPTY; the player picks their own
+        #                               platform when they first open their seat.
         if seat_cfg.get('positions') is not None:
             p.positions = list(seat_cfg['positions'])
-        elif issues_mode:
+        elif not issues_mode:
+            p.positions = [0] * n_issues
+        elif controller == 'ai':
             p.positions = [rng.choice([-1, 0, 1]) for _ in range(n_issues)]
         else:
-            p.positions = [0] * n_issues
+            p.positions = []
         players[seat] = p
 
     # Zero-init per-state organizations and per-district allocations/support.

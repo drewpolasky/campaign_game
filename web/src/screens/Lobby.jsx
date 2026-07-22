@@ -1,43 +1,24 @@
 import { useEffect, useState } from 'react'
 import { api } from '../api.js'
-import { POSITION_CHOICES } from '../issues.js'
 
 const AI_STRATEGIES = ['Default', 'Aggressive', 'BigState', 'CloseOnly', 'MoneyMachine', 'Balanced']
 const TURN_OPTIONS = [8, 10, 20]
 
 function blankSeat(n, controller = 'human') {
-  return { name: `Candidate ${n}`, controller, ai_strategy: 'Default', positions: [] }
+  return { name: `Candidate ${n}`, controller, ai_strategy: 'Default' }
 }
 
 export default function Lobby() {
   const [numTurns, setNumTurns] = useState(10)
   const [issuesMode, setIssuesMode] = useState(false)
   const [seats, setSeats] = useState([blankSeat(1, 'human'), blankSeat(2, 'ai')])
-  const [issues, setIssues] = useState([])
   const [gated, setGated] = useState(false)
   const [createKey, setCreateKey] = useState(() => localStorage.getItem('campaign_create_key') || '')
   const [result, setResult] = useState(null)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
 
-  useEffect(() => { api.getIssues().then(setIssues).catch(() => {}) }, [])
   useEffect(() => { api.getConfig().then((c) => setGated(!!c.create_gated)).catch(() => {}) }, [])
-
-  function setPos(i, issueIdx, val) {
-    setSeats(seats.map((s, j) => {
-      if (j !== i) return s
-      const positions = issues.map((_, k) => (k === issueIdx ? val : (s.positions?.[k] ?? 0)))
-      return { ...s, positions }
-    }))
-  }
-
-  const randomStance = () => issues.map(() => [-1, 0, 1][Math.floor(Math.random() * 3)])
-  function randomizeSeat(i) {
-    setSeats(seats.map((s, j) => (j === i ? { ...s, positions: randomStance() } : s)))
-  }
-  function randomizeAll() {
-    setSeats(seats.map((s) => (s.controller === 'human' ? { ...s, positions: randomStance() } : s)))
-  }
 
   function setSeat(i, patch) {
     setSeats(seats.map((s, j) => (j === i ? { ...s, ...patch } : s)))
@@ -61,11 +42,9 @@ export default function Lobby() {
           name: s.name,
           controller: s.controller,
           ai_strategy: s.controller === 'ai' ? s.ai_strategy : null,
-          // Human platforms only matter in issues mode; AI seats get randomized
-          // positions server-side, so send null for them.
-          positions: (s.controller === 'human' && issuesMode)
-            ? issues.map((_, k) => s.positions?.[k] ?? 0)
-            : null,
+          // Platforms are chosen by each human when they open their seat link;
+          // AI seats get randomized positions server-side. So none are sent here.
+          positions: null,
         })),
       }
       const res = await api.createMatch(config, createKey)
@@ -140,38 +119,10 @@ export default function Lobby() {
             </tbody>
           </table>
 
-          {issuesMode && issues.length > 0 && (
-            <div style={{ marginTop: 18 }}>
-              <div className="spread" style={{ marginBottom: 4 }}>
-                <h3 style={{ margin: 0 }}>Platforms</h3>
-                <button className="secondary small" onClick={randomizeAll}>🎲 Randomize all</button>
-              </div>
-              <p className="muted small">Each human candidate's stance per issue. Matching a state's stance on the week's issue boosts your support there; clashing hurts. AI candidates get randomized platforms.</p>
-              {seats.map((s, i) => s.controller === 'human' && (
-                <div key={i} className="panel" style={{ background: 'var(--panel-2)', marginBottom: 8 }}>
-                  <div className="spread">
-                    <strong>{s.name}</strong>
-                    <button className="secondary small" onClick={() => randomizeSeat(i)}>🎲 Randomize</button>
-                  </div>
-                  <div style={{ overflowX: 'auto' }}>
-                    <table>
-                      <thead><tr>{issues.map((iss) => <th key={iss.name}>{iss.name}</th>)}</tr></thead>
-                      <tbody>
-                        <tr>
-                          {issues.map((iss, k) => (
-                            <td key={iss.name}>
-                              <select value={s.positions?.[k] ?? 0} onChange={(e) => setPos(i, k, Number(e.target.value))}>
-                                {POSITION_CHOICES.map((c) => <option key={c.value} value={c.value}>{iss[c.key]}</option>)}
-                              </select>
-                            </td>
-                          ))}
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              ))}
-            </div>
+          {issuesMode && (
+            <p className="muted small" style={{ marginTop: 10 }}>
+              Issues mode is on — each human player picks their own platform when they open their seat link. AI candidates get randomized platforms.
+            </p>
           )}
 
           <div className="row" style={{ marginTop: 14 }}>

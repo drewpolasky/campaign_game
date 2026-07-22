@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { api } from '../api.js'
 import USMap from '../USMap.jsx'
 import StateDistrictMap from '../StateDistrictMap.jsx'
-import { sideLabel } from '../issues.js'
+import { sideLabel, POSITION_CHOICES } from '../issues.js'
 
 const WEEKLY_TIME = 80
 const SEAT_COLORS = ['#ff5b5b', '#4f8cff', '#3ecf8e', '#b07bff', '#ffb23e', '#38d6d6',
@@ -144,6 +144,12 @@ export default function Play() {
   if (!state || (!me && !isSpectator)) return <div className="wrap"><p className="muted">Loading…</p></div>
 
   if (isSpectator) return <Spectator state={state} status={status} />
+
+  // Issues mode: a human picks their platform the first time they open the seat.
+  if (state.config.issues_mode && me && !(me.positions && me.positions.length)) {
+    return <PlatformPicker state={state} matchId={info.match_id} token={token}
+      name={me.public_name} onDone={() => load()} />
+  }
 
   const iSubmitted = status?.seats?.find((s) => s.seat === seat)?.submitted
   const gameOver = status?.game_over
@@ -379,6 +385,50 @@ function Spectator({ state, status }) {
         <LastWeek results={state.week_results} seats={state.config.seats} />
       )}
       {gameOver && <FinalResults state={state} />}
+    </div>
+  )
+}
+
+function PlatformPicker({ state, matchId, token, name, onDone }) {
+  const issues = state.config.issues || []
+  const [pos, setPos] = useState(() => issues.map(() => 0))
+  const [busy, setBusy] = useState(false)
+  const [err, setErr] = useState('')
+  const randomize = () => setPos(issues.map(() => [-1, 0, 1][Math.floor(Math.random() * 3)]))
+  async function confirm() {
+    setBusy(true); setErr('')
+    try {
+      await api.setPositions(matchId, token, pos)
+      await onDone()
+    } catch (e) { setErr(e.message) } finally { setBusy(false) }
+  }
+  return (
+    <div className="wrap">
+      <h1>{name}: choose your platform</h1>
+      <p className="muted">Set your stance on each issue. When it's the issue of the week, states that share your stance are easier to win support in; states that clash are harder. This is locked in once you confirm.</p>
+      <div className="panel">
+        <div style={{ overflowX: 'auto' }}>
+          <table>
+            <tbody>
+              {issues.map((iss, i) => (
+                <tr key={iss.name}>
+                  <td style={{ fontWeight: 600 }}>{iss.name}</td>
+                  <td>
+                    <select value={pos[i]} onChange={(e) => setPos(pos.map((v, j) => (j === i ? Number(e.target.value) : v)))}>
+                      {POSITION_CHOICES.map((c) => <option key={c.value} value={c.value}>{iss[c.key]}</option>)}
+                    </select>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="row" style={{ marginTop: 14 }}>
+          <button className="secondary" onClick={randomize}>🎲 Randomize</button>
+          <button onClick={confirm} disabled={busy}>{busy ? 'Saving…' : 'Confirm platform'}</button>
+        </div>
+        {err && <p className="error" style={{ marginTop: 10 }}>{err}</p>}
+      </div>
     </div>
   )
 }

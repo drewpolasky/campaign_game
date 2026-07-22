@@ -31,6 +31,10 @@ export const api = {
     req('/api/matches', { method: 'POST', body: JSON.stringify({ config, create_key: createKey || '' }) }),
   resolveToken: (token) =>
     req(`/api/resolve-token?token=${encodeURIComponent(token)}`),
+  setPositions: (matchId, token, positions) =>
+    req(`/api/matches/${matchId}/positions?token=${encodeURIComponent(token)}`, {
+      method: 'POST', body: JSON.stringify({ positions }),
+    }),
   getState: (matchId, token) =>
     req(`/api/matches/${matchId}/state?token=${encodeURIComponent(token)}`),
   submitMove: (matchId, token, move) =>

@@ -254,6 +254,33 @@ def get_state(match_id):
     })
 
 
+@app.route('/api/matches/<match_id>/positions', methods=['POST'])
+def set_positions(match_id):
+    """A human seat chooses its issue platform the first time it opens the seat
+    link (issues mode only). Settable once, while it's still empty."""
+    seat, err = _auth(match_id)
+    if err:
+        return err
+    if seat['controller'] != 'human':
+        return jsonify({'error': 'seat is not human-controlled'}), 400
+    positions = (request.get_json(silent=True) or {}).get('positions')
+    n = len(state_issues.ISSUES)
+    if not isinstance(positions, list) or len(positions) != n or not all(p in (-1, 0, 1) for p in positions):
+        return jsonify({'error': 'positions must be a list of {} values in -1/0/1'.format(n)}), 400
+    with db.resolve_lock:
+        match = db.get_match(match_id)
+        if match is None:
+            return jsonify({'error': 'no such match'}), 404
+        pdata = match['doc']['players'].get(str(seat['seat_no']))
+        if pdata is None:
+            return jsonify({'error': 'no such seat'}), 404
+        if pdata.get('positions'):
+            return jsonify({'error': 'platform already set'}), 409
+        pdata['positions'] = [int(p) for p in positions]
+        db.save_match_state(match_id, match['doc'])
+    return jsonify({'ok': True})
+
+
 @app.route('/api/matches/<match_id>/moves', methods=['POST'])
 def submit_move(match_id):
     seat, err = _auth(match_id)
@@ -267,6 +294,11 @@ def submit_move(match_id):
         return jsonify({'error': 'no such match'}), 404
     if match['status'] != 'active':
         return jsonify({'error': 'match is not active'}), 409
+    # In issues mode a player must pick their platform before playing.
+    if match['doc']['config']['issues_mode']:
+        pdata = match['doc']['players'].get(str(seat['seat_no']))
+        if pdata is not None and not pdata.get('positions'):
+            return jsonify({'error': 'choose your platform first'}), 409
 
     week = match['current_week']
     if seat['seat_no'] in db.submitted_seats(match_id, week):
