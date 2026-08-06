@@ -116,6 +116,9 @@ export default function Play() {
 
   async function submit() {
     if (!info || overBudget) return
+    const wk = status?.current_week
+    const msg = `End your turn${wk ? ` for week ${wk}` : ''}? Your moves will be locked in and submitted to the other players.`
+    if (!window.confirm(msg)) return
     setBusy(true); setError('')
     try {
       const res = await api.submitMove(info.match_id, token, move)

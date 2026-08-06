@@ -3984,6 +3984,17 @@ def endTurn(window, fundraising):
     global players
     global numTurns
 
+    # Confirm before locking in the turn — this commits the week's plan and
+    # can't be undone. In a Live game it also submits the moves to the others.
+    if is_networked_game() and network_state.get('mode') == 'simultaneous':
+        prompt = ('End your turn for week {}? Your moves will be locked in and '
+                  'submitted to the other players.'.format(currentDate))
+    else:
+        prompt = ('End your turn for week {}? Any unspent campaign time will go '
+                  'to fundraising, and this turn cannot be changed.'.format(currentDate))
+    if not messagebox.askyesno('End Turn', prompt):
+        return
+
     players[player].resources[0] -= fundraising
     fundraising += players[player].resources[0]
     calcEndTurn(fundraising)
