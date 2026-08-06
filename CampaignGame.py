@@ -191,10 +191,10 @@ _TUTORIAL_PAGES = [
             "  * 'Iowa - wk 4 (12 del)' shows the state, the week it votes, and the delegates at stake.\n"
             "  * Rows where you're already on the ballot are highlighted green and prefixed with '*'.\n"
             "  * Past contests are grayed out as '[Done]'.\n\n"
-            "Each row also has a quick-action button on the right:\n"
-            "  * 'Ballot $10k' if you're not on the ballot yet.\n"
-            "  * 'Office $10k' to grow from level 1 to level 2.\n"
-            "  * 'Build $20k' (or higher) to keep building your organization.\n\n"
+            "Each row also has a quick-action button on the right (the price scales with state size, from $5k in the smallest states to $20k in the largest):\n"
+            "  * 'Ballot $Xk' if you're not on the ballot yet.\n"
+            "  * 'Office $Xk' to grow from level 1 to level 2.\n"
+            "  * 'Build $Xk' (or higher) to keep building your organization.\n\n"
             "There's also a 'Jump to State' search box at the top so you can find a state by name without scrolling."
         ),
     },
@@ -230,8 +230,8 @@ _TUTORIAL_PAGES = [
         'title': 'Organization (Getting on the Ballot)',
         'image': None,
         'body': (
-            "Before you can earn any support in a state, you need to be on the ballot there. That's organization tier 1, which costs $10,000.\n\n"
-            "Each tier above 1 also costs $10,000 x current tier (so $10k for the office, $20k for the next, $30k after that, etc). Higher tiers:\n"
+            "Before you can earn any support in a state, you need to be on the ballot there. That's organization tier 1. The base cost scales with the size of the state: $5,000 in the smallest states, $10,000 in medium ones, $15,000 in large ones, and $20,000 in the largest.\n\n"
+            "Getting on the ballot and the first field office both cost that base; each tier above that costs the base x current tier (so in a medium state: $10k for the office, $20k for the next, $30k after that). Higher tiers:\n"
             "  * Multiply support gained from organization directly (each tier adds 2 baseline support per district per turn).\n"
             "  * Boost local donations from supporters.\n"
             "  * Improve voter turnout for you on election night.\n\n"
@@ -1770,7 +1770,7 @@ def calcAImove(agent):
             continue
         state = info['state']
         org_level = state.organizations[ai_idx]
-        cost = max(10000, 10000 * org_level)
+        cost = engine.org_tier_cost(state, org_level)
         # Value of an org tick: scales with delegates and how soon we vote.
         org_value = info['delegates'] * (1.0 + max(0, 6 - time_to_election))
         threshold = (org_level + 1) * personality['org_threshold']
@@ -3121,12 +3121,14 @@ def render_selected_state(stateName):
               stateName, _format_position(state_pos, eventOfTheWeek), align_text),
           bg='white', justify=LEFT, wraplength=360).pack(anchor='w', padx=12, pady=(0, 10))
 
+    org_cost = engine.org_tier_cost(currentState, currentOrg)
     if currentOrg == 0:
-        Button(state_card, text='Get on the ballot ($10,000)', command=lambda: getOnBallot(player, stateName, 10000, None, None)).pack(anchor='w', padx=12, pady=(0, 8))
+        org_label = 'Get on the ballot (${:,})'.format(org_cost)
     elif currentOrg == 1:
-        Button(state_card, text='Build field office ($10,000)', command=lambda: getOnBallot(player, stateName, 10000, None, None)).pack(anchor='w', padx=12, pady=(0, 8))
+        org_label = 'Build field office (${:,})'.format(org_cost)
     else:
-        Button(state_card, text='Build more organization (${:,.0f})'.format(10000 * currentOrg), command=lambda: getOnBallot(player, stateName, 10000 * currentOrg, None, None)).pack(anchor='w', padx=12, pady=(0, 8))
+        org_label = 'Build more organization (${:,})'.format(org_cost)
+    Button(state_card, text=org_label, command=lambda c=org_cost: getOnBallot(player, stateName, c, None, None)).pack(anchor='w', padx=12, pady=(0, 8))
 
     scroll_holder = Frame(state_card, bg='white')
     scroll_holder.pack(fill='both', expand=True, padx=12, pady=(0, 6))
@@ -3738,13 +3740,14 @@ def createNationalMap(selected_state=None):
 
             # Right-side action button: build organization. Skipped for past contests.
             if not past and stateName in states:
-                cost = max(10000, 10000 * org_level)
+                cost = engine.org_tier_cost(states[stateName], org_level)
+                k = int(cost / 1000)
                 if org_level == 0:
-                    action_text = 'Ballot $10k'
+                    action_text = 'Ballot ${}k'.format(k)
                 elif org_level == 1:
-                    action_text = 'Office $10k'
+                    action_text = 'Office ${}k'.format(k)
                 else:
-                    action_text = 'Build ${}k'.format(int(cost / 1000))
+                    action_text = 'Build ${}k'.format(k)
                 Button(row, text=action_text, padx=2,
                        command=lambda s=stateName, c=cost: _build_org_from_sidebar(s, c)).pack(side='right', padx=2, pady=1)
 

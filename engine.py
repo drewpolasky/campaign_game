@@ -436,3 +436,38 @@ def randomize_calendar(states, num_turns, rng, first_week=2):
             calendar = [(nm, target if nm == mover else wk) for nm, wk in calendar]
 
     return calendar
+
+
+# --- Organization / ballot cost ---
+# The cost to get on the ballot and build organization scales with the size of
+# the state (its total delegates at stake):
+#     small   (<= 4 delegates)   $5,000
+#     medium  (5-9)              $10,000
+#     large   (10-19)            $15,000
+#     largest (>= 20)            $20,000
+# Getting on the ballot (tier 0->1) and the first field office (1->2) cost the
+# base; each tier k>=2 costs base*k, as before. Shared by the desktop game
+# (CampaignGame.getOnBallot / AI) and the web service (game_service).
+
+def state_delegate_count(state):
+    """Total delegates at stake in a state. District.population is stored as
+    delegates*3 by every loader, so divide it back out."""
+    return sum(d.population for d in state.districts) // 3
+
+
+def org_base_cost(state):
+    """Base org/ballot cost for a state, scaled by its size."""
+    dels = state_delegate_count(state)
+    if dels <= 4:
+        return 5000
+    if dels <= 9:
+        return 10000
+    if dels <= 19:
+        return 15000
+    return 20000
+
+
+def org_tier_cost(state, current_tier):
+    """Cost to buy the next org tier when currently at ``current_tier``."""
+    base = org_base_cost(state)
+    return base if current_tier <= 1 else base * current_tier

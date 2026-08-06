@@ -69,13 +69,15 @@ def create_match(config):
 
 # --- move cost / validation ----------------------------------------------
 
-def org_build_cost(from_tier, count):
+def org_build_cost(from_tier, count, base=ORG_BASE_COST):
     """Total $ to build ``count`` org tiers starting at ``from_tier``.
-    Tiers 0->1 and 1->2 cost $10k each; tier k>=2 costs $10k*k."""
+    Tiers 0->1 and 1->2 cost ``base`` each; tier k>=2 costs ``base``*k. ``base``
+    is the state's size-scaled cost (engine.org_base_cost); it defaults to the
+    medium $10k so callers that don't care about size still work."""
     total = 0
     tier = from_tier
     for _ in range(count):
-        total += ORG_BASE_COST if tier <= 1 else ORG_BASE_COST * tier
+        total += base if tier <= 1 else base * tier
         tier += 1
     return total
 
@@ -135,7 +137,7 @@ def validate_move(gs, seat, move):
         cw = _contest_week(gs, state_name)
         if cur_tier == 0 and cw is not None and gs.current_date > cw:
             return False, 'too late to get on the ballot in {}'.format(state_name)
-        total_org_cost += org_build_cost(cur_tier, count)
+        total_org_cost += org_build_cost(cur_tier, count, base=engine.org_base_cost(gs.states[state_name]))
 
     if total_ads + total_org_cost > money:
         return False, 'insufficient funds: need {}, have {}'.format(total_ads + total_org_cost, money)
@@ -161,7 +163,7 @@ def apply_move(gs, seat, move):
         if not count:
             continue
         st = gs.states[state_name]
-        cost = org_build_cost(st.organizations[idx], count)
+        cost = org_build_cost(st.organizations[idx], count, base=engine.org_base_cost(st))
         spend += cost
         st.organizations[idx] += count
         try:

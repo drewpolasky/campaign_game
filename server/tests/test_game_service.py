@@ -10,6 +10,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
+import engine  # noqa: E402
 from server import game_service, state_schema  # noqa: E402
 
 BASE_CONFIG = {
@@ -49,11 +50,23 @@ def test_create_match():
 
 
 def test_org_cost_curve():
-    # 0->1 and 1->2 are $10k each; tier 2 is $20k, tier 3 is $30k.
+    # 0->1 and 1->2 are $10k each; tier 2 is $20k, tier 3 is $30k (medium base).
     assert game_service.org_build_cost(0, 1) == 10000
     assert game_service.org_build_cost(0, 2) == 20000
     assert game_service.org_build_cost(0, 3) == 40000   # 10k+10k+20k
     assert game_service.org_build_cost(2, 1) == 20000
+    # Same curve scales with the state's size-based base.
+    assert game_service.org_build_cost(0, 2, base=5000) == 10000     # 5k+5k
+    assert game_service.org_build_cost(0, 3, base=20000) == 80000    # 20k+20k+40k
+
+
+def test_org_base_cost_by_state_size():
+    gs, _, _ = _fresh_gs()
+    # small <=4 -> 5k, medium 5-9 -> 10k, large 10-19 -> 15k, largest >=20 -> 20k.
+    expected = {'Alaska': 5000, 'Iowa': 5000, 'Colorado': 10000, 'Arizona': 10000,
+                'Ohio': 15000, 'Illinois': 15000, 'Texas': 20000, 'California': 20000}
+    for name, want in expected.items():
+        assert engine.org_base_cost(gs.states[name]) == want, (name, want)
 
 
 def test_human_move_applies():
@@ -74,7 +87,9 @@ def test_human_move_applies():
     assert gs.states[state].organizations[0] == 1               # org built
     assert gs.states[state].districts[0].campaigningThisTurn[0] == 10
     assert gs.states[state].districts[0].adsThisTurn[0] == 5000
-    assert gs.players[1].resources[1] == money_before - 5000 - 10000  # ads + org
+    # Org (tier 0->1) costs the state's size-scaled base.
+    org_cost = engine.org_base_cost(gs.states[state])
+    assert gs.players[1].resources[1] == money_before - 5000 - org_cost  # ads + org
 
 
 def test_validation_rejects():

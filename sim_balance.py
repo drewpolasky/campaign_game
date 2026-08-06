@@ -274,7 +274,7 @@ def _spend_money_on_orgs(sim, p_idx, urgency_max=8, threshold=18.0):
         if tte < 0 or tte > urgency_max:
             continue
         org_level = st.organizations[p_idx]
-        cost = max(10000, 10000 * org_level)
+        cost = engine.org_tier_cost(st, org_level)
         state_delegates = sum(d.population - (d.population * 2) / 3 for d in st.districts)
         org_value = state_delegates * (1.0 + max(0, 6 - tte))
         if org_value > (org_level + 1) * threshold and p.resources[1] >= cost:
