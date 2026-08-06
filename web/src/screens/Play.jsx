@@ -312,6 +312,7 @@ function CalendarPanel({ state, idx, move, selected, onSelect, setOrg, disabled 
           const onBallot = org > 0
           const tier = org + pending
           const cost = orgBuildCost(st, tier, 1)
+          const costK = Math.round(cost / 1000)
           const canBuild = org > 0 || cur <= week
           const leader = leaderSeat(st)
           return (
@@ -329,7 +330,7 @@ function CalendarPanel({ state, idx, move, selected, onSelect, setOrg, disabled 
               {!disabled && !past && canBuild && (
                 <button className="secondary small" style={{ whiteSpace: 'nowrap' }}
                   onClick={(e) => { e.stopPropagation(); setOrg(name, pending + 1) }}>
-                  {tier === 0 ? 'Ballot $10k' : tier === 1 ? 'Office $10k' : `+$${Math.round(cost / 1000)}k`}
+                  {tier === 0 ? `Ballot $${costK}k` : tier === 1 ? `Office $${costK}k` : `+$${costK}k`}
                 </button>
               )}
             </div>
