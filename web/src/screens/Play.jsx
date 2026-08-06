@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom'
+import { useParams } from 'react-router'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { api } from '../api.js'
 import USMap from '../USMap.jsx'
