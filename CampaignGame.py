@@ -66,6 +66,11 @@ player = 1                  #keeps track of whose turn it is. indexed at 1
 numTurns = 8
 numPlayers = 2
 currentDate = 1
+# When True, a new game builds a randomized primary calendar (small states
+# first, ramping up) via engine.randomize_calendar instead of the fixed
+# schedule files. Chosen on the New Game Setup screen; the resulting calendar
+# is saved with the game so reloads stay consistent.
+randomizeCalendar = False
 players = {}            #dictionaries of class instances of players and states
 states = {}
 calendarOfContests = [('Iowa' , 4),('New Hampshire' , 5) ,('Nevada',7), ('South Carolina',8),('Minnesota',9),('Alabama' , 9), ('Arkansas', 9), ('Colorado', 9), ('Georgia', 9), ('Massachusetts', 9), ('North Dakota', 9), ('Oklahoma', 9), ('Tennessee', 9), ('Texas', 9), ('Vermont', 9), ('Virginia', 9), ('Kansas', 10), ('Kentucky', 10), ('Louisiana', 10), ('Maine', 10), ('Nebraska', 10), ('Hawaii', 10), ('Michigan', 10), ('Mississippi', 10), ('Wyoming', 11), ('Florida', 11), ('Illinois' , 11), ('Missouri', 11), ('North Carolina', 11), ('Ohio', 11), ('Arizona', 12), ('Idaho', 12), ('Utah', 12),('Alaska', 13), ('Washington', 13), ('Wisconsin', 14), ('New Jersey', 15), ('New York', 15), ('Connecticut', 15), ('Delaware', 15), ('Maryland', 15), ('Pennsylvania', 15), ('Rhode Island', 15), ('Indiana', 16), ('West Virginia', 16), ('Oregon', 17), ('California', 19), ('Montana', 19), ('New Mexico', 19), ('South Dakota', 19)]#, ('DC', 20)]
@@ -398,6 +403,12 @@ def setUpGame(window):        #this will set up the basic parameters of the game
 
 def setCalendar(numTurns):
     global calendarOfContests
+    if randomizeCalendar and states:
+        # Randomized primary calendar (small states first, ramping up). Shared
+        # with the web build via engine.randomize_calendar so both versions
+        # produce the same shape. Uses the stdlib random module as the RNG.
+        calendarOfContests = engine.randomize_calendar(states, numTurns, random)
+        return
     if numTurns == 20:
         # Use the default full calendar already defined globally
         calendarOfContests = [('Iowa' , 4),('New Hampshire' , 5) ,('Nevada',7), ('South Carolina',8),('Minnesota',9),('Alabama' , 9), ('Arkansas', 9), ('Colorado', 9), ('Georgia', 9), ('Massachusetts', 9), ('North Dakota', 9), ('Oklahoma', 9), ('Tennessee', 9), ('Texas', 9), ('Vermont', 9), ('Virginia', 9), ('Kansas', 10), ('Kentucky', 10), ('Louisiana', 10), ('Maine', 10), ('Nebraska', 10), ('Hawaii', 10), ('Michigan', 10), ('Mississippi', 10), ('Wyoming', 11), ('Florida', 11), ('Illinois' , 11), ('Missouri', 11), ('North Carolina', 11), ('Ohio', 11), ('Arizona', 12), ('Idaho', 12), ('Utah', 12),('Alaska', 13), ('Washington', 13), ('Wisconsin', 14), ('New Jersey', 15), ('New York', 15), ('Connecticut', 15), ('Delaware', 15), ('Maryland', 15), ('Pennsylvania', 15), ('Rhode Island', 15), ('Indiana', 16), ('West Virginia', 16), ('Oregon', 17), ('California', 19), ('Montana', 19), ('New Mexico', 19), ('South Dakota', 19)]
@@ -411,7 +422,18 @@ def setCalendar(numTurns):
         line = line.split(',')
         calendarOfContests.append((line[0],int(line[1])))
 
-def setUpStates(): 
+
+def _restore_calendar(saveFile):
+    """Restore the calendar saved with a game (index 7). Older saves predate
+    calendar persistence, so fall back to rebuilding it from numTurns."""
+    global calendarOfContests
+    try:
+        calendarOfContests = pickle.loads(saveFile[7])
+    except (IndexError, EOFError, pickle.UnpicklingError, TypeError):
+        setCalendar(numTurns)
+
+
+def setUpStates():
     statesList = open('statesPositions.txt', 'r')
     for line in statesList:
         l = line.split(',')
@@ -2875,6 +2897,7 @@ def setUpGame(window=None):
     mode = IntVar(value=1)
     turnsVar = IntVar(value=8)
     playersVar = IntVar(value=2)
+    randomizeVar = IntVar(value=0)
 
     Label(setup_card, text='Issue mode', bg='white').pack(anchor='w', padx=12)
     Radiobutton(setup_card, text='No Issues Mode', variable=mode, value=1, bg='white').pack(anchor='w', padx=16)
@@ -2886,7 +2909,16 @@ def setUpGame(window=None):
     Label(setup_card, text='Number of players', bg='white').pack(anchor='w', padx=12, pady=(8, 0))
     Scale(setup_card, variable=playersVar, orient=HORIZONTAL, from_=2, to_=10, bg='white').pack(anchor='w', padx=12)
 
-    Button(setup_card, text='Continue to Player Setup', command=lambda: setUpPlayers(playersVar.get(), None, mode.get(), turnsVar.get()), padx=14).pack(anchor='w', padx=12, pady=(12, 14))
+    Label(setup_card, text='Primary calendar', bg='white').pack(anchor='w', padx=12, pady=(8, 0))
+    Checkbutton(setup_card, text='Randomize the calendar (a few small states first, more each week)',
+                variable=randomizeVar, bg='white').pack(anchor='w', padx=16)
+
+    def continue_to_players():
+        global randomizeCalendar
+        randomizeCalendar = bool(randomizeVar.get())
+        setUpPlayers(playersVar.get(), None, mode.get(), turnsVar.get())
+
+    Button(setup_card, text='Continue to Player Setup', command=continue_to_players, padx=14).pack(anchor='w', padx=12, pady=(12, 14))
 
 
 def setUpPlayers(numP, setUpWindow, mode, numTurn_menu):
@@ -4037,6 +4069,10 @@ def saveGameSecond(fileName, window, autosave, direct_path=False):
     saveFile.append(pickle.dumps(currentDate))
     saveFile.append(pickle.dumps(weekResults))
     saveFile.append(pickle.dumps(numTurns))
+    # Persist the calendar (index 7) so a randomized calendar survives a
+    # save/load round-trip. Older saves lack this; loaders fall back to
+    # rebuilding it from numTurns.
+    saveFile.append(pickle.dumps(calendarOfContests))
     if direct_path:
         save_path = fileName
     else:
@@ -4174,7 +4210,7 @@ def _network_load_save_path(path):
         numTurns = pickle.loads(saveFile[6])
     except IndexError:
         numTurns = 8
-    setCalendar(numTurns)
+    _restore_calendar(saveFile)
     numPlayers = len(players)
     return True
 
@@ -4815,7 +4851,7 @@ def _loadFromPath(file_path):
         numTurns = pickle.loads(saveFile[6])
     except IndexError:
         numTurns = 8
-    setCalendar(numTurns)
+    _restore_calendar(saveFile)
     numPlayers = len(players)
     start_active_turn_flow(currentDate > 1)
 
@@ -4854,7 +4890,7 @@ def loadGame(window):
     except IndexError:
         numTurns = 8
 
-    setCalendar(numTurns)
+    _restore_calendar(saveFile)
     numPlayers = len(players)
     start_active_turn_flow(currentDate > 1)
 

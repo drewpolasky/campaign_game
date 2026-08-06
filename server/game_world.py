@@ -73,10 +73,17 @@ def build_match(config, rng=None):
     issues_mode = bool(config.get('issues_mode', False))
     n_issues = len(state_issues.ISSUES)
 
-    # World + calendar from the shared data-file loaders (cwd-pinned).
+    # World + calendar from the shared data-file loaders (cwd-pinned). When
+    # randomize_calendar is set, build a randomized primary schedule (small
+    # states first, ramping up) via the shared engine helper instead — the
+    # same code the desktop uses, so both versions behave identically. The
+    # resulting calendar is persisted in the match doc, so reloads are stable.
     with _cwd(_REPO_ROOT):
         states = sim_balance.load_states()
-        calendar = sim_balance.load_calendar(num_turns)
+        if config.get('randomize_calendar'):
+            calendar = engine.randomize_calendar(states, num_turns, rng)
+        else:
+            calendar = sim_balance.load_calendar(num_turns)
 
     # Players (1-based dict), zero-initialized.
     players = {}

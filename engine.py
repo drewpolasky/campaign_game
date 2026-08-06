@@ -363,3 +363,76 @@ def reset_weekly(gs):
             for i in range(gs.num_players):
                 district.setCampaigningThisTurn(i, 0)
                 district.setAdsThisTurn(i, 0)
+
+
+def randomize_calendar(states, num_turns, rng, first_week=2):
+    """Build a randomized primary calendar: list of (state_name, week).
+
+    Shared by both the desktop game (CampaignGame.setCalendar) and the web
+    server (server/game_world.build_match) so the two produce the same shape.
+
+    The schedule keeps the real primary's feel: the first couple of weeks hold
+    only a few small states, and both the number of contests and their size
+    ramp up week over week. States are ordered smallest-to-largest by delegate
+    count with a bit of jitter (so it differs each game), then mapped onto the
+    contest weeks with a concave curve that packs more — and larger — states
+    into the later weeks.
+
+    ``states``     dict of name -> State (uses each State's district populations
+                   only for RELATIVE sizing, so the desktop's *1 and the sim's
+                   *3 district-population scaling both work).
+    ``num_turns``  total weeks; contests run from ``first_week`` through it.
+    ``rng``        a random.Random (or the random module) exposing uniform().
+    """
+    names = list(states.keys())
+    n = len(names)
+    if n == 0:
+        return []
+
+    last_week = max(first_week, num_turns)
+
+    size = {name: sum(d.population for d in states[name].districts) for name in names}
+    # Rank smallest -> largest, then jitter each rank by up to ~12% of the field
+    # so the ordering (and thus the calendar) varies game to game without losing
+    # the small-first trend.
+    by_size = sorted(names, key=lambda name: size[name])
+    rank = {name: i for i, name in enumerate(by_size)}
+    jitter = max(1.0, n * 0.12)
+    seq = sorted(names, key=lambda name: rank[name] + rng.uniform(-jitter, jitter))
+
+    # Map ordinal position (0 = smallest-ish) to a week. Exponent < 1 makes the
+    # curve concave: early ordinals spread across the opening weeks a few at a
+    # time, later ordinals compress into the final weeks many at a time.
+    span = last_week - first_week
+    p = 0.62
+    calendar = []
+    for i, name in enumerate(seq):
+        frac = (i / (n - 1)) if n > 1 else 0.0
+        week = first_week + span * (frac ** p)
+        week = int(round(week))
+        week = max(first_week, min(last_week, week))
+        calendar.append((name, week))
+
+    # Guarantee the opening: the first two contest weeks should each have at
+    # least one small state (a lone empty opening week reads oddly). If either
+    # is empty, pull it from the earliest over-full later week.
+    if span >= 1:
+        weeks_used = {}
+        for name, wk in calendar:
+            weeks_used.setdefault(wk, []).append(name)
+        for target in (first_week, first_week + 1):
+            if target > last_week:
+                break
+            if weeks_used.get(target):
+                continue
+            donor_wk = next((w for w in sorted(weeks_used)
+                             if w > target and len(weeks_used[w]) > 1), None)
+            if donor_wk is None:
+                continue
+            # Move the smallest state from the donor week down to the empty week.
+            mover = min(weeks_used[donor_wk], key=lambda name: size[name])
+            weeks_used[donor_wk].remove(mover)
+            weeks_used.setdefault(target, []).append(mover)
+            calendar = [(nm, target if nm == mover else wk) for nm, wk in calendar]
+
+    return calendar

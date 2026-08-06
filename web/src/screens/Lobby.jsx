@@ -11,6 +11,7 @@ function blankSeat(n, controller = 'human') {
 export default function Lobby() {
   const [numTurns, setNumTurns] = useState(10)
   const [issuesMode, setIssuesMode] = useState(false)
+  const [randomizeCalendar, setRandomizeCalendar] = useState(false)
   const [seats, setSeats] = useState([blankSeat(1, 'human'), blankSeat(2, 'ai')])
   const [gated, setGated] = useState(false)
   const [createKey, setCreateKey] = useState(() => localStorage.getItem('campaign_create_key') || '')
@@ -38,6 +39,7 @@ export default function Lobby() {
       const config = {
         num_turns: numTurns,
         issues_mode: issuesMode,
+        randomize_calendar: randomizeCalendar,
         seats: seats.map((s) => ({
           name: s.name,
           controller: s.controller,
@@ -78,6 +80,13 @@ export default function Lobby() {
               <select value={issuesMode ? 'on' : 'off'} onChange={(e) => setIssuesMode(e.target.value === 'on')}>
                 <option value="off">Off</option>
                 <option value="on">On</option>
+              </select>
+            </div>
+            <div>
+              <label>Calendar</label>
+              <select value={randomizeCalendar ? 'random' : 'fixed'} onChange={(e) => setRandomizeCalendar(e.target.value === 'random')}>
+                <option value="fixed">Fixed schedule</option>
+                <option value="random">Randomized</option>
               </select>
             </div>
             {gated && (
