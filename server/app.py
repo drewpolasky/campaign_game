@@ -320,6 +320,32 @@ def submit_move(match_id):
     })
 
 
+@app.route('/api/matches/<match_id>/moves', methods=['DELETE'])
+def unsubmit_move(match_id):
+    """Retract this seat's submitted move for the current week so the player can
+    edit and resubmit. Only possible while the week is unresolved — once every
+    human seat has submitted the week resolves (clearing submissions and
+    advancing), after which there's nothing to unsubmit. The resolve_lock makes
+    the check-and-delete atomic against a concurrent resolve."""
+    seat, err = _auth(match_id)
+    if err:
+        return err
+    if seat['controller'] != 'human':
+        return jsonify({'error': 'seat is not human-controlled'}), 400
+    with db.resolve_lock:
+        match = db.get_match(match_id)
+        if match is None:
+            return jsonify({'error': 'no such match'}), 404
+        if match['status'] != 'active':
+            return jsonify({'error': 'match is not active'}), 409
+        week = match['current_week']
+        if seat['seat_no'] not in db.submitted_seats(match_id, week):
+            return jsonify({'error': 'nothing to unsubmit (the week may have already resolved)'}), 409
+        db.delete_submission(match_id, seat['seat_no'], week)
+        match = db.get_match(match_id)
+    return jsonify({'result': 'unsubmitted', 'status': _public_status(match)})
+
+
 @app.route('/api/matches/<match_id>/advance', methods=['POST'])
 def advance(match_id):
     """Step a ready match one week. Useful for AI-only matches (no human to

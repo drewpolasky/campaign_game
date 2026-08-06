@@ -190,6 +190,18 @@ def clear_submissions(match_id, week):
                      (match_id, week))
 
 
+def delete_submission(match_id, seat_no, week):
+    """Retract one seat's submission for a week (used by unsubmit). Clears the
+    seat's submitted_week marker so it shows as un-submitted again."""
+    with _connect() as conn:
+        conn.execute(
+            'DELETE FROM submissions WHERE match_id = ? AND seat_no = ? AND week = ?',
+            (match_id, seat_no, week))
+        conn.execute(
+            'UPDATE seats SET submitted_week = 0 WHERE match_id = ? AND seat_no = ?',
+            (match_id, seat_no))
+
+
 def log_week(match_id, week, results, moves):
     """Record a resolved week's results and every seat's moves for the history."""
     with _connect() as conn:

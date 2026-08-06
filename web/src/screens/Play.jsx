@@ -128,6 +128,15 @@ export default function Play() {
     } catch (e) { setError(e.message) } finally { setBusy(false) }
   }
 
+  async function unsubmit() {
+    setBusy(true); setError('')
+    try {
+      await api.unsubmitMove(info.match_id, token)
+      if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null }
+      await load()  // reload: iSubmitted flips back to false so the plan is editable again
+    } catch (e) { setError(e.message) } finally { setBusy(false) }
+  }
+
   function startPolling() {
     if (pollRef.current) clearInterval(pollRef.current)
     const startWeek = status?.current_week
@@ -238,7 +247,15 @@ export default function Play() {
             )}
             <SeatBar status={status} seat={seat} />
             {iSubmitted ? (
-              <div className="panel"><p className="muted">✓ Turn submitted. Waiting for the other players… (auto-refreshing)</p></div>
+              <div className="panel">
+                <p className="muted">✓ Turn submitted. Waiting for the other players… (auto-refreshing)</p>
+                <button className="secondary" onClick={unsubmit} disabled={busy} style={{ width: '100%' }}>
+                  {busy ? 'Working…' : 'Unsubmit & edit turn'}
+                </button>
+                <p className="muted small" style={{ marginTop: 6 }}>
+                  You can pull your turn back and change it until everyone has submitted and the week resolves.
+                </p>
+              </div>
             ) : selected ? (
               <StateDetail name={selected} state={state} idx={idx} move={move}
                 onClose={() => setSelected(null)}

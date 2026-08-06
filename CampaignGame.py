@@ -4547,6 +4547,41 @@ def _sim_do_resolution(week, found):
     _sim_begin_week()
 
 
+def _sim_unsubmit(week):
+    """Pull our turn back so we can edit it, as long as the host hasn't
+    resolved the week yet. Non-resolvers delete their uploaded submission
+    first; everyone then re-downloads the pristine week-start state (still
+    authoritative until resolution) and replays this week from their first
+    seat."""
+    _net_cancel_polling()
+    match_id = network_state['match_id']
+    cfg = RemoteSaveLoad.load_config()
+    if not network_state.get('is_resolver'):
+        found = _sim_collect_submissions(week)
+        if found is None:
+            messagebox.showerror('Live Game', 'Could not reach the server. Try again.')
+            _sim_wait_for_resolution(week)
+            return
+        if not (set(_sim_owned_seats()) & set(found)):
+            messagebox.showinfo('Live Game',
+                                'Too late to unsubmit — the week has already been resolved.')
+            _sim_wait_for_resolution(week)
+            return
+        name = _sim_submit_name(match_id, week, _sim_owned_seats())
+        try:
+            RemoteSaveLoad.delete_remote_save(cfg['server_url'], cfg['api_key'], name)
+        except Exception:
+            pass
+    if not download_networked_state(match_id):
+        messagebox.showerror('Live Game', 'Could not reload the week to edit. Try again.')
+        (_sim_resolve_screen if network_state.get('is_resolver') else _sim_wait_for_resolution)(week)
+        return
+    if currentDate > week:
+        messagebox.showinfo('Live Game',
+                            'The week resolved while you were deciding — moving on to the next week.')
+    _sim_begin_week()
+
+
 def _sim_resolve_screen(week):
     """Resolver's between-week screen: poll until every needed seat has
     submitted, then merge + resolve."""
@@ -4580,6 +4615,7 @@ def _sim_resolve_screen(week):
     actions = Frame(body, bg='#f3efe2')
     actions.pack(anchor='w', pady=(8, 0))
     Button(actions, text='Check Now', command=tick, padx=12).pack(side='left')
+    Button(actions, text='Edit my turn', command=lambda: _sim_unsubmit(week), padx=12).pack(side='left', padx=8)
     Button(actions, text='Leave Match', command=leave_networked_match, padx=12).pack(side='left', padx=8)
     network_state['poll_job'] = init_app_root().after(1000, tick)
 
@@ -4614,6 +4650,7 @@ def _sim_wait_for_resolution(week):
     actions = Frame(body, bg='#f3efe2')
     actions.pack(anchor='w', pady=(8, 0))
     Button(actions, text='Check Now', command=tick, padx=12).pack(side='left')
+    Button(actions, text='Unsubmit & edit turn', command=lambda: _sim_unsubmit(week), padx=12).pack(side='left', padx=8)
     Button(actions, text='Leave Match', command=leave_networked_match, padx=12).pack(side='left', padx=8)
     network_state['poll_job'] = init_app_root().after(2000, tick)
 

@@ -41,6 +41,10 @@ export const api = {
     req(`/api/matches/${matchId}/moves?token=${encodeURIComponent(token)}`, {
       method: 'POST', body: JSON.stringify({ move }),
     }),
+  unsubmitMove: (matchId, token) =>
+    req(`/api/matches/${matchId}/moves?token=${encodeURIComponent(token)}`, {
+      method: 'DELETE',
+    }),
   status: (matchId, token) =>
     req(`/api/matches/${matchId}/status?token=${encodeURIComponent(token)}`),
   getLog: (matchId, token) =>
