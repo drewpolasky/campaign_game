@@ -119,6 +119,10 @@ def state_to_dict(s):
         'support': list(s.support),
         'organizations': list(s.organizations),
         'polling_average': list(s.pollingAverage),
+        # Derived, not persisted state: the size-scaled base cost of an org
+        # tier here. Sent so the client shows/budgets the same price the
+        # server charges instead of duplicating the threshold table in JS.
+        'org_base_cost': engine.org_base_cost(s),
         'districts': [district_to_dict(d) for d in s.districts],
     }
 

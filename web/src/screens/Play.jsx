@@ -9,10 +9,17 @@ const WEEKLY_TIME = 80
 const SEAT_COLORS = ['#ff5b5b', '#4f8cff', '#3ecf8e', '#b07bff', '#ffb23e', '#38d6d6',
   '#ff8fce', '#a0d24a', '#d98b4a', '#8a94ff']
 
+// Base org cost for a state — scales with the state's size. The server sends
+// it per state (state.org_base_cost); fall back to the medium tier for match
+// docs serialized before that field existed.
+function orgBaseCost(stateObj) {
+  return stateObj?.org_base_cost ?? 10000
+}
 // Cost to build `count` org tiers from `fromTier` — mirrors game_service.org_build_cost.
-function orgBuildCost(fromTier, count) {
+function orgBuildCost(stateObj, fromTier, count) {
+  const base = orgBaseCost(stateObj)
   let total = 0, tier = fromTier
-  for (let i = 0; i < count; i++) { total += tier <= 1 ? 10000 : 10000 * tier; tier++ }
+  for (let i = 0; i < count; i++) { total += tier <= 1 ? base : base * tier; tier++ }
   return total
 }
 function contestWeekOf(state, name) {
@@ -81,7 +88,7 @@ export default function Play() {
     for (const dists of Object.values(move.ads)) for (const d of Object.values(dists)) money += d
     for (const [sname, count] of Object.entries(move.orgs)) {
       if (!count) continue
-      money += orgBuildCost(state.states[sname].organizations[idx], count)
+      money += orgBuildCost(state.states[sname], state.states[sname].organizations[idx], count)
     }
     return { time, money }
   }, [move, state, idx])
@@ -304,7 +311,7 @@ function CalendarPanel({ state, idx, move, selected, onSelect, setOrg, disabled 
           const past = week < cur, now = week === cur
           const onBallot = org > 0
           const tier = org + pending
-          const cost = tier <= 1 ? 10000 : 10000 * tier
+          const cost = orgBuildCost(st, tier, 1)
           const canBuild = org > 0 || cur <= week
           const leader = leaderSeat(st)
           return (
@@ -565,7 +572,7 @@ function StateDetail({ name, state, idx, move, onClose, setCampaign, setAd, setO
           <span className="muted small">Organization tier {myOrg}{pendingOrg ? ` → ${myOrg + pendingOrg}` : ''}</span>
           <button className="secondary small" disabled={!canBuildBallot}
             onClick={() => setOrg(name, pendingOrg + 1)}>
-            {myOrg + pendingOrg === 0 ? 'Get on ballot' : 'Upgrade org'} (${orgBuildCost(myOrg + pendingOrg, 1).toLocaleString()})
+            {myOrg + pendingOrg === 0 ? 'Get on ballot' : 'Upgrade org'} (${orgBuildCost(st, myOrg + pendingOrg, 1).toLocaleString()})
           </button>
           {pendingOrg > 0 && <button className="secondary small" onClick={() => setOrg(name, pendingOrg - 1)}>Undo</button>}
           {!canBuildBallot && <span className="muted small">contest already voted</span>}
