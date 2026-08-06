@@ -2,26 +2,29 @@
 State-level positions on each campaign issue.
 
 Each state has one position per issue: -1 (oppose), 0 (neutral), or +1 (support).
-Positions are calibrated to real-world political leanings and tuned so the
-delegate-weighted total of supporters and opponents is roughly balanced for
-each issue. Use `compute_balance(state_delegates)` to verify or to tune
-further data changes.
+The left/right issues (Climate, Abortion, Taxes) plus Trade are calibrated to
+real-world leanings; the cross-cutting issues are split on real data so the
+favorable map reshuffles week to week:
+    Ag Subsidies      EWG farm subsidies per capita (cumulative 1995-2025)
+    Defense Spending  DoD FY2024 'Defense Spending by State', $ per resident
+    Federal Land      CRS federal-land-ownership % of each state
+    Social Security & Medicare   Census/AHR % of population age 65+
+
+Use `compute_balance(state_delegates)` to verify the delegate split per issue.
 
 Issues (must match issueNames order in CampaignGame.py):
-    Climate Change, Abortion, Taxes-Government Spending,
-    Gun Control, Healthcare, Regulation, Trade
+    Climate Action, Abortion, Taxes & Spending, Trade, Ag Subsidies, Defense Spending, Federal Land, Social Security & Medicare
 """
 
 # Each issue has a short name plus labels for the +1/0/-1 sides so the UI
-# can describe a stance in plain English rather than "Support" / "Oppose".
-# The order here is the canonical issue order; positions in STATE_POSITIONS
-# and Player.positions follow this order.
+# can describe a stance in plain English. This order is canonical; positions
+# in STATE_POSITIONS and Player.positions follow it.
 ISSUES = [
     {
         'name': 'Climate Action',
-        'pro': 'Aggressive Action',     # +1
-        'mid': 'Incremental Steps',     #  0
-        'con': 'Industry First',        # -1
+        'pro': 'Aggressive Action',
+        'mid': 'Incremental Steps',
+        'con': 'Industry First',
     },
     {
         'name': 'Abortion',
@@ -36,28 +39,34 @@ ISSUES = [
         'con': 'Cut Taxes',
     },
     {
-        'name': 'Gun Policy',
-        'pro': 'Stricter Laws',
-        'mid': 'Status Quo',
-        'con': 'Gun Rights',
-    },
-    {
-        'name': 'Healthcare',
-        'pro': 'Public Option',
-        'mid': 'Mixed System',
-        'con': 'Free Market',
-    },
-    {
-        'name': 'Regulation',
-        'pro': 'More Oversight',
-        'mid': 'Targeted Rules',
-        'con': 'Deregulation',
-    },
-    {
         'name': 'Trade',
         'pro': 'Free Trade',
         'mid': 'Balanced',
         'con': 'Protectionism',
+    },
+    {
+        'name': 'Ag Subsidies',
+        'pro': 'Boost Farm Aid',
+        'mid': 'Hold Steady',
+        'con': 'Cut Subsidies',
+    },
+    {
+        'name': 'Defense Spending',
+        'pro': 'Boost Spending',
+        'mid': 'Hold Steady',
+        'con': 'Cut Spending',
+    },
+    {
+        'name': 'Federal Land',
+        'pro': 'Local Control',
+        'mid': 'Shared Stewardship',
+        'con': 'Federal Control',
+    },
+    {
+        'name': 'Social Security & Medicare',
+        'pro': 'Protect & Expand',
+        'mid': 'Steady As-Is',
+        'con': 'Reform & Cut',
     },
 ]
 
@@ -65,11 +74,7 @@ ISSUE_NAMES = [issue['name'] for issue in ISSUES]
 
 
 def side_label(issue_index, position):
-    """Return the human label for a position on an issue.
-
-    issue_index: index into ISSUES.
-    position: -1, 0, or 1 (or float close to one of those).
-    """
+    """Return the human label for a position on an issue."""
     if not (0 <= issue_index < len(ISSUES)):
         return 'Neutral'
     issue = ISSUES[issue_index]
@@ -83,9 +88,9 @@ def side_label(issue_index, position):
         return issue['con']
     return issue['mid']
 
-# Headlines pool, indexed by issue then position-of-the-news. The "news angle"
-# for the week is randomized to add flavor; the underlying issue index is what
-# drives gameplay alignment.
+
+# Headlines pool, indexed by issue name. The news 'angle' for the week is
+# flavor; the issue index is what drives gameplay alignment.
 ISSUE_HEADLINES = {
     'Climate Action': [
         'Devastating wildfires reignite climate debate',
@@ -105,87 +110,92 @@ ISSUE_HEADLINES = {
         'Debate flares over tax breaks for the wealthy',
         'Cities push for more federal spending on infrastructure',
     ],
-    'Gun Policy': [
-        'Latest mass shooting renews calls for new gun laws',
-        'Supreme Court weighs Second Amendment challenge',
-        'Governors split on universal background checks',
-        'Gun rights advocates mobilize after new state law',
-    ],
-    'Healthcare': [
-        'Insurance premiums spike, reigniting healthcare debate',
-        'Hospital closures hit rural communities hard',
-        'Drug pricing fight heats up in Washington',
-        'States split over Medicaid expansion plans',
-    ],
-    'Regulation': [
-        'Major industry hit with sweeping new regulations',
-        'Small business owners protest red tape',
-        'Federal agency rolls back environmental rules',
-        'Workers rally for stronger workplace protections',
-    ],
     'Trade': [
         'Tariff fight escalates with major trading partner',
         'Manufacturing towns demand stronger trade protections',
         'Farmers warn of trade war fallout',
         'New trade deal stalls in Senate',
     ],
+    'Ag Subsidies': [
+        'Farm bill fight splits Congress over subsidy programs',
+        'Commodity prices crash as growers press for support',
+        'Watchdog slams payouts flowing to the largest agribusinesses',
+        'Historic drought devastates crops across the heartland',
+    ],
+    'Defense Spending': [
+        'Pentagon unveils a record defense budget request',
+        'Proposed base closures rattle local economies',
+        'Lawmakers clash over a costly new weapons program',
+        'Contractors and veterans rally against Pentagon cuts',
+    ],
+    'Federal Land': [
+        'Standoff over federal control of Western public lands',
+        'Push to hand federal land to the states gains steam',
+        'Ranchers and conservationists clash over grazing rules',
+        'New national monument sparks a local backlash',
+    ],
+    'Social Security & Medicare': [
+        'Trustees warn the Social Security trust fund nears a shortfall',
+        'Seniors mobilize against proposed benefit cuts',
+        'Debate erupts over raising the retirement age',
+        'Medicare drug-pricing fight returns to Washington',
+    ],
 }
 
 
 # Positions per state, in the order of ISSUE_NAMES.
-# Tuned so net delegate-weighted balance per issue stays modest.
+# order: Climate  Abortion  Taxes  Trade  Ag  Defense  FedLand  SS/Medicare
 STATE_POSITIONS = {
-    # state             CC  Ab  T&GS GC  HC  Reg Trade
-    'Alabama':         [-1, -1, -1, -1, -1, -1, -1],
-    'Alaska':          [-1,  0, -1, -1, -1, -1,  0],
-    'Arizona':         [ 0, -1,  0,  0, -1,  0,  0],
-    'Arkansas':        [-1, -1, -1, -1, -1, -1, -1],
-    'California':      [ 1,  1,  1,  1,  1,  1,  1],
-    'Colorado':        [ 1,  0,  0,  1,  0,  0,  0],
-    'Connecticut':     [ 1,  1,  1,  1,  1,  1,  1],
-    'Delaware':        [ 1,  1,  0,  1,  0,  0,  0],
-    'Florida':         [-1, -1,  0, -1, -1,  0,  0],
-    'Georgia':         [-1, -1,  0,  0, -1,  0, -1],
-    'Hawaii':          [ 1,  1,  0,  1,  1,  0,  0],
-    'Idaho':           [-1, -1, -1, -1, -1, -1,  0],
-    'Illinois':        [ 1,  1,  0,  1,  1,  0,  0],
-    'Indiana':         [-1, -1, -1, -1, -1, -1, -1],
-    'Iowa':            [ 0,  0,  0,  0, -1,  0,  1],
-    'Kansas':          [-1, -1, -1, -1, -1, -1,  1],
-    'Kentucky':        [-1, -1, -1, -1, -1, -1, -1],
-    'Louisiana':       [-1, -1, -1, -1, -1, -1,  0],
-    'Maine':           [ 1,  0,  0,  0,  1,  0,  0],
-    'Maryland':        [ 1,  1,  1,  1,  1,  1,  0],
-    'Massachusetts':   [ 1,  1,  1,  1,  1,  1,  1],
-    'Michigan':        [ 0,  0,  0,  0,  0,  0, -1],
-    'Minnesota':       [ 1,  0,  0,  1,  0,  0,  0],
-    'Mississippi':     [-1, -1, -1, -1, -1, -1,  0],
-    'Missouri':        [-1, -1, -1, -1, -1, -1, -1],
-    'Montana':         [-1,  0,  0, -1, -1,  0,  1],
-    'Nebraska':        [-1, -1, -1, -1, -1, -1,  1],
-    'Nevada':          [ 0,  0,  0,  0,  0,  0,  0],
-    'New Hampshire':   [ 1,  0,  0,  0,  1,  0,  0],
-    'New Jersey':      [ 1,  1,  1,  1,  1,  1,  1],
-    'New Mexico':      [ 1,  0,  0,  0,  1,  0,  0],
-    'New York':        [ 1,  1,  1,  1,  1,  1,  1],
-    'North Carolina':  [-1, -1,  0,  0, -1,  0, -1],
-    'North Dakota':    [-1, -1, -1, -1, -1, -1,  1],
-    'Ohio':            [ 0,  0,  0,  0,  0,  0, -1],
-    'Oklahoma':        [-1, -1, -1, -1, -1, -1,  0],
-    'Oregon':          [ 1,  1,  1,  1,  1,  1,  0],
-    'Pennsylvania':    [ 0,  0,  0,  0,  0,  0, -1],
-    'Rhode Island':    [ 1,  1,  0,  1,  1,  0,  0],
-    'South Carolina':  [-1, -1, -1, -1, -1, -1, -1],
-    'South Dakota':    [-1, -1, -1, -1, -1, -1,  1],
-    'Tennessee':       [-1, -1, -1, -1, -1, -1, -1],
-    'Texas':           [-1, -1, -1, -1, -1, -1,  1],
-    'Utah':            [-1, -1, -1, -1, -1, -1,  0],
-    'Vermont':         [ 1,  1,  1,  1,  1,  1,  0],
-    'Virginia':        [ 0,  0,  0,  0,  0,  0, -1],
-    'Washington':      [ 1,  1,  1,  1,  1,  1,  0],
-    'West Virginia':   [-1, -1, -1, -1, -1, -1, -1],
-    'Wisconsin':       [ 0,  0,  0,  0,  0,  0, -1],
-    'Wyoming':         [-1, -1, -1, -1, -1, -1,  0],
+    'Alabama':          [-1, -1, -1, -1,  0,  1,  0,  0],
+    'Alaska':           [-1,  0, -1,  0, -1,  1,  1, -1],
+    'Arizona':          [ 0, -1,  0,  0, -1,  1,  1,  1],
+    'Arkansas':         [-1, -1, -1, -1,  1, -1,  0,  0],
+    'California':       [ 1,  1,  1,  1,  0,  1,  1, -1],
+    'Colorado':         [ 1,  0,  0,  0,  1,  1,  1, -1],
+    'Connecticut':      [ 1,  1,  1,  1, -1,  1, -1,  1],
+    'Delaware':         [ 1,  1,  0,  0, -1, -1, -1,  1],
+    'Florida':          [-1, -1,  0,  0, -1,  0,  1,  1],
+    'Georgia':          [-1, -1,  0, -1,  0,  0,  0, -1],
+    'Hawaii':           [ 1,  1,  0,  0, -1,  1,  1,  1],
+    'Idaho':            [-1, -1, -1,  0,  1, -1,  1,  0],
+    'Illinois':         [ 1,  1,  0,  0,  1, -1, -1,  0],
+    'Indiana':          [-1, -1, -1, -1,  1, -1, -1, -1],
+    'Iowa':             [ 0,  0,  0,  1,  1,  0, -1,  1],
+    'Kansas':           [-1, -1, -1,  1,  1,  0, -1,  0],
+    'Kentucky':         [-1, -1, -1, -1,  1,  1,  0,  0],
+    'Louisiana':        [-1, -1, -1,  0,  1, -1,  0,  0],
+    'Maine':            [ 1,  0,  0,  0, -1,  1, -1,  1],
+    'Maryland':         [ 1,  1,  1,  0, -1,  1,  0,  0],
+    'Massachusetts':    [ 1,  1,  1,  1, -1,  1, -1,  0],
+    'Michigan':         [ 0,  0,  0, -1,  0, -1,  1,  1],
+    'Minnesota':        [ 1,  0,  0,  0,  1, -1,  0,  0],
+    'Mississippi':      [-1, -1, -1,  0,  1,  1,  0,  0],
+    'Missouri':         [-1, -1, -1, -1,  1,  1,  0,  0],
+    'Montana':          [-1,  0,  0,  1,  1, -1,  1,  1],
+    'Nebraska':         [-1, -1, -1,  1,  1, -1, -1, -1],
+    'Nevada':           [ 0,  0,  0,  0, -1, -1,  1,  0],
+    'New Hampshire':    [ 1,  0,  0,  0, -1,  1,  1,  1],
+    'New Jersey':       [ 1,  1,  1,  1, -1, -1,  0,  0],
+    'New Mexico':       [ 1,  0,  0,  0,  1,  1,  1,  1],
+    'New York':         [ 1,  1,  1,  1, -1, -1, -1,  1],
+    'North Carolina':   [-1, -1,  0, -1,  0,  0,  0,  0],
+    'North Dakota':     [-1, -1, -1,  1,  1,  0,  0, -1],
+    'Ohio':             [ 0,  0,  0, -1,  1, -1, -1,  1],
+    'Oklahoma':         [-1, -1, -1,  0,  1,  1, -1, -1],
+    'Oregon':           [ 1,  1,  1,  0,  0, -1,  1,  1],
+    'Pennsylvania':     [ 0,  0,  0, -1, -1,  1, -1,  1],
+    'Rhode Island':     [ 1,  1,  0,  0, -1,  1, -1,  1],
+    'South Carolina':   [-1, -1, -1, -1,  0,  0,  0,  1],
+    'South Dakota':     [-1, -1, -1,  1,  1,  0,  0,  0],
+    'Tennessee':        [-1, -1, -1, -1,  0, -1,  0,  0],
+    'Texas':            [-1, -1, -1,  1,  1,  0, -1, -1],
+    'Utah':             [-1, -1, -1,  0, -1,  1,  1, -1],
+    'Vermont':          [ 1,  1,  1,  0,  0,  0,  0,  1],
+    'Virginia':         [ 0,  0,  0, -1, -1,  1,  1, -1],
+    'Washington':       [ 1,  1,  1,  0,  0,  1,  1, -1],
+    'West Virginia':    [-1, -1, -1, -1, -1, -1,  0,  1],
+    'Wisconsin':        [ 0,  0,  0, -1,  1, -1,  1,  1],
+    'Wyoming':          [-1, -1, -1,  0,  1,  0,  1,  1],
 }
 
 
@@ -197,11 +207,7 @@ def get_state_positions(state_name):
 
 
 def compute_balance(state_delegates):
-    """Return delegate-weighted net (sum of position * delegates) per issue.
-
-    state_delegates: dict of state_name -> total delegates (district populations).
-    Returns dict of issue_name -> (support_total, oppose_total, neutral_total, net).
-    """
+    """Return delegate-weighted support/oppose/neutral totals per issue."""
     result = {}
     for i, issue in enumerate(ISSUE_NAMES):
         support = oppose = neutral = 0
@@ -224,7 +230,6 @@ def compute_balance(state_delegates):
 
 
 if __name__ == '__main__':
-    # Quick sanity check using the canonical districts.txt delegate counts.
     import os
     delegates = {}
     path = os.path.join(os.path.dirname(__file__), 'districts.txt')
