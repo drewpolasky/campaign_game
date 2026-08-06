@@ -53,4 +53,12 @@ export const api = {
     req(`/api/matches/${matchId}/advance?token=${encodeURIComponent(token)}`, {
       method: 'POST',
     }),
+  // Admin endpoints — key travels in a header (never the URL) so it stays out
+  // of access logs.
+  adminListMatches: (adminKey) =>
+    req('/api/admin/matches', { headers: { 'X-Admin-Key': adminKey, 'Content-Type': 'application/json' } }),
+  adminMatchLog: (matchId, adminKey) =>
+    req(`/api/admin/matches/${matchId}/log`, { headers: { 'X-Admin-Key': adminKey, 'Content-Type': 'application/json' } }),
+  adminKillMatch: (matchId, adminKey) =>
+    req(`/api/admin/matches/${matchId}`, { method: 'DELETE', headers: { 'X-Admin-Key': adminKey, 'Content-Type': 'application/json' } }),
 }

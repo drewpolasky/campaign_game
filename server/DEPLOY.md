@@ -48,6 +48,7 @@ Environment variables:
 | `CAMPAIGN_ENABLE_BLOB` | (unset → off) | Legacy `/campaign_saves` blob endpoints are disabled unless this is set. The web game doesn't need them; leave off. |
 | `CAMPAIGN_API_KEY` | `changeme` | Shared secret for the legacy `/campaign_saves` blob endpoints (only when `CAMPAIGN_ENABLE_BLOB` is on). The `/api` match endpoints use per-seat tokens instead. |
 | `CAMPAIGN_CREATE_KEY` | (unset) | If set, a shared passphrase is required to **create** a match (the lobby shows a passphrase field). Playing an existing seat via its magic link is never gated by this. Leave unset to allow anyone who can reach the site to create games. |
+| `CAMPAIGN_ADMIN_KEY` | (unset → admin off) | Password for the **admin page at `/admin`**: lists every match (active + finished, who's submitted, who's waiting), shows each game's full unredacted move log, and can kill (delete) games. The key is sent in the `X-Admin-Key` header — never a URL — so it stays out of access logs. Unset disables the admin endpoints entirely. |
 | `CAMPAIGN_RNG_SECRET` | (random per start) | Secret mixed into the per-week contest RNG so outcomes can't be predicted from the match id. A fresh random value each start is fine; pin it only if you want reproducible resolutions across restarts. |
 | `CAMPAIGN_MAX_BODY` | `8388608` (8 MB) | Max request body size; rejects oversized uploads. |
 | `CAMPAIGN_CORS_ORIGIN` | `*` | Only matters if you serve the frontend from a different origin; unused for same-origin prod. |
@@ -121,6 +122,10 @@ default 8 MB; the create endpoint can be gated — above.)
 
 - **Set `CAMPAIGN_CREATE_KEY`** so random visitors/bots can't spin up matches.
   (This is the one thing you must actively turn on.)
+- **Set `CAMPAIGN_ADMIN_KEY` to something long and random** if you want the
+  `/admin` page (match overview, full move logs, kill switch). Note the admin
+  view exposes every player's moves for active games — treat the key like a
+  root password. Leave it unset and the endpoints don't exist.
 - **Legacy blob endpoints are already off.** `/campaign_saves` (the desktop
   save relay, unused by the web game) returns 404 in this server unless you set
   `CAMPAIGN_ENABLE_BLOB=1` — so nothing to do here for a normal web deploy. If

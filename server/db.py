@@ -221,6 +221,39 @@ def get_log(match_id):
             for r in rows]
 
 
+def list_matches():
+    """All matches (newest first) with their seat summaries. Admin overview."""
+    with _connect() as conn:
+        match_rows = conn.execute(
+            'SELECT id, current_week, status, num_players, created FROM matches'
+            ' ORDER BY created DESC').fetchall()
+        seat_rows = conn.execute(
+            'SELECT match_id, seat_no, controller, display_name, submitted_week'
+            ' FROM seats WHERE seat_no > 0 ORDER BY seat_no').fetchall()
+    seats_by_match = {}
+    for r in seat_rows:
+        seats_by_match.setdefault(r['match_id'], []).append({
+            'seat': r['seat_no'], 'controller': r['controller'],
+            'name': r['display_name'], 'submitted_week': r['submitted_week']})
+    return [{
+        'id': r['id'], 'current_week': r['current_week'], 'status': r['status'],
+        'num_players': r['num_players'], 'created': r['created'],
+        'seats': seats_by_match.get(r['id'], []),
+    } for r in match_rows]
+
+
+def delete_match(match_id):
+    """Remove a match and every row that references it. Returns True if the
+    match existed."""
+    with _connect() as conn:
+        existed = conn.execute('SELECT 1 FROM matches WHERE id = ?', (match_id,)).fetchone() is not None
+        conn.execute('DELETE FROM submissions WHERE match_id = ?', (match_id,))
+        conn.execute('DELETE FROM game_log WHERE match_id = ?', (match_id,))
+        conn.execute('DELETE FROM seats WHERE match_id = ?', (match_id,))
+        conn.execute('DELETE FROM matches WHERE id = ?', (match_id,))
+    return existed
+
+
 def prune_finished(max_age_days=14):
     """Delete finished matches (and their seats/submissions) created more than
     ``max_age_days`` ago. Called at startup; keeps the DB from growing forever.
@@ -231,9 +264,6 @@ def prune_finished(max_age_days=14):
             "SELECT id FROM matches WHERE status = 'finished' AND created < ?",
             (cutoff,)).fetchall()
         ids = [r['id'] for r in rows]
-        for mid in ids:
-            conn.execute('DELETE FROM submissions WHERE match_id = ?', (mid,))
-            conn.execute('DELETE FROM game_log WHERE match_id = ?', (mid,))
-            conn.execute('DELETE FROM seats WHERE match_id = ?', (mid,))
-            conn.execute('DELETE FROM matches WHERE id = ?', (mid,))
+    for mid in ids:
+        delete_match(mid)
     return len(ids)

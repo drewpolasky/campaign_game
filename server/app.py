@@ -83,8 +83,8 @@ def _cors_preflight():
 @app.after_request
 def _cors(resp):
     resp.headers['Access-Control-Allow-Origin'] = os.environ.get('CAMPAIGN_CORS_ORIGIN', '*')
-    resp.headers['Access-Control-Allow-Headers'] = 'Content-Type'
-    resp.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+    resp.headers['Access-Control-Allow-Headers'] = 'Content-Type, X-Admin-Key'
+    resp.headers['Access-Control-Allow-Methods'] = 'GET, POST, DELETE, OPTIONS'
     return resp
 
 
@@ -384,6 +384,85 @@ def status(match_id):
     out = _public_status(match)
     out['last_week_results'] = match['doc'].get('week_results', {})
     return jsonify(out)
+
+
+# --- Admin endpoints --------------------------------------------------------
+# Gated by CAMPAIGN_ADMIN_KEY (env). If the env var is unset, the endpoints are
+# disabled entirely. The key travels in the X-Admin-Key HEADER, not the query
+# string, so it never lands in access logs the way seat tokens do.
+
+def _admin_auth():
+    """Return None if the request carries the correct admin key, else an error
+    response tuple. Reads the env at request time so tests can toggle it."""
+    admin_key = os.environ.get('CAMPAIGN_ADMIN_KEY', '')
+    if not admin_key:
+        return jsonify({'error': 'admin mode is not enabled on this server'}), 403
+    supplied = request.headers.get('X-Admin-Key', '')
+    if not secrets.compare_digest(supplied, admin_key):
+        return jsonify({'error': 'bad admin key'}), 403
+    return None
+
+
+@app.route('/api/admin/matches', methods=['GET'])
+def admin_list_matches():
+    """Every match on the server (active and finished) with seat summaries."""
+    err = _admin_auth()
+    if err:
+        return err
+    matches = db.list_matches()
+    for m in matches:
+        # Waiting-on summary for active games, matching _public_status.
+        humans = [s['seat'] for s in m['seats'] if s['controller'] == 'human']
+        submitted = db.submitted_seats(m['id'], m['current_week'])
+        m['waiting_on'] = sorted(set(humans) - submitted) if m['status'] == 'active' else []
+        doc_match = db.get_match(m['id'])
+        if doc_match:
+            m['num_turns'] = doc_match['doc']['config']['num_turns']
+    return jsonify({'matches': matches})
+
+
+@app.route('/api/admin/matches/<match_id>/log', methods=['GET'])
+def admin_match_log(match_id):
+    """Unredacted per-week history: every seat's moves and results, plus the
+    current standings — the admin view hides nothing."""
+    err = _admin_auth()
+    if err:
+        return err
+    match = db.get_match(match_id)
+    if match is None:
+        return jsonify({'error': 'no such match'}), 404
+    doc = match['doc']
+    standings = {}
+    for seat_no, pdata in doc.get('players', {}).items():
+        standings[seat_no] = {
+            'name': pdata.get('public_name') or 'Seat {}'.format(seat_no),
+            'delegates': pdata.get('delegate_count', 0),
+            'money': (pdata.get('resources') or [0, 0])[1],
+            'positions': pdata.get('positions') or [],
+        }
+    return jsonify({
+        'match_id': match_id,
+        'status': match['status'],
+        'current_week': match['current_week'],
+        'num_turns': doc['config']['num_turns'],
+        'standings': standings,
+        'log': db.get_log(match_id),   # full moves for every seat, unredacted
+        'pending_submissions': sorted(db.submitted_seats(match_id, match['current_week'])),
+    })
+
+
+@app.route('/api/admin/matches/<match_id>', methods=['DELETE'])
+def admin_kill_match(match_id):
+    """Kill a game: delete the match, its seats, submissions, and log. The
+    resolve lock keeps this atomic against a concurrent week resolution."""
+    err = _admin_auth()
+    if err:
+        return err
+    with db.resolve_lock:
+        existed = db.delete_match(match_id)
+    if not existed:
+        return jsonify({'error': 'no such match'}), 404
+    return jsonify({'killed': match_id})
 
 
 # --- Serve the built React SPA (production) --------------------------------
