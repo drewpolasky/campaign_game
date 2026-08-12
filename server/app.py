@@ -409,7 +409,7 @@ def admin_list_matches():
     err = _admin_auth()
     if err:
         return err
-    matches = db.list_matches()
+    matches = db.list_matches(include_tokens=True)
     for m in matches:
         # Waiting-on summary for active games, matching _public_status.
         humans = [s['seat'] for s in m['seats'] if s['controller'] == 'human']
@@ -418,6 +418,13 @@ def admin_list_matches():
         doc_match = db.get_match(m['id'])
         if doc_match:
             m['num_turns'] = doc_match['doc']['config']['num_turns']
+        # Magic links, so a lost seat link can be recovered from here. Same
+        # path shape the create response hands out; AI seats have no token.
+        for s in m['seats']:
+            tok = s.pop('token', None)
+            s['play_path'] = '/play/{}'.format(tok) if tok else None
+        spectator = m.pop('spectator_token', None)
+        m['spectator_path'] = '/play/{}'.format(spectator) if spectator else None
     return jsonify({'matches': matches})
 
 

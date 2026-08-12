@@ -58,6 +58,25 @@ function WeekLog({ entry, standings }) {
   )
 }
 
+// A seat's magic link: opens in a new tab, or copies the full URL. Kept short
+// on screen since the token itself is long and unguessable.
+function SeatLink({ path }) {
+  const url = window.location.origin + path
+  const [copied, setCopied] = useState(false)
+  return (
+    <>
+      <a href={path} target="_blank" rel="noreferrer">open</a>
+      {' · '}
+      <a href="#" onClick={(e) => {
+        e.preventDefault()
+        navigator.clipboard.writeText(url).then(() => {
+          setCopied(true); setTimeout(() => setCopied(false), 1200)
+        })
+      }}>{copied ? 'copied!' : 'copy link'}</a>
+    </>
+  )
+}
+
 function MatchRow({ m, adminKey, onKilled }) {
   const [log, setLog] = useState(null)
   const [busy, setBusy] = useState(false)
@@ -87,7 +106,17 @@ function MatchRow({ m, adminKey, onKilled }) {
           <span className="muted small"> (waiting on {m.waiting_on.join(', ')})</span>}</td>
         <td>{m.current_week}{m.num_turns ? ` / ${m.num_turns}` : ''}</td>
         <td className="small">
-          {m.seats.map((s) => `${s.name} (${s.controller === 'human' ? 'human' : 'AI'})`).join(', ')}
+          {m.seats.map((s) => (
+            <div key={s.seat} style={{ whiteSpace: 'nowrap' }}>
+              {s.name}{' '}
+              {s.play_path ? <SeatLink path={s.play_path} /> : <span className="muted">(AI)</span>}
+            </div>
+          ))}
+          {m.spectator_path && (
+            <div style={{ whiteSpace: 'nowrap', marginTop: 2 }}>
+              <span className="muted">spectator</span> <SeatLink path={m.spectator_path} />
+            </div>
+          )}
         </td>
         <td className="muted small">{created}</td>
         <td>

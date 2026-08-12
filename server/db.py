@@ -221,25 +221,44 @@ def get_log(match_id):
             for r in rows]
 
 
-def list_matches():
-    """All matches (newest first) with their seat summaries. Admin overview."""
+def list_matches(include_tokens=False):
+    """All matches (newest first) with their seat summaries. Admin overview.
+
+    ``include_tokens`` also returns each seat's magic-link token and the
+    spectator token. It's opt-in because these are bearer credentials — only
+    the admin endpoints should ever ask for them.
+    """
     with _connect() as conn:
         match_rows = conn.execute(
             'SELECT id, current_week, status, num_players, created FROM matches'
             ' ORDER BY created DESC').fetchall()
+        # seat_no 0 is the read-only spectator row; players are 1..N.
         seat_rows = conn.execute(
-            'SELECT match_id, seat_no, controller, display_name, submitted_week'
-            ' FROM seats WHERE seat_no > 0 ORDER BY seat_no').fetchall()
+            'SELECT match_id, seat_no, controller, display_name, submitted_week, token'
+            ' FROM seats ORDER BY seat_no').fetchall()
     seats_by_match = {}
+    spectator_by_match = {}
     for r in seat_rows:
-        seats_by_match.setdefault(r['match_id'], []).append({
-            'seat': r['seat_no'], 'controller': r['controller'],
-            'name': r['display_name'], 'submitted_week': r['submitted_week']})
-    return [{
-        'id': r['id'], 'current_week': r['current_week'], 'status': r['status'],
-        'num_players': r['num_players'], 'created': r['created'],
-        'seats': seats_by_match.get(r['id'], []),
-    } for r in match_rows]
+        if r['seat_no'] == 0:
+            if include_tokens:
+                spectator_by_match[r['match_id']] = r['token']
+            continue
+        seat = {'seat': r['seat_no'], 'controller': r['controller'],
+                'name': r['display_name'], 'submitted_week': r['submitted_week']}
+        if include_tokens:
+            seat['token'] = r['token']
+        seats_by_match.setdefault(r['match_id'], []).append(seat)
+    out = []
+    for r in match_rows:
+        m = {
+            'id': r['id'], 'current_week': r['current_week'], 'status': r['status'],
+            'num_players': r['num_players'], 'created': r['created'],
+            'seats': seats_by_match.get(r['id'], []),
+        }
+        if include_tokens:
+            m['spectator_token'] = spectator_by_match.get(r['id'])
+        out.append(m)
+    return out
 
 
 def delete_match(match_id):

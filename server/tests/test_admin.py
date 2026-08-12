@@ -52,6 +52,24 @@ def test_admin_rejects_bad_key(monkeypatch):
                       headers={'X-Admin-Key': 'wrong'}).status_code == 403
 
 
+def test_seat_tokens_never_leak_to_players():
+    """Magic links are admin-only: the player-facing endpoints must not echo
+    any seat token, least of all another seat's."""
+    client = app.test_client()
+    r = client.post('/api/matches', json={'config': {
+        'num_turns': 8, 'issues_mode': False, 'seed': 1,
+        'seats': [{'name': 'A', 'controller': 'human'},
+                  {'name': 'B', 'controller': 'human'}],
+    }})
+    created = r.get_json()
+    mid = created['match_id']
+    t1, t2 = created['seat_tokens']['1'], created['seat_tokens']['2']
+    for path in ('state', 'status', 'log'):
+        body = client.get('/api/matches/{}/{}?token={}'.format(mid, path, t1)).get_data(as_text=True)
+        assert t2 not in body, "{} leaked the other seat's token".format(path)
+        assert t1 not in body, '{} echoed a seat token'.format(path)
+
+
 def test_admin_list_log_and_kill(monkeypatch):
     monkeypatch.setenv('CAMPAIGN_ADMIN_KEY', ADMIN_KEY)
     hdrs = {'X-Admin-Key': ADMIN_KEY}
@@ -66,6 +84,17 @@ def test_admin_list_log_and_kill(monkeypatch):
     assert m['status'] == 'active'
     assert {s['name'] for s in m['seats']} == {'Alice', 'AI-1'}
     assert m['waiting_on'] == [1]
+
+    # Magic links are recoverable here: the human seat's link actually works,
+    # the AI seat has none, and the spectator link is present.
+    by_seat = {s['seat']: s for s in m['seats']}
+    assert by_seat[1]['play_path'] == '/play/{}'.format(token)
+    assert by_seat[2]['play_path'] is None          # AI seat has no token
+    assert 'token' not in by_seat[1]                # raw token isn't echoed twice
+    assert m['spectator_path'] and m['spectator_path'].startswith('/play/')
+    spec_token = m['spectator_path'].rsplit('/', 1)[1]
+    r = client.get('/api/matches/{}/state?token={}'.format(match_id, spec_token))
+    assert r.status_code == 200 and r.get_json()['you']['controller'] == 'spectator'
 
     # Resolve one week (single human submitting triggers it), then the admin
     # log shows BOTH seats' moves, unredacted.
