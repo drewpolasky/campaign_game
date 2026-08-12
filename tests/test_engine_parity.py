@@ -250,10 +250,15 @@ def test_engine_matches_shipped_rules():
 # catch an accidental change to the engine's numbers (both sides would move
 # together). This locks the canonical values so any rule change is deliberate.
 # Verified equal to the ORIGINAL shipped CampaignGame code at extraction time.
+# Momentum for players 1 and 3 was re-recorded when the at-large momentum block
+# was fixed to credit the aggregate state winner instead of the leftover
+# district-loop `winner`. StateA splits its districts and is won by player 1, so
+# its at-large momentum moved from player 3 to player 1; the pool total is
+# unchanged (60.35 either way), as are delegates, money, support, and the winner.
 GOLDEN_PLAYERS = {
-    1: {'momentum': 14.65022888056596, 'delegateCount': 7.666666666666666, 'resources': [80, 152060]},
+    1: {'momentum': 32.183867387987235, 'delegateCount': 7.666666666666666, 'resources': [80, 152060]},
     2: {'momentum': -1.0, 'delegateCount': 0, 'resources': [80, 301654]},
-    3: {'momentum': 45.700686641697885, 'delegateCount': 10.333333333333334, 'resources': [80, 29716]},
+    3: {'momentum': 28.167048134276605, 'delegateCount': 10.333333333333334, 'resources': [80, 29716]},
 }
 GOLDEN_SUPPORT = {
     ('StateA', 'A1'): [57, 10, 32],

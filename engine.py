@@ -323,7 +323,11 @@ def decide_contests(gs, hooks=None):
             weekResults[stateWinner]['states'].append(stateName)
 
             totalMomemtum += stateDelegates / 2.0
-            momentums[winner - 1] += stateDelegates
+            # Credit the at-large block's momentum to the aggregate stateWinner
+            # too. This used the leftover district loop variable `winner`, so
+            # in a split state the state-level momentum went to whoever took
+            # the LAST district iterated rather than whoever won the state.
+            momentums[stateWinner - 1] += stateDelegates
 
             gs.past_elections[stateName] = stateWinner
             try:
