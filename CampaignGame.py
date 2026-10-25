@@ -1169,7 +1169,7 @@ def endTurn(window, fundraising):
         currentDate += 1
         decideContests()
         player = 1
-        eventOfTheWeek = random.randint(0,len(issueNames)-1)
+        eventOfTheWeek = engine.next_event_of_week(random, len(issueNames), eventOfTheWeek)
         _refresh_headline()
         for state in states:
             for district in states[state].districts:
@@ -1855,7 +1855,7 @@ def _ai_advance_turn():
     currentDate += 1
     decideContests()
     player = 1
-    eventOfTheWeek = random.randint(0, len(issueNames) - 1)
+    eventOfTheWeek = engine.next_event_of_week(random, len(issueNames), eventOfTheWeek)
     # Refresh the displayed flavor headline so it tracks the new issue.
     # Without this, weeks rolled through AI-only paths would keep showing
     # the previous week's headline.
@@ -4016,7 +4016,7 @@ def endTurn(window, fundraising):
         currentDate += 1
         decideContests()
         player = 1
-        eventOfTheWeek = random.randint(0, len(issueNames) - 1)
+        eventOfTheWeek = engine.next_event_of_week(random, len(issueNames), eventOfTheWeek)
         _refresh_headline()
         for state in states:
             for district in states[state].districts:
@@ -4529,7 +4529,7 @@ def _sim_do_resolution(week, found):
     currentDate += 1
     decideContests()
     player = 1
-    eventOfTheWeek = random.randint(0, len(issueNames) - 1)
+    eventOfTheWeek = engine.next_event_of_week(random, len(issueNames), eventOfTheWeek)
     _refresh_headline()
     for state in states:
         for district in states[state].districts:

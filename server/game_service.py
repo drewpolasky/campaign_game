@@ -233,7 +233,7 @@ def resolve_turn(gs, human_moves, rng):
     engine.reset_weekly(gs)
     # Roll a fresh issue of the week for the upcoming week (matches the desktop
     # game and the RL sim, both of which re-roll event_of_week each turn).
-    gs.event_of_week = rng.randint(0, len(state_issues.ISSUES) - 1)
+    gs.event_of_week = engine.next_event_of_week(rng, len(state_issues.ISSUES), gs.event_of_week)
 
     return week_results, all_moves
 

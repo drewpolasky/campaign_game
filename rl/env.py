@@ -178,8 +178,9 @@ class CampaignGameEnv:
 
         # 5. Roll the new event and reset per-district counters. (The date was
         # already advanced in step 3, before contest resolution.)
+        import engine
         import state_issues
-        sim.event_of_week = sim.rng.randint(0, len(state_issues.ISSUES) - 1)
+        sim.event_of_week = engine.next_event_of_week(sim.rng, len(state_issues.ISSUES), sim.event_of_week)
         _sim.reset_weekly(sim)
 
         done = sim.current_date > sim.num_turns

@@ -475,3 +475,18 @@ def org_tier_cost(state, current_tier):
     """Cost to buy the next org tier when currently at ``current_tier``."""
     base = org_base_cost(state)
     return base if current_tier <= 1 else base * current_tier
+
+
+def next_event_of_week(rng, num_issues, previous):
+    """Roll the next week's issue: uniformly random, but never the same issue
+    as ``previous`` (last week's). One draw over the other num_issues-1
+    issues, so every eligible issue stays equally likely. Shared by the
+    desktop game, web server, balance sim, and RL env.
+
+    ``rng`` is a random.Random or the random module (anything with randint).
+    Falls back to a plain roll if there's nothing to exclude.
+    """
+    if num_issues <= 1 or previous is None or not (0 <= previous < num_issues):
+        return rng.randint(0, num_issues - 1)
+    pick = rng.randint(0, num_issues - 2)
+    return pick + 1 if pick >= previous else pick

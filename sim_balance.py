@@ -228,7 +228,7 @@ def run_game(strategies, num_turns=20, seed=0):
         # that removes the old off-by-one vs the real game.)
         sim.current_date += 1
         decide_contests(sim)
-        sim.event_of_week = sim.rng.randint(0, len(state_issues.ISSUES) - 1)
+        sim.event_of_week = engine.next_event_of_week(sim.rng, len(state_issues.ISSUES), sim.event_of_week)
         reset_weekly(sim)
     return sim
 
