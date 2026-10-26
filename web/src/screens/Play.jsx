@@ -138,9 +138,13 @@ export default function Play() {
   async function unsubmit() {
     setBusy(true); setError('')
     try {
-      await api.unsubmitMove(info.match_id, token)
+      const res = await api.unsubmitMove(info.match_id, token)
       if (pollRef.current) { clearInterval(pollRef.current); pollRef.current = null }
       await load()  // reload: iSubmitted flips back to false so the plan is editable again
+      // load() clears the plan; restore the retracted move so the player can
+      // tweak it rather than redo everything.
+      const m = res.move || {}
+      setMove({ campaigning: m.campaigning || {}, ads: m.ads || {}, orgs: m.orgs || {} })
     } catch (e) { setError(e.message) } finally { setBusy(false) }
   }
 

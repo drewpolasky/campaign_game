@@ -341,9 +341,11 @@ def unsubmit_move(match_id):
         week = match['current_week']
         if seat['seat_no'] not in db.submitted_seats(match_id, week):
             return jsonify({'error': 'nothing to unsubmit (the week may have already resolved)'}), 409
-        db.delete_submission(match_id, seat['seat_no'], week)
+        move = db.delete_submission(match_id, seat['seat_no'], week)
         match = db.get_match(match_id)
-    return jsonify({'result': 'unsubmitted', 'status': _public_status(match)})
+    # Hand the retracted move back so the client can restore the plan for
+    # small edits instead of starting the week over.
+    return jsonify({'result': 'unsubmitted', 'move': move, 'status': _public_status(match)})
 
 
 @app.route('/api/matches/<match_id>/advance', methods=['POST'])

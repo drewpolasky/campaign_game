@@ -192,14 +192,19 @@ def clear_submissions(match_id, week):
 
 def delete_submission(match_id, seat_no, week):
     """Retract one seat's submission for a week (used by unsubmit). Clears the
-    seat's submitted_week marker so it shows as un-submitted again."""
+    seat's submitted_week marker so it shows as un-submitted again. Returns
+    the retracted move (or None) so the player can keep editing it."""
     with _connect() as conn:
+        row = conn.execute(
+            'SELECT move_json FROM submissions WHERE match_id = ? AND seat_no = ? AND week = ?',
+            (match_id, seat_no, week)).fetchone()
         conn.execute(
             'DELETE FROM submissions WHERE match_id = ? AND seat_no = ? AND week = ?',
             (match_id, seat_no, week))
         conn.execute(
             'UPDATE seats SET submitted_week = 0 WHERE match_id = ? AND seat_no = ?',
             (match_id, seat_no))
+    return json.loads(row['move_json']) if row else None
 
 
 def log_week(match_id, week, results, moves):
