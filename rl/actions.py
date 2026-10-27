@@ -19,6 +19,7 @@ not yet held) is a valid target; we mask invalid targets in the env.
 """
 from dataclasses import dataclass
 
+import engine
 import sim_balance as _sb
 
 
@@ -167,7 +168,7 @@ def decode_action(sim, p_idx, action):
         if tte < 0 or tte > 8:
             continue
         org_level = st.organizations[p_idx]
-        cost = max(10000, 10000 * org_level)
+        cost = engine.org_tier_cost(st, org_level)
         state_delegates = sum(
             d.population - (d.population * 2) / 3 for d in st.districts)
         # Org-value bonus for target; baseline matches sim_balance threshold=18.
@@ -306,7 +307,7 @@ def decode_continuous_action(sim, p_idx, action):
         scaled = weight * n_active  # ~1.0 at neutral
         threshold = 18.0 / max(scaled, 0.05)
         org_level = st.organizations[p_idx]
-        cost = max(10000, 10000 * org_level)
+        cost = engine.org_tier_cost(st, org_level)
         state_delegates = sum(
             d.population - (d.population * 2) / 3 for d in st.districts)
         org_value = state_delegates * (1.0 + max(0, 6 - tte))
@@ -396,6 +397,39 @@ def random_continuous_action(rng):
 COUPLED_ACTION_DIM = NUM_TARGET_STATES + 3   # 53
 COUPLED_ACTION_LOW = -5.0
 COUPLED_ACTION_HIGH = 5.0
+# The coupled decoder buys ballot access (tier 1) in weighted states voting
+# within this many weeks (0 = this week only), even when the org knob is near
+# zero. Wider windows pull ad money away from the states the policy is
+# concentrating on, so keep it to the last call.
+BALLOT_FLOOR_WEEKS = 0
+
+
+def _buy_ballot_floor(sim, p_idx, ranked, n_active):
+    """Buy tier 1, best-weighted first, in states the agent isn't on the
+    ballot in that vote within BALLOT_FLOOR_WEEKS. `ranked` is the decoder's
+    (weight, state_name) list, highest first. Returns how many were bought."""
+    p = sim.players[p_idx]
+    bought = 0
+    for weight, state_name in ranked:
+        if weight * n_active < 0.5:
+            break
+        st = sim.states[state_name]
+        if st.organizations[p_idx] > 0:
+            continue
+        tte = _sb.time_to_election(sim, state_name)
+        if tte < 0 or tte > BALLOT_FLOOR_WEEKS:
+            continue
+        cost = engine.org_tier_cost(st, 0)
+        if p.resources[1] < cost:
+            continue
+        p.resources[1] -= cost
+        st.organizations[p_idx] += 1
+        bought += 1
+        try:
+            p.money_on_org += cost
+        except (AttributeError, TypeError):
+            pass
+    return bought
 
 
 def decode_coupled_action(sim, p_idx, action):
@@ -464,7 +498,7 @@ def decode_coupled_action(sim, p_idx, action):
         org_level = st.organizations[p_idx]
         if org_level >= 5:
             continue
-        cost = max(10000, 10000 * org_level)
+        cost = engine.org_tier_cost(st, org_level)
         if org_budget < cost:
             continue
         state_delegates = sum(
@@ -516,6 +550,14 @@ def decode_coupled_action(sim, p_idx, action):
         if t <= 6:
             return 0.9
         return 0.6
+
+    # Ads and campaign hours only go to states where the agent is on the
+    # ballot (_scored_districts skips org-0 states). A policy that learned on
+    # 10-week games turns the org knob down once its early build-out is done,
+    # which there covers every state; in a 20-week game the big late states
+    # are still out of org range (tte > 9) at that point, so the agent would
+    # sit on its cash while they vote.
+    _buy_ballot_floor(sim, p_idx, ranked, n_active)
 
     scored = _sb._scored_districts(sim, p_idx, urgency_curve,
                                    closeness_w=1.0, delegates_w=1.0,

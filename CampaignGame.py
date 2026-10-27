@@ -191,7 +191,7 @@ _TUTORIAL_PAGES = [
             "  * 'Iowa - wk 4 (12 del)' shows the state, the week it votes, and the delegates at stake.\n"
             "  * Rows where you're already on the ballot are highlighted green and prefixed with '*'.\n"
             "  * Past contests are grayed out as '[Done]'.\n\n"
-            "Each row also has a quick-action button on the right (the price scales with state size, from $5k in the smallest states to $20k in the largest):\n"
+            "Each row also has a quick-action button on the right. The price scales with state size: getting on the ballot and opening an office each cost from $5k in the smallest states to $20k in the largest, and every level after that costs that base times your current level:\n"
             "  * 'Ballot $Xk' if you're not on the ballot yet.\n"
             "  * 'Office $Xk' to grow from level 1 to level 2.\n"
             "  * 'Build $Xk' (or higher) to keep building your organization.\n\n"
@@ -242,7 +242,7 @@ _TUTORIAL_PAGES = [
         'title': 'Issues and the Issue of the Week',
         'image': None,
         'body': (
-            "If you start the game in Issues Mode, each candidate picks a stance on 7 issues during setup: Climate Action, Abortion, Taxes & Spending, Gun Policy, Healthcare, Regulation, and Trade. The setup screen shows how many delegates worth of states currently take each side, so you can see the tradeoffs.\n\n"
+            "If you start the game in Issues Mode, each candidate picks a stance on 8 issues during setup: Climate Action, Abortion, Taxes & Spending, Trade, Ag Subsidies, Defense Spending, Federal Land, and Social Security & Medicare. The setup screen shows how many delegates worth of states currently take each side, so you can see the tradeoffs.\n\n"
             "Every week the news cycle picks one issue to dominate. You can see it on the Campaign Dashboard with a flavor headline. While that issue is in the news:\n"
             "  * If your stance matches the state's, support builds 33% faster there.\n"
             "  * If you clash with the state, support builds slower (worse the further apart you are).\n"
@@ -254,7 +254,7 @@ _TUTORIAL_PAGES = [
         'title': 'Ending Your Turn',
         'image': None,
         'body': (
-            "On the dashboard, set the 'Fundraising time allocation' slider to whatever portion of your remaining hours should go to fundraising. The rest goes unused (only allocated campaign hours actually count).\n\n"
+            "On the dashboard, set the 'Fundraising time allocation' slider to whatever portion of your remaining hours should go to fundraising. Any hours still unspent when you end the turn go to fundraising too, so none are wasted.\n\n"
             "Hit 'End Turn' and play passes to the next candidate. Once everyone has gone:\n"
             "  * The week's contests are decided. Delegates are awarded based on the polling average plus a small random factor at election time, scaled by population and turnout.\n"
             "  * Wins give momentum to the winners and reset some district allocations.\n"
@@ -1580,6 +1580,20 @@ AI_STRATEGIES = {
 DEFAULT_AI_STRATEGY = 'Default'
 
 
+def _checkpoint_obs_dim(zip_path):
+    """Observation size a saved PPO checkpoint expects, read from the JSON
+    metadata stable-baselines3 stores in the zip (no torch import). None if
+    it can't be read."""
+    import json
+    import zipfile
+    try:
+        with zipfile.ZipFile(zip_path) as z:
+            meta = json.loads(z.read('data'))
+        return int(meta['observation_space']['_shape'][0])
+    except (OSError, KeyError, IndexError, TypeError, ValueError, zipfile.BadZipFile):
+        return None
+
+
 def _discover_neural_checkpoints():
     """Find every trained PPO checkpoint under runs/ and register each as
     its own AI_STRATEGIES entry. That way the player can pick a specific
@@ -1592,12 +1606,21 @@ def _discover_neural_checkpoints():
         entries = sorted(os.listdir(base))
     except OSError:
         return
+    try:
+        from rl.obs import OBS_DIM
+    except ImportError:
+        OBS_DIM = None
     for run_name in entries:
         model_path = os.path.join(base, run_name, 'model')
         if not os.path.isfile(model_path + '.zip'):
             continue
         # Skip throwaway smoke / scratch runs by name convention.
         if run_name.lower().startswith(('smoke', 'tmp_', 'tmp.', '_')):
+            continue
+        # Skip checkpoints trained on an older observation layout (e.g.
+        # before the issue set changed) — they can't run, and picking one
+        # would silently play Default every turn.
+        if OBS_DIM is not None and _checkpoint_obs_dim(model_path + '.zip') not in (None, OBS_DIM):
             continue
         label = 'Neural: {}'.format(run_name)
         if label in AI_STRATEGIES:
@@ -1716,6 +1739,12 @@ def calcAImove(agent):
 
     ai_idx = player - 1
     strategy_name = getattr(players[player], 'aiStrategy', None) or DEFAULT_AI_STRATEGY
+    # A saved game can name a 'Neural: <run>' checkpoint that isn't offered
+    # here (not checked out, or trained for a different issue set). Play
+    # Default, as a failed neural turn does, not a random personality.
+    if strategy_name.startswith('Neural: ') and strategy_name not in AI_STRATEGIES:
+        print('{} is not available; playing {} instead.'.format(strategy_name, DEFAULT_AI_STRATEGY))
+        strategy_name = DEFAULT_AI_STRATEGY
 
     # Neural policy short-circuit: encode the world, run the trained PPO
     # model, decode the action onto the live State / District objects, then

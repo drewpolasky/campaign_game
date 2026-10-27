@@ -63,8 +63,10 @@ class _PlayerView:
     # and `p.money_on_ads += cost`. Because our getters always return 0, the
     # `+=` desugars to `setter(0 + cost) = setter(cost)`. So each setter call
     # receives exactly the per-action cost (one org tier built, or one ad
-    # chunk spent). We forward those into the real game's `addStat` system
-    # so the end-of-game report credits the neural agent correctly.
+    # chunk spent). Org spend is forwarded into the real game's `addStat`
+    # system so the end-of-game report credits the neural agent. Ad spend is
+    # not: Player.endTurn already adds each turn's district ad totals to
+    # 'ad_money_total', so forwarding it here would count it twice.
     @property
     def money_on_org(self):
         return 0
@@ -83,10 +85,7 @@ class _PlayerView:
 
     @money_on_ads.setter
     def money_on_ads(self, v):
-        try:
-            self._p.addStat('ad_money_total', int(v))
-        except AttributeError:
-            pass
+        pass
 
 
 class RealGameSimView:

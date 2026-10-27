@@ -55,10 +55,16 @@ class CampaignGameEnv:
     """Gym-style API: reset() -> obs; step(action) -> (obs, reward, done, info)."""
 
     def __init__(self, opponents, num_turns=20, seed=None,
-                 randomize_positions=True, action_kind='discrete'):
+                 randomize_positions=True, action_kind='discrete',
+                 random_calendar_prob=0.0, seed_stride=1):
         """
+        num_turns: game length in weeks, or a sequence of lengths to pick from
+            each episode (e.g. (8, 10, 20), the real game's choices).
         action_kind: 'discrete' (MultiDiscrete bootstrap) or 'continuous' (Box).
             Affects which decoder is used in step().
+        seed_stride: gap between consecutive episode seeds. Vec envs seeded
+            base+i should pass the env count, so no two envs replay the same
+            episode setup (calendar, positions).
         """
         if not opponents:
             raise ValueError('CampaignGameEnv needs at least one opponent.')
@@ -70,8 +76,24 @@ class CampaignGameEnv:
             raise ValueError(
                 f'too many players ({self.num_players}); '
                 f'MAX_PLAYERS={_obs.MAX_PLAYERS}')
-        self.num_turns = num_turns
+        if isinstance(num_turns, (list, tuple)):
+            self.num_turns_choices = tuple(num_turns)
+        else:
+            self.num_turns_choices = (num_turns,)
+        if not self.num_turns_choices:
+            raise ValueError('num_turns needs at least one length')
+        self.num_turns = self.num_turns_choices[0]
+        if seed_stride < 1:
+            raise ValueError('seed_stride must be >= 1')
+        self.seed_stride = seed_stride
         self.randomize_positions = randomize_positions
+        # Chance each episode plays on a shuffled primary calendar (the real
+        # game's "Randomize the calendar" option) instead of the fixed one.
+        # Mixing both teaches the policy to read each state's slot features
+        # (time-to-election, delegates, ...) rather than memorize a schedule.
+        if not 0.0 <= random_calendar_prob <= 1.0:
+            raise ValueError('random_calendar_prob must be in [0, 1]')
+        self.random_calendar_prob = random_calendar_prob
         self.action_kind = action_kind
         self.base_seed = seed if seed is not None else random.randrange(1 << 30)
         self.episode_count = 0
@@ -92,10 +114,18 @@ class CampaignGameEnv:
         # opponents. Sim still needs *something* in that slot.
         agent_stub = ('Agent', _agent_stub_strategy)
         strategies = [agent_stub] + [(opp.name, _opp_stub) for opp in self.opponents]
-        seed = self.base_seed + self.episode_count
+        seed = self.base_seed + self.episode_count * self.seed_stride
         self.episode_count += 1
+        # Decide the calendar and game length from the episode seed
+        # (reproducible per episode, independent of the sim's own rng stream).
+        episode_rng = random.Random(seed * 7919 + 17)
+        use_random_calendar = (self.random_calendar_prob > 0.0 and
+                               episode_rng.random() < self.random_calendar_prob)
+        if len(self.num_turns_choices) > 1:
+            self.num_turns = episode_rng.choice(self.num_turns_choices)
         self.sim = _sim.Sim(strategies, num_turns=self.num_turns, seed=seed,
-                            randomize_positions=self.randomize_positions)
+                            randomize_positions=self.randomize_positions,
+                            randomize_calendar=use_random_calendar)
         for opp in self.opponents:
             opp.reset()
         self.last_delegates = 0

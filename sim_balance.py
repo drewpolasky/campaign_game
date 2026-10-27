@@ -134,10 +134,16 @@ class SimPlayer:
 
 
 class Sim:
-    def __init__(self, strategies, num_turns=20, seed=0, randomize_positions=True):
+    def __init__(self, strategies, num_turns=20, seed=0, randomize_positions=True,
+                 randomize_calendar=False):
         self.rng = random.Random(seed)
         self.states = load_states()
-        self.calendar = load_calendar(num_turns)
+        # randomize_calendar uses the same generator as the real game's
+        # "Randomize the calendar" option, seeded from this sim's rng.
+        if randomize_calendar:
+            self.calendar = engine.randomize_calendar(self.states, num_turns, self.rng)
+        else:
+            self.calendar = load_calendar(num_turns)
         self.num_turns = num_turns
         self.current_date = 1
         self.event_of_week = self.rng.randint(0, len(state_issues.ISSUES) - 1)
@@ -305,13 +311,15 @@ def _greedy_spend_time(sim, p_idx, scored, fundraise_cutoff):
         i = max(range(len(scored)), key=lambda k: (scored[k][0], scored[k][1]))
         s = scored[i][0]
         if s < fundraise_cutoff:
-            fundraising_hours += p.resources[0]
-            p.resources[0] = 0
             break
         d = scored[i][2]
         d.setCampaigningThisTurn(p_idx, d.campaigningThisTurn[p_idx] + 1)
         p.resources[0] -= 1
         scored[i][0] *= 0.9
+    # Hours left over (below the cutoff, or nowhere on the ballot to campaign)
+    # go to fundraising, as in the real game's end of turn.
+    fundraising_hours += p.resources[0]
+    p.resources[0] = 0
     return fundraising_hours
 
 

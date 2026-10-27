@@ -27,7 +27,7 @@ def _default_model_path():
     return os.environ.get(
         'CAMPAIGN_RL_MODEL',
         os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                     'runs', 'v17_decoder_fixed', 'model'),
+                     'runs', 'v20_mixed_lengths', 'model'),
     )
 
 

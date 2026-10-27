@@ -21,7 +21,8 @@ class CampaignGymEnv(gym.Env):
 
     def __init__(self, opponent_names=('Default', 'Default'), num_turns=8,
                  seed=None, randomize_positions=True, opponent_factory=None,
-                 action_kind='discrete'):
+                 action_kind='discrete', random_calendar_prob=0.0,
+                 seed_stride=1):
         """
         opponent_names: tuple of strategy names; only used when
             `opponent_factory` is None.
@@ -30,6 +31,8 @@ class CampaignGymEnv(gym.Env):
             env (e.g. opponent pool with its own RNG).
         action_kind: 'discrete' or 'continuous' — selects which action space
             and decoder are used.
+        num_turns, random_calendar_prob, seed_stride: passed to
+            CampaignGameEnv (num_turns may be a sequence of lengths).
         """
         super().__init__()
         self.opponent_names = tuple(opponent_names)
@@ -38,6 +41,8 @@ class CampaignGymEnv(gym.Env):
         self.randomize_positions = randomize_positions
         self.opponent_factory = opponent_factory
         self.action_kind = action_kind
+        self.random_calendar_prob = random_calendar_prob
+        self.seed_stride = seed_stride
 
         self.observation_space = spaces.Box(
             low=-5.0, high=5.0, shape=(_obs.OBS_DIM,), dtype=np.float32)
@@ -71,6 +76,8 @@ class CampaignGymEnv(gym.Env):
             seed=self._seed,
             randomize_positions=self.randomize_positions,
             action_kind=self.action_kind,
+            random_calendar_prob=self.random_calendar_prob,
+            seed_stride=self.seed_stride,
         )
 
     def reset(self, *, seed=None, options=None):

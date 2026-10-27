@@ -152,8 +152,10 @@ Not covered (fine for friends): there's no rate limiting — add nginx
 
 - **Match cleanup**: finished matches accumulate in the DB. Prune old ones
   periodically (e.g. `DELETE FROM matches WHERE status='finished' AND ...`).
-- **Neural AI** (`NeuralPPO`) needs `torch` installed server-side; the scripted
-  strategies (Default/Aggressive/BigState/CloseOnly/MoneyMachine/Balanced) have
-  no extra dependencies and are the default.
+- **AI opponents** on the web are the scripted strategies
+  (Default/Aggressive/BigState/CloseOnly/MoneyMachine/Balanced), which need no
+  extra dependencies. The trained neural AI (`NeuralPPO`) is desktop-only for
+  now — the server has no adapter for it, so installing `torch` here doesn't
+  enable it.
 - **The desktop client still works** against the same server via the unchanged
   `/campaign_saves` blob endpoints.

@@ -12,10 +12,13 @@ Run with:  python generate_tutorial_images.py
 import os
 import random
 import sys
+from types import SimpleNamespace
+
 from PIL import Image, ImageDraw, ImageFont
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+import engine
 from State import State, District
 
 
@@ -217,27 +220,27 @@ def make_dashboard_diagram():
         for i, line in enumerate(body_lines):
             draw.text((20, y0 + 28 + i * 16), line, fill=(0, 0, 0), font=font_b)
 
-    card(12, 170, 'Campaign Dashboard', [
+    card(12, 210, 'Campaign Dashboard', [
         'Time: 80    Money: $112,500',
         'Momentum: 18.4',
         '',
         "Headline:",
-        "  Hospital closures hit rural communities",
-        "Issue: Healthcare",
-        "Your stance: Public Option",
+        "  Seniors mobilize against proposed benefit cuts",
+        "Issue: Social Security & Medicare",
+        "Your stance: Protect & Expand",
         '',
         'Standings',
         'You: 142 delegates',
         'Bot: 98 delegates',
     ])
-    card(196, 70, 'Fundraising time', [
+    card(236, 70, 'Fundraising time', [
         'Drag the slider below to send hours to fundraising.',
         '[ slider ]   24 / 80',
     ])
-    card(280, 60, 'Actions', [
+    card(320, 60, 'Actions', [
         '[ Review Report ]   [ End Turn ]',
     ])
-    card(354, 110, 'This Week', [
+    card(394, 110, 'This Week', [
         'Voting this week:',
         '  Wyoming, Florida, Illinois, Missouri,',
         '  North Carolina, Ohio',
@@ -265,14 +268,23 @@ def make_sidebar_diagram():
     draw.rectangle((20, 54, 200, 70), fill=(255, 255, 255), outline=(80, 80, 80))
     draw.text((25, 56), 'Iowa', fill=(0, 0, 0), font=font_b)
 
+    def org_action(row_delegates, org_level):
+        # Same label and price as the game's calendar-row button. The row's
+        # delegate figure is the state's summed district population, which is
+        # what engine's size-scaled org pricing reads.
+        state = SimpleNamespace(districts=[SimpleNamespace(population=row_delegates)])
+        k = engine.org_tier_cost(state, org_level) // 1000
+        verb = ('Ballot', 'Office')[org_level] if org_level < 2 else 'Build'
+        return '{} ${}k'.format(verb, k)
+
     rows = [
         ('[Done]   * Iowa - wk 4 (12 del)',     (220, 220, 220), None),
-        ('[Now]   * Massachusetts - wk 9 (30 del)', (214, 240, 194), 'Office $20k'),
-        ('Tennessee - wk 9 (27 del)',           (255, 255, 255), 'Ballot $10k'),
-        ('* Texas - wk 9 (108 del)',            (214, 240, 194), 'Office $10k'),
-        ('Florida - wk 11 (81 del)',            (255, 255, 255), 'Ballot $10k'),
-        ('* California - wk 19 (159 del)',      (214, 240, 194), 'Build $20k'),
-        ('* New York - wk 15 (81 del)',         (214, 240, 194), 'Office $20k'),
+        ('[Now]   * Massachusetts - wk 9 (30 del)', (214, 240, 194), org_action(30, 1)),
+        ('Tennessee - wk 9 (27 del)',           (255, 255, 255), org_action(27, 0)),
+        ('* Texas - wk 9 (108 del)',            (214, 240, 194), org_action(108, 1)),
+        ('Florida - wk 11 (81 del)',            (255, 255, 255), org_action(81, 0)),
+        ('* California - wk 19 (159 del)',      (214, 240, 194), org_action(159, 2)),
+        ('* New York - wk 15 (81 del)',         (214, 240, 194), org_action(81, 1)),
     ]
     y = 96
     for label, bg, action in rows:

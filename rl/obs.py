@@ -2,13 +2,15 @@
 
 Layout (all values pre-normalized to roughly [-1, 1] or [0, 1]):
 
-  globals (10):
+  globals (3 + NUM_ISSUES = 11 with the current 8 issues):
     turn / num_turns
     num_turns / 20
     n_active_players / MAX_PLAYERS
-    event_of_week one-hot (NUM_ISSUES = 7)
+    event_of_week one-hot (NUM_ISSUES)
 
-  per-state (NUM_STATES * 8 = 400):
+  per-state (NUM_STATES * 8 = 400), slots in this game's calendar order (so
+  the slot-to-state mapping changes every game when the calendar is
+  shuffled; the action decoders use the same order):
     time_to_election / num_turns (clipped to [-1, 1.5])
     finished flag (0 or 1)
     self_org / 5
@@ -16,19 +18,23 @@ Layout (all values pre-normalized to roughly [-1, 1] or [0, 1]):
     self_avg_district_support / 100
     max_opp_avg_district_support / 100
     state_position_on_event_issue (-1, 0, 1)
-    state_total_delegates / 60     (rough scale: top states ~50)
+    sum(district.population) / 60  (populations are stored as 3x delegates,
+                                    so California is 159 / 60 ~ 2.65)
 
-  per-player slot (MAX_PLAYERS * 11 = 44):
+  per-player slot (MAX_PLAYERS * (5 + NUM_ISSUES) = 52 with 8 issues):
     valid (1 if seat is filled, else 0 — agent self always valid)
     delegate_count / 1000
     momentum / 100  (clipped)
     money / 100000
     hours / 80
-    positions (NUM_ISSUES = 7) as -1/0/1
+    positions (NUM_ISSUES) as -1/0/1
 
 The agent always occupies slot 0; opponents fill 1..MAX_PLAYERS-1 in their
 sim-order, padded with zero/invalid slots so the network sees a fixed
 shape regardless of player count.
+
+OBS_DIM therefore depends on the issue count (463 with 8 issues). A model
+trained with a different issue set can't be loaded against this encoder.
 """
 import numpy as np
 
@@ -38,14 +44,10 @@ NUM_STATES = 50
 NUM_ISSUES = len(state_issues.ISSUES)
 MAX_PLAYERS = 4
 
-GLOBAL_DIM = 3 + NUM_ISSUES                # 10
+GLOBAL_DIM = 3 + NUM_ISSUES                # 11 with 8 issues
 STATE_FEATURES = 8
-PLAYER_SLOT_FEATURES = 4 + NUM_ISSUES      # valid+deleg+mom+money+hours + positions = 4 + 7? -> 11
-# (4 = valid, delegate, momentum, money, hours? that's 5. We want 4 scalars + valid = 5.)
-# Recount carefully:
-#   valid, delegates, momentum, money, hours = 5 scalars
-#   + NUM_ISSUES position scalars = 5 + 7 = 12
-PLAYER_SLOT_FEATURES = 5 + NUM_ISSUES      # 12
+# valid, delegates, momentum, money, hours = 5 scalars, + one position per issue
+PLAYER_SLOT_FEATURES = 5 + NUM_ISSUES      # 13 with 8 issues
 
 OBS_DIM = (GLOBAL_DIM
            + NUM_STATES * STATE_FEATURES
@@ -74,7 +76,7 @@ def encode_obs(sim, agent_idx):
 
     # --- Per-state ---
     state_names = list(sim.states.keys())
-    # Stable order by calendar (matches the canonical CALENDAR ordering).
+    # Order by this game's calendar (canonical, or shuffled per game).
     cal_index = {name: i for i, (name, _) in enumerate(sim.calendar)}
     state_names.sort(key=lambda n: cal_index.get(n, 999))
     # If for some reason fewer than NUM_STATES states are present, the rest

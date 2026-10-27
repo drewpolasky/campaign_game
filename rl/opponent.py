@@ -7,6 +7,7 @@ existing scripted strategies adapt with one wrapper.
 """
 from typing import Callable
 
+import engine
 import sim_balance as _sb
 
 
@@ -116,7 +117,7 @@ class EarlyIgnorerOpponent(Opponent):
             if tte < self.skip_weeks or tte > 8:
                 continue
             org_level = st.organizations[p_idx]
-            cost = max(10000, 10000 * org_level)
+            cost = engine.org_tier_cost(st, org_level)
             state_delegates = sum(
                 d.population - (d.population * 2) / 3 for d in st.districts)
             org_value = state_delegates * (1.0 + max(0, 6 - tte))
@@ -207,13 +208,13 @@ class UpcomingFocusOpponent(_IssueAwareOpponent):
         # Build orgs in the top candidates while cash allows.
         for score, state_name, st, tte in candidates[:8]:
             org_level = st.organizations[p_idx]
-            cost = max(10000, 10000 * org_level)
+            cost = engine.org_tier_cost(st, org_level)
             # Upcoming-focused: more willing to push orgs in matched
             # states near the election.
             if org_level >= 4:
                 continue
             if p.resources[1] < cost:
-                break
+                continue  # org prices vary by size; a cheaper one may fit
             # Skip 0-cost low-value: require the score to be meaningfully
             # above a floor proportional to org cost.
             if score < 1.5 * (org_level + 1) * 10:
@@ -283,11 +284,11 @@ class BigStateFocusOpponent(_IssueAwareOpponent):
         # to tier 5 in the biggest aligned ones.
         for score, state_name, st, tte in candidates[:12]:
             org_level = st.organizations[p_idx]
-            cost = max(10000, 10000 * org_level)
+            cost = engine.org_tier_cost(st, org_level)
             if org_level >= 5:
                 continue
             if p.resources[1] < cost:
-                break
+                continue  # org prices vary by size; a cheaper one may fit
             # Threshold scales with size — only invest if this is in the
             # truly heavyweight quartile of remaining candidates.
             if score < candidates[len(candidates) // 4][0]:
@@ -353,7 +354,7 @@ class BigStateRushOpponent(_IssueAwareOpponent):
                 continue
             while st.organizations[p_idx] < target_tier:
                 org_level = st.organizations[p_idx]
-                cost = max(10000, 10000 * org_level)
+                cost = engine.org_tier_cost(st, org_level)
                 if p.resources[1] < cost:
                     break
                 p.resources[1] -= cost
@@ -429,9 +430,9 @@ class LateBlitzOpponent(_IssueAwareOpponent):
             for delegates, state_name, st in candidates[:4]:
                 if st.organizations[p_idx] >= 1:
                     continue
-                cost = 10000
+                cost = engine.org_base_cost(st)
                 if p.resources[1] < cost:
-                    break
+                    continue  # ballot prices vary by size; a smaller one may fit
                 p.resources[1] -= cost
                 st.organizations[p_idx] += 1
                 try:
@@ -446,7 +447,7 @@ class LateBlitzOpponent(_IssueAwareOpponent):
                     continue
                 while st.organizations[p_idx] < 3:
                     org_level = st.organizations[p_idx]
-                    cost = max(10000, 10000 * org_level)
+                    cost = engine.org_tier_cost(st, org_level)
                     if p.resources[1] < cost:
                         break
                     p.resources[1] -= cost
@@ -459,9 +460,9 @@ class LateBlitzOpponent(_IssueAwareOpponent):
 
         # --- Spending allocation per phase ---
         if phase == 'early':
-            # Skip ads/time entirely; fundraise hard.
-            fundraising = min(p.resources[0], 60)
-            p.resources[0] -= fundraising
+            # Skip ads/time entirely; every hour fundraises.
+            fundraising = p.resources[0]
+            p.resources[0] = 0
             return fundraising
 
         if phase == 'mid':
@@ -490,7 +491,7 @@ class LateBlitzOpponent(_IssueAwareOpponent):
                                               fundraise_cutoff=8.0)
             # Restore the reserved cash for next turn.
             p.resources[1] += money_reserve
-            return leftover + min(p.resources[0], 20)
+            return leftover
 
         # late: empty the bank account on near-term states.
         def urgency_curve(t):
@@ -545,9 +546,9 @@ class AdMaximizerOpponent(_IssueAwareOpponent):
         for _, state_name, st, tte in candidates[:10]:
             if st.organizations[p_idx] >= 1:
                 continue
-            cost = 10000
+            cost = engine.org_base_cost(st)
             if p.resources[1] < cost:
-                break
+                continue  # ballot prices vary by size; a smaller one may fit
             p.resources[1] -= cost
             st.organizations[p_idx] += 1
             try:
@@ -621,12 +622,13 @@ class FundraiseHoarderOpponent(_IssueAwareOpponent):
             for _, state_name, st in candidates[:6]:
                 if st.organizations[p_idx] >= 1:
                     continue
-                if p.resources[1] < 10000:
-                    break
-                p.resources[1] -= 10000
+                cost = engine.org_base_cost(st)
+                if p.resources[1] < cost:
+                    continue  # ballot prices vary by size; a smaller one may fit
+                p.resources[1] -= cost
                 st.organizations[p_idx] += 1
                 try:
-                    p.money_on_org += 10000
+                    p.money_on_org += cost
                 except (AttributeError, TypeError):
                     pass
             # All hours to fundraising.
@@ -640,7 +642,7 @@ class FundraiseHoarderOpponent(_IssueAwareOpponent):
                 continue
             while st.organizations[p_idx] < 3:
                 org_level = st.organizations[p_idx]
-                cost = max(10000, 10000 * org_level)
+                cost = engine.org_tier_cost(st, org_level)
                 if p.resources[1] < cost:
                     break
                 p.resources[1] -= cost
@@ -744,12 +746,13 @@ class MaxFundraiserOpponent(_IssueAwareOpponent):
                 continue
             org_level = st.organizations[p_idx]
             if org_level == 0:
-                # Get on the ballot — cheapest org tier costs $10k.
-                if p.resources[1] >= 10000 and tte <= 4:
-                    p.resources[1] -= 10000
+                # Get on the ballot — tier 1 costs the state's base org price.
+                cost = engine.org_base_cost(st)
+                if p.resources[1] >= cost and tte <= 4:
+                    p.resources[1] -= cost
                     st.organizations[p_idx] += 1
                     try:
-                        p.money_on_org += 10000
+                        p.money_on_org += cost
                     except (AttributeError, TypeError):
                         pass
             elif tte <= 2 and margin > -self.AHEAD_BIG_THRESHOLD \
@@ -758,7 +761,7 @@ class MaxFundraiserOpponent(_IssueAwareOpponent):
                 target_tier = 3 if margin <= 0 else 2
                 while st.organizations[p_idx] < target_tier:
                     org_level = st.organizations[p_idx]
-                    cost = max(10000, 10000 * org_level)
+                    cost = engine.org_tier_cost(st, org_level)
                     if p.resources[1] < cost:
                         break
                     p.resources[1] -= cost

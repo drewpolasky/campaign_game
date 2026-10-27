@@ -21,7 +21,8 @@ runs/**/tb/
 # `model.zip` per run is committed for portability between machines.
 runs/**/snapshots/
 runs/**/pool_manifest.txt
-runs/smoke/
+runs/**/train.log
+runs/smoke*/
 balance_plots/
 
 # Server match database (SQLite) — runtime state, not source.
