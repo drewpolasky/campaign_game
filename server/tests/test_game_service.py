@@ -124,6 +124,25 @@ def test_validation_rejects():
     assert not ok and 'ballot' in err
 
 
+def test_seat_in_debt_can_end_turn():
+    # Weekly income can go negative, so a seat can start a week in debt. It
+    # must still be able to submit a move that spends nothing, and an AI seat
+    # in debt mustn't stop the week resolving.
+    gs, _, _ = _fresh_gs()
+    state = _first_upcoming_state(gs)
+    dnames = [d.name for d in gs.states[state].districts]
+    for seat in gs.players:
+        gs.players[seat].resources[1] = -26747
+
+    ok, err = game_service.validate_move(gs, 1, {'campaigning': {state: {dnames[0]: 10}}})
+    assert ok, err
+    ok, err = game_service.validate_move(gs, 1, {'ads': {state: {dnames[0]: 1000}}})
+    assert not ok and 'funds' in err
+
+    game_service.resolve_turn(gs, {1: {}}, random.Random(3))
+    assert gs.current_date == 2
+
+
 def test_full_game_completes():
     gs, _, _ = _fresh_gs()
     rng = random.Random(777)
@@ -153,5 +172,6 @@ if __name__ == '__main__':
     test_org_cost_curve()
     test_human_move_applies()
     test_validation_rejects()
+    test_seat_in_debt_can_end_turn()
     test_full_game_completes()
     print('OK: match creation, move validation/apply, and a full 4-seat game all pass.')

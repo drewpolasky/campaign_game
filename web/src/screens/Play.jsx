@@ -95,7 +95,9 @@ export default function Play() {
 
   const timeLeft = WEEKLY_TIME - totals.time
   const moneyLeft = me ? me.resources[1] - totals.money : 0
-  const overBudget = timeLeft < 0 || moneyLeft < 0
+  // A week can start in debt (income goes negative with negative support and
+  // momentum); spending nothing is still a valid turn then.
+  const overBudget = timeLeft < 0 || (totals.money > 0 && moneyLeft < 0)
 
   function setCampaign(sname, dname, hours) {
     setMove((m) => {

@@ -139,8 +139,12 @@ def validate_move(gs, seat, move):
             return False, 'too late to get on the ballot in {}'.format(state_name)
         total_org_cost += org_build_cost(cur_tier, count, base=engine.org_base_cost(gs.states[state_name]))
 
-    if total_ads + total_org_cost > money:
-        return False, 'insufficient funds: need {}, have {}'.format(total_ads + total_org_cost, money)
+    # Weekly income can be negative (local fundraising goes negative with
+    # negative support and momentum), so a seat can start a week in debt. It
+    # can still end the week spending nothing.
+    spend = total_ads + total_org_cost
+    if spend > 0 and spend > money:
+        return False, 'insufficient funds: need {}, have {}'.format(spend, money)
 
     return True, None
 
