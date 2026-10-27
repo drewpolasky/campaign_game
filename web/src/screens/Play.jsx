@@ -168,7 +168,10 @@ export default function Play() {
   if (error && !state) return <div className="wrap"><p className="error">{error}</p></div>
   if (!state || (!me && !isSpectator)) return <div className="wrap"><p className="muted">Loading…</p></div>
 
-  if (isSpectator) return <Spectator state={state} status={status} />
+  if (isSpectator) {
+    return <Spectator state={state} status={status}
+      onAdvance={async () => { await api.advance(info.match_id, token); await load() }} />
+  }
 
   // Issues mode: a human picks their platform the first time they open the seat.
   if (state.config.issues_mode && me && !(me.positions && me.positions.length)) {
@@ -378,16 +381,28 @@ function SeatBar({ status, seat }) {
   )
 }
 
-function Spectator({ state, status }) {
+function Spectator({ state, status, onAdvance }) {
+  const [busy, setBusy] = useState(false)
   const players = Object.entries(state.players)
     .map(([seat, p]) => ({ seat: Number(seat), name: p.public_name, delegates: Math.round(p.delegate_count), momentum: Math.round(p.momentum) }))
     .sort((a, b) => b.delegates - a.delegates)
   const gameOver = status?.game_over
+  // No human submits in an all-AI match, so the viewer steps it a week at a time.
+  const aiOnly = !!status?.seats?.length && status.seats.every((s) => s.controller !== 'human')
+  async function advance() {
+    setBusy(true)
+    try { await onAdvance() } finally { setBusy(false) }
+  }
   return (
     <div className="wrap">
       <div className="spread">
         <h1>Spectating</h1>
-        <span className="pill">Week {state.current_date} / {state.config.num_turns}{gameOver ? ' · finished' : ''}</span>
+        <div className="row">
+          {aiOnly && !gameOver && (
+            <button onClick={advance} disabled={busy}>{busy ? 'Playing…' : 'Play next week'}</button>
+          )}
+          <span className="pill">Week {state.current_date} / {state.config.num_turns}{gameOver ? ' · finished' : ''}</span>
+        </div>
       </div>
       <div className="panel">
         <h3>Standings</h3>
