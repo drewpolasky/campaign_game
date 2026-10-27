@@ -9,7 +9,7 @@ Pool weights default to favoring the strongest known opponent, with a tail
 on weaker / older policies (PFSP-lite). Sampling happens at episode reset.
 
 Usage:
-    python -m rl.train_selfplay --steps 200000 --frozen runs/v3_2p10t/model
+    python -m rl.train_selfplay --steps 200000 --frozen runs/v20_mixed_lengths/model
 """
 import argparse
 import os

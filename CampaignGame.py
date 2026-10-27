@@ -1597,7 +1597,7 @@ def _checkpoint_obs_dim(zip_path):
 def _discover_neural_checkpoints():
     """Find every trained PPO checkpoint under runs/ and register each as
     its own AI_STRATEGIES entry. That way the player can pick a specific
-    model (e.g. 'Neural: v8_rebalanced') from the AI dropdown at setup,
+    model (e.g. 'Neural: v18_issues8') from the AI dropdown at setup,
     instead of all routing to the single default."""
     base = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'runs')
     if not os.path.isdir(base):

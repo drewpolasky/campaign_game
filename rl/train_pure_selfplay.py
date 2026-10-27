@@ -5,15 +5,15 @@ snapshots. Every `snapshot_every` steps the current policy is saved and
 appended to a manifest file; worker envs re-read the manifest each
 episode reset and sample an opponent.
 
-The pool is seeded with one or more "anchor" checkpoints (e.g. v13) so
+The pool is seeded with one or more "anchor" checkpoints (e.g. v20) so
 the agent has something competent to play against before any of its
 own snapshots have been written.
 
 Usage:
     python -m rl.train_pure_selfplay --steps 4000000 \\
         --num-turns 10 --action-kind coupled --net-arch 256 256 \\
-        --seed-anchors runs/v13_rush_blitz/model \\
-        --init-from runs/v13_rush_blitz/model \\
+        --seed-anchors runs/v20_mixed_lengths/model \\
+        --init-from runs/v20_mixed_lengths/model \\
         --out runs/v14_pure_selfplay
 """
 import argparse

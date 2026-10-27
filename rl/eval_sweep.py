@@ -5,7 +5,7 @@ Default panel: Random, Default, FocusedDefault. For multi-player models
 the player count.
 
 Usage:
-    python -m rl.eval_sweep --models runs/v2/model runs/v3_2p10t/model \\
+    python -m rl.eval_sweep --models runs/v18_issues8/model runs/v20_mixed_lengths/model \\
                             --num-turns 10 --games 100
 """
 import argparse

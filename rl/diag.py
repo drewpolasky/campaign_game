@@ -13,7 +13,7 @@ per-turn deltas. Also tracks remaining cash + hours after each turn.
 
 Usage:
     from rl.diag import run_diagnostic
-    run_diagnostic('runs/v15_league/model', 'FocusedDefault',
+    run_diagnostic('runs/v20_mixed_lengths/model', 'FocusedDefault',
                    num_turns=10, action_kind='coupled')
 """
 from stable_baselines3 import PPO
