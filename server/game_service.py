@@ -55,6 +55,13 @@ def create_match(config):
     document, seat_tokens is {seat: token} for **human** seats (the magic-link
     secrets; AI seats get none), and spectator_token is a read-only link secret.
     """
+    # Reject an AI this server can't play (e.g. Neural without its weights)
+    # instead of quietly substituting Default all game.
+    for seat_cfg in config.get('seats', []):
+        if seat_cfg.get('controller') == 'ai':
+            name = seat_cfg.get('ai_strategy') or game_world.DEFAULT_AI_STRATEGY
+            if name not in ai.STRATEGIES:
+                raise ValueError('unknown AI strategy {!r}'.format(name))
     gs = game_world.build_match(config)
     match_id = generate_match_id()
     doc = state_schema.match_to_dict(gs, match_id=match_id, week_results={}, whose_turn=None)

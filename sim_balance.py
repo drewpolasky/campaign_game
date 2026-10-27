@@ -14,10 +14,6 @@ import os
 import random
 from collections import defaultdict, Counter
 
-import matplotlib
-
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
 import numpy as np
 
 from State import State, District
@@ -25,7 +21,17 @@ import state_issues
 import engine
 
 OUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'balance_plots')
-os.makedirs(OUT_DIR, exist_ok=True)
+
+
+def _pyplot():
+    """matplotlib, loaded only when a tournament plot is drawn: the web server
+    imports this module for its AIs and has neither matplotlib nor a writable
+    balance_plots/."""
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    os.makedirs(OUT_DIR, exist_ok=True)
+    return plt
 
 
 # --- Game data (extracted from CampaignGame.py) ---
@@ -477,6 +483,7 @@ def print_table(agg, label):
 
 
 def plot_round(agg, rows, suffix):
+    plt = _pyplot()
     names = sorted(agg.keys(), key=lambda n: -agg[n]['win_rate'])
 
     # Win rate + average delegates.
@@ -561,6 +568,7 @@ def head_to_head(rows):
 
 
 def plot_head_to_head(rows, suffix):
+    plt = _pyplot()
     names = sorted({r['name'] for r in rows})
     h2h = head_to_head(rows)
     matrix = np.zeros((len(names), len(names)))
@@ -807,6 +815,7 @@ def round_lengths(seats=4, seed_offset=0, label_suffix=''):
 
 def plot_length_comparison(results, suffix='4p'):
     """Side-by-side win-rate bars across the three lengths."""
+    plt = _pyplot()
     lengths = sorted(results.keys())
     names = sorted({n for nt in lengths for n in results[nt][0].keys()})
 
@@ -848,6 +857,7 @@ def plot_length_comparison(results, suffix='4p'):
 
 def plot_seats_comparison(results_3p, results_4p):
     """For each game length, plot 3p vs 4p win rate per strategy."""
+    plt = _pyplot()
     lengths = sorted(set(results_3p.keys()) | set(results_4p.keys()))
     names = sorted({n for nt in lengths for n in results_4p.get(nt, ({},))[0].keys()})
 

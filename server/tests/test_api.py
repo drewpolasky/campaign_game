@@ -89,6 +89,20 @@ def test_api_full_playthrough():
     assert total > 0
 
 
+def test_config_lists_playable_ai_strategies():
+    from server import ai
+    client = app.test_client()
+    cfg = client.get('/api/config').get_json()
+    assert cfg['ai_strategies'] == ai.STRATEGY_NAMES
+    assert cfg['ai_strategies'][0] == 'Default'
+
+    bad = dict(CONFIG, seats=CONFIG['seats'][:1] + [
+        {'name': 'AI-1', 'controller': 'ai', 'ai_strategy': 'NoSuchAI'}])
+    r = client.post('/api/matches', json={'config': bad})
+    assert r.status_code == 400 and 'unknown AI strategy' in r.get_json()['error']
+
+
 if __name__ == '__main__':
     test_api_full_playthrough()
+    test_config_lists_playable_ai_strategies()
     print('OK: match API creates, validates, plays a full game, and finishes.')

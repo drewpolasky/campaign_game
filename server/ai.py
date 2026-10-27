@@ -2,8 +2,10 @@
 
 Reuses the sim's strategy functions (``sim_balance.ALL_STRATEGIES`` —
 Default / Aggressive / BigState / CloseOnly / MoneyMachine / Balanced), which
-already decide a full week's allocation for a player. We run the chosen
-strategy on a *throwaway deep copy* of the world and then read the resulting
+already decide a full week's allocation for a player, plus ``Neural``, the
+trained PPO policy (rl.numpy_policy, run with numpy alone; it's only offered
+when its exported weights load). We run the chosen strategy on a
+*throwaway deep copy* of the world and then read the resulting
 allocations off the copy as a move payload — the authoritative GameState is
 never touched. The service layer applies that payload through the same
 validated path a human submission uses, so AI and human seats are handled
@@ -20,6 +22,7 @@ import copy
 import os
 import random
 import sys
+import traceback
 
 _REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _REPO_ROOT not in sys.path:
@@ -30,17 +33,43 @@ import sim_balance  # noqa: E402
 STRATEGIES = dict(sim_balance.ALL_STRATEGIES)
 STRATEGY_NAMES = [name for name, _ in sim_balance.ALL_STRATEGIES]
 DEFAULT_STRATEGY = 'Default'
+NEURAL_STRATEGY = 'Neural'
+
+
+def _load_neural_policy():
+    """The trained policy, or None when it can't run on this server (numpy
+    not installed, no policy.npz, or weights built for another issue set).
+    CAMPAIGN_NEURAL_POLICY points at a different exported .npz."""
+    try:
+        from rl import numpy_policy
+        return numpy_policy.load(os.environ.get('CAMPAIGN_NEURAL_POLICY') or None)
+    except Exception as e:  # any failure just hides the option
+        print('Neural AI unavailable ({}: {})'.format(type(e).__name__, e), file=sys.stderr)
+        return None
+
+
+_NEURAL_POLICY = _load_neural_policy()
+if _NEURAL_POLICY is not None:
+    from rl import numpy_policy
+
+    def strat_neural(sim, p_idx):
+        return numpy_policy.act(sim, p_idx, _NEURAL_POLICY)
+
+    STRATEGIES[NEURAL_STRATEGY] = strat_neural
+    STRATEGY_NAMES.append(NEURAL_STRATEGY)
 
 
 class _PlayerView:
     """Minimal Sim-player facade over a (copied) Player. Strategies read/mutate
-    .resources and accumulate .money_on_ads / .money_on_org."""
+    .resources and accumulate .money_on_ads / .money_on_org; the neural
+    policy's observation also reads .delegate_count."""
 
     def __init__(self, idx, player):
         self.idx = idx
         self.resources = player.resources     # shared list on the copy
         self.momentum = player.momentum
         self.positions = player.positions
+        self.delegate_count = player.delegateCount
         self.money_on_ads = 0
         self.money_on_org = 0
 
@@ -61,19 +90,9 @@ class _SimView:
         self.num_players = len(player_views)
 
 
-def compute_move(gs, seat, rng=None, strategy=None):
-    """Return a move payload (see server/game_service.py) for an AI-controlled
-    ``seat`` (1-based) in the current week of ``gs``. Pure — does not mutate
-    ``gs``.
-    """
-    if rng is None:
-        rng = gs.rng if gs.rng is not None else random.Random()
-    seat_idx = seat - 1
-
-    strat_name = strategy or getattr(gs.players[seat], 'aiStrategy', DEFAULT_STRATEGY)
-    strat_fn = STRATEGIES.get(strat_name, sim_balance.strat_default)
-
-    # Throwaway copy of the world so strategy side effects don't touch gs.
+def _play_on_copy(gs, seat_idx, strat_fn, rng):
+    """Run ``strat_fn`` for ``seat_idx`` on a throwaway copy of the world so
+    its side effects don't touch gs. Returns (copied states, fundraising)."""
     states_copy = copy.deepcopy(gs.states)
     players_copy = {seat_no: copy.deepcopy(p) for seat_no, p in gs.players.items()}
     player_views = [_PlayerView(i, players_copy[i + 1]) for i in range(gs.num_players)]
@@ -88,8 +107,33 @@ def compute_move(gs, seat, rng=None, strategy=None):
         past_elections=dict(gs.past_elections),
         rng=rng,
     )
+    return states_copy, strat_fn(sim, seat_idx)
 
-    fundraising = strat_fn(sim, seat_idx)
+
+def compute_move(gs, seat, rng=None, strategy=None):
+    """Return a move payload (see server/game_service.py) for an AI-controlled
+    ``seat`` (1-based) in the current week of ``gs``. Pure — does not mutate
+    ``gs``.
+    """
+    if rng is None:
+        rng = gs.rng if gs.rng is not None else random.Random()
+    seat_idx = seat - 1
+
+    strat_name = strategy or getattr(gs.players[seat], 'aiStrategy', DEFAULT_STRATEGY)
+    strat_fn = STRATEGIES.get(strat_name, sim_balance.strat_default)
+
+    try:
+        states_copy, fundraising = _play_on_copy(gs, seat_idx, strat_fn, rng)
+    except Exception:
+        if strat_fn is sim_balance.strat_default:
+            raise
+        # Play Default for the week rather than leave the match unable to
+        # resolve (the neural policy is the one that could hit a world it
+        # can't read).
+        print('AI strategy {!r} failed for seat {}; playing {} this week.'.format(
+            strat_name, seat, DEFAULT_STRATEGY), file=sys.stderr)
+        traceback.print_exc()
+        states_copy, fundraising = _play_on_copy(gs, seat_idx, sim_balance.strat_default, rng)
 
     # Read the resulting allocation off the copy as a move payload.
     campaigning = {}

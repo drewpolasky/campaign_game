@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { api } from '../api.js'
 
+// Shown until /api/config answers with the strategies this server can play
+// (it adds Neural when the trained model is installed).
 const AI_STRATEGIES = ['Default', 'Aggressive', 'BigState', 'CloseOnly', 'MoneyMachine', 'Balanced']
 const TURN_OPTIONS = [8, 10, 20]
 
@@ -14,12 +16,18 @@ export default function Lobby() {
   const [randomizeCalendar, setRandomizeCalendar] = useState(false)
   const [seats, setSeats] = useState([blankSeat(1, 'human'), blankSeat(2, 'ai')])
   const [gated, setGated] = useState(false)
+  const [aiStrategies, setAiStrategies] = useState(AI_STRATEGIES)
   const [createKey, setCreateKey] = useState(() => localStorage.getItem('campaign_create_key') || '')
   const [result, setResult] = useState(null)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
 
-  useEffect(() => { api.getConfig().then((c) => setGated(!!c.create_gated)).catch(() => {}) }, [])
+  useEffect(() => {
+    api.getConfig().then((c) => {
+      setGated(!!c.create_gated)
+      if (Array.isArray(c.ai_strategies) && c.ai_strategies.length) setAiStrategies(c.ai_strategies)
+    }).catch(() => {})
+  }, [])
 
   function setSeat(i, patch) {
     setSeats(seats.map((s, j) => (j === i ? { ...s, ...patch } : s)))
@@ -116,7 +124,7 @@ export default function Lobby() {
                   <td>
                     {s.controller === 'ai' ? (
                       <select value={s.ai_strategy} onChange={(e) => setSeat(i, { ai_strategy: e.target.value })}>
-                        {AI_STRATEGIES.map((a) => <option key={a} value={a}>{a}</option>)}
+                        {aiStrategies.map((a) => <option key={a} value={a}>{a}</option>)}
                       </select>
                     ) : <span className="muted small">—</span>}
                   </td>

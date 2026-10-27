@@ -2,3 +2,6 @@ flask>=2.0
 # Production WSGI server. The Flask dev server is fine for local play; use
 # gunicorn behind nginx for a real deployment (see server/DEPLOY.md).
 gunicorn>=21.0
+# The AI strategies (sim_balance) and the trained "Neural" AI
+# (rl/numpy_policy.py) use it. PyTorch is not needed.
+numpy>=1.24

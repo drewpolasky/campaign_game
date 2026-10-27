@@ -30,7 +30,7 @@ if _REPO_ROOT not in sys.path:
 from flask import request, jsonify, send_from_directory, Response  # noqa: E402
 
 from server.campaign_save_server import app  # noqa: E402  (reuse blob app + endpoints)
-from server import db, game_service, state_schema  # noqa: E402
+from server import ai, db, game_service, state_schema  # noqa: E402
 import state_issues  # noqa: E402
 
 db.init_db()
@@ -156,8 +156,10 @@ def _maybe_resolve(match_id):
 @app.route('/api/config', methods=['GET'])
 def public_config():
     """Client-visible server config: whether creating a match needs a passphrase
-    (so the lobby only shows the field when it's actually required)."""
-    return jsonify({'create_gated': bool(CREATE_KEY)})
+    (so the lobby only shows the field when it's actually required), and the AI
+    strategies this server can play."""
+    return jsonify({'create_gated': bool(CREATE_KEY),
+                    'ai_strategies': ai.STRATEGY_NAMES})
 
 
 @app.route('/api/issues', methods=['GET'])

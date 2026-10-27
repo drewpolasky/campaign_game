@@ -18,7 +18,8 @@ logs/
 runs/**/tb/
 # The rolling self-play snapshot history (5-10 MB per checkpoint, can
 # easily be hundreds per training run) is local-only — only the final
-# `model.zip` per run is committed for portability between machines.
+# `model.zip` per run is committed for portability between machines, plus
+# the default model's `policy.npz` (its numpy copy for the web server).
 runs/**/snapshots/
 runs/**/pool_manifest.txt
 runs/**/train.log
