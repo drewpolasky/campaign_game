@@ -485,10 +485,10 @@ function PlatformPicker({ state, matchId, token, name, onDone }) {
 function Opponents({ state, mySeat, onClose }) {
   const issues = state.config.issues || []
   const showStances = state.config.issues_mode && issues.length > 0
-  const opps = Object.entries(state.players)
-    .map(([seat, p]) => ({ seat: Number(seat), p }))
-    .filter((o) => o.seat !== mySeat)
-    .sort((a, b) => a.seat - b.seat)
+  const players = Object.entries(state.players).map(([seat, p]) => ({ seat: Number(seat), p }))
+  const opps = players.filter((o) => o.seat !== mySeat).sort((a, b) => a.seat - b.seat)
+  // Your own card comes first, to compare against.
+  const mine = players.filter((o) => o.seat === mySeat)
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
@@ -497,11 +497,13 @@ function Opponents({ state, mySeat, onClose }) {
           <button className="secondary small" onClick={onClose}>Close</button>
         </div>
         <div className="opp-grid">
-          {opps.map(({ seat, p }) => (
-            <div key={seat} className="panel" style={{ background: 'var(--panel-2)', marginBottom: 0 }}>
+          {[...mine, ...opps].map(({ seat, p }) => (
+            <div key={seat} className="panel" style={{ background: 'var(--panel-2)', marginBottom: 0,
+              ...(seat === mySeat ? { borderColor: 'var(--accent)' } : {}) }}>
               <div className="row" style={{ marginBottom: 2 }}>
                 <span className="leader-dot" style={{ background: SEAT_COLORS[seat - 1] }} />
                 <strong>{p.public_name || `Player ${seat}`}</strong>
+                {seat === mySeat && <span className="muted small">(you)</span>}
               </div>
               <div className="muted small" style={{ marginBottom: showStances ? 8 : 0 }}>
                 Momentum {Math.round(p.momentum)} · Delegates {Math.round(p.delegate_count)}
