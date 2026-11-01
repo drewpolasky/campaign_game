@@ -189,7 +189,8 @@ export default function Play() {
           <h1>{me.public_name || `Seat ${seat}`} <span className="muted small">· history</span></h1>
           <button className="secondary small" onClick={() => setShowHistory(false)}>← Back to game</button>
         </div>
-        <History matchId={info.match_id} token={token} seats={state.config.seats} />
+        <History matchId={info.match_id} token={token} seats={state.config.seats}
+          mySeat={seat} gameOver={gameOver} />
       </div>
     )
   }
@@ -673,22 +674,59 @@ function LastWeek({ results, seats }) {
   )
 }
 
-function summarizeMove(mv) {
-  let camp = 0, ads = 0, orgs = 0
-  const states = new Set()
+// A move's allocations per state (its districts summed), alphabetical.
+function moveByState(mv) {
+  const rows = {}
+  const row = (st) => {
+    if (!rows[st]) rows[st] = { state: st, camp: 0, ads: 0, orgs: 0 }
+    return rows[st]
+  }
   for (const [st, dists] of Object.entries(mv.campaigning || {})) {
-    for (const h of Object.values(dists)) camp += h
-    if (Object.keys(dists).length) states.add(st)
+    for (const h of Object.values(dists)) row(st).camp += h
   }
   for (const [st, dists] of Object.entries(mv.ads || {})) {
-    for (const d of Object.values(dists)) ads += d
-    if (Object.keys(dists).length) states.add(st)
+    for (const d of Object.values(dists)) row(st).ads += d
   }
-  for (const [st, n] of Object.entries(mv.orgs || {})) { orgs += n; if (n) states.add(st) }
-  return { camp, ads, orgs, states: states.size }
+  for (const [st, n] of Object.entries(mv.orgs || {})) row(st).orgs += n
+  return Object.values(rows).filter((r) => r.camp || r.ads || r.orgs)
+    .sort((a, b) => a.state.localeCompare(b.state))
 }
 
-function History({ matchId, token, seats }) {
+function summarizeMove(mv) {
+  const rows = moveByState(mv)
+  const sum = (k) => rows.reduce((t, r) => t + r[k], 0)
+  return { camp: sum('camp'), ads: sum('ads'), orgs: sum('orgs'), states: rows.length }
+}
+
+function MoveByState({ title, mv, open }) {
+  const rows = moveByState(mv)
+  return (
+    <details open={open} style={{ marginTop: 10 }}>
+      <summary className="small" style={{ cursor: 'pointer' }}>{title}</summary>
+      {rows.length === 0 ? (
+        <p className="muted small">No campaigning, ads or organizations: all {WEEKLY_TIME} hours went to fundraising.</p>
+      ) : (
+        <div style={{ overflowX: 'auto' }}>
+          <table>
+            <thead><tr><th>State</th><th>Campaign hrs</th><th>Ad $</th><th>Orgs built</th></tr></thead>
+            <tbody>
+              {rows.map((r) => (
+                <tr key={r.state}>
+                  <td>{r.state}</td>
+                  <td>{r.camp || ''}</td>
+                  <td>{r.ads ? `$${r.ads.toLocaleString()}` : ''}</td>
+                  <td>{r.orgs ? `+${r.orgs}` : ''}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </details>
+  )
+}
+
+function History({ matchId, token, seats, mySeat, gameOver }) {
   const [log, setLog] = useState(null)
   const [err, setErr] = useState('')
   useEffect(() => {
@@ -702,12 +740,17 @@ function History({ matchId, token, seats }) {
 
   return (
     <>
+      {!gameOver && (
+        <p className="muted small">Opponents' moves stay hidden until the game ends.</p>
+      )}
       {log.slice().reverse().map((entry) => {
         const stateResults = entry.results?._state_results || {}
+        const decided = Object.keys(stateResults).length > 0
+        const moves = Object.entries(entry.moves).sort((a, b) => Number(a[0]) - Number(b[0]))
         return (
           <div key={entry.week} className="panel">
             <h3 style={{ marginBottom: 8 }}>Week {entry.week}</h3>
-            {Object.keys(stateResults).length > 0 && (
+            {decided && (
               <div style={{ overflowX: 'auto' }}>
                 <table>
                   <thead><tr><th>Decided state</th><th>Winner</th><th>Vote share</th></tr></thead>
@@ -723,15 +766,16 @@ function History({ matchId, token, seats }) {
                 </table>
               </div>
             )}
-            <div style={{ overflowX: 'auto', marginTop: Object.keys(stateResults).length ? 10 : 0 }}>
+            <div style={{ overflowX: 'auto', marginTop: decided ? 10 : 0 }}>
               <table>
-                <thead><tr><th>Candidate</th><th>Campaign hrs</th><th>Ad $</th><th>Orgs</th><th>States active</th></tr></thead>
+                <thead><tr><th>Candidate</th>{decided && <th>Delegates won</th>}<th>Campaign hrs</th><th>Ad $</th><th>Orgs</th><th>States active</th></tr></thead>
                 <tbody>
-                  {Object.entries(entry.moves).sort((a, b) => Number(a[0]) - Number(b[0])).map(([seat, mv]) => {
+                  {moves.map(([seat, mv]) => {
                     const s = summarizeMove(mv)
                     return (
                       <tr key={seat}>
                         <td><span className="leader-dot" style={{ background: SEAT_COLORS[Number(seat) - 1] }} />{nameOf(seat)}</td>
+                        {decided && <td>{Math.round(entry.results?.[seat]?.delegates || 0)}</td>}
                         <td>{s.camp}</td>
                         <td>${s.ads.toLocaleString()}</td>
                         <td>{s.orgs}</td>
@@ -742,6 +786,10 @@ function History({ matchId, token, seats }) {
                 </tbody>
               </table>
             </div>
+            {moves.map(([seat, mv]) => (
+              <MoveByState key={seat} mv={mv} open={Number(seat) === mySeat}
+                title={Number(seat) === mySeat ? 'Your moves by state' : `${nameOf(seat)}'s moves by state`} />
+            ))}
           </div>
         )
       })}
