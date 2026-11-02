@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { api } from '../api.js'
 import USMap from '../USMap.jsx'
 import StateDistrictMap from '../StateDistrictMap.jsx'
-import { sideLabel, POSITION_CHOICES } from '../issues.js'
+import { sideLabel, POSITION_CHOICES, SIDE_COLORS } from '../issues.js'
 
 const WEEKLY_TIME = 80
 const SEAT_COLORS = ['#ff5b5b', '#4f8cff', '#3ecf8e', '#b07bff', '#ffb23e', '#38d6d6',
@@ -42,6 +42,7 @@ export default function Play() {
   const [districtSel, setDistrictSel] = useState(null)
   const [showHistory, setShowHistory] = useState(false)
   const [showOpponents, setShowOpponents] = useState(false)
+  const [mapIssue, setMapIssue] = useState(null)   // issue overlay; null colors by leader
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
   const pollRef = useRef(null)
@@ -80,6 +81,11 @@ export default function Play() {
 
   // Clear the highlighted district whenever the selected state changes.
   useEffect(() => { setDistrictSel(null) }, [selected])
+
+  // An open issue overlay moves to the new issue of the week each week.
+  useEffect(() => {
+    if (state) setMapIssue((m) => (m == null ? m : state.event_of_week))
+  }, [state?.current_date])
 
   const totals = useMemo(() => {
     if (!state) return { time: 0, money: 0 }
@@ -242,10 +248,33 @@ export default function Play() {
                 </>
               ) : (
                 <>
-                  <USMap state={state} selected={selected} onSelect={setSelected} seatColors={SEAT_COLORS} />
-                  <p className="muted small" style={{ textAlign: 'center', marginTop: 6 }}>
-                    Colored by current leader · <span style={{ color: '#ffb23e' }}>orange</span> = votes this/next week · click a state to open its districts
-                  </p>
+                  {state.config.issues_mode && state.config.issues?.length > 0 && (
+                    <div className="row" style={{ gap: 8, marginBottom: 8 }}>
+                      <button className={mapIssue == null ? 'small' : 'secondary small'}
+                        onClick={() => setMapIssue(null)}>Poll leader</button>
+                      <button className={mapIssue != null ? 'small' : 'secondary small'}
+                        onClick={() => setMapIssue((m) => m ?? state.event_of_week)}>Issue stances</button>
+                      {mapIssue != null && (
+                        <select value={mapIssue} onChange={(e) => setMapIssue(Number(e.target.value))}>
+                          {state.config.issues.map((iss, i) => (
+                            <option key={iss.name} value={i}>
+                              {iss.name}{i === state.event_of_week ? ' (this week)' : ''}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                    </div>
+                  )}
+                  <USMap state={state} selected={selected} onSelect={setSelected} seatColors={SEAT_COLORS}
+                    issueIdx={mapIssue} />
+                  {mapIssue != null ? (
+                    <IssueLegend issue={state.config.issues[mapIssue]} myPos={me.positions?.[mapIssue]}
+                      thisWeek={mapIssue === state.event_of_week} />
+                  ) : (
+                    <p className="muted small" style={{ textAlign: 'center', marginTop: 6 }}>
+                      Colored by current leader · <span style={{ color: '#ffb23e' }}>orange</span> = votes this/next week · click a state to open its districts
+                    </p>
+                  )}
                 </>
               )}
             </div>
@@ -523,6 +552,29 @@ function Opponents({ state, mySeat, onClose }) {
           ))}
           {opps.length === 0 && <p className="muted">No opponents in this game.</p>}
         </div>
+      </div>
+    </div>
+  )
+}
+
+// Key for the map's issue overlay: what each color means, and your own side.
+function IssueLegend({ issue, myPos, thisWeek }) {
+  const mine = Math.round(myPos ?? 0)
+  return (
+    <div className="muted small" style={{ textAlign: 'center', marginTop: 6 }}>
+      <div className="row" style={{ justifyContent: 'center', gap: 14 }}>
+        {POSITION_CHOICES.map(({ value, key }) => (
+          <span key={key}>
+            <span className="leader-dot" style={{ background: SIDE_COLORS[value] }} />
+            {issue[key]}{value === mine && <b style={{ color: 'var(--text)' }}> (you)</b>}
+          </span>
+        ))}
+      </div>
+      <div style={{ marginTop: 4 }}>
+        {thisWeek
+          ? "This week, a state that takes a side makes support easier if it's your side and harder if it isn't; middle states are unaffected."
+          : "Not this week's issue, so it doesn't change support right now."}
+        {' '}Dimmed = already voted · <span style={{ color: '#ffb23e' }}>orange</span> = votes this/next week
       </div>
     </div>
   )

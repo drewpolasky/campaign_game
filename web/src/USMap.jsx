@@ -3,6 +3,7 @@ import { feature } from 'topojson-client'
 import { geoAlbersUsa, geoPath } from 'd3-geo'
 import statesTopo from 'us-atlas/states-10m.json'
 import { seatName, supportPercents } from './players.js'
+import { sideLabel, SIDE_COLORS } from './issues.js'
 
 const W = 960, H = 600
 
@@ -17,8 +18,9 @@ function darken(hex, f) {
 
 // Hover tooltip for a state — mirrors CampaignGame.format_state_tooltip:
 // name + delegates + when it votes, the leader, each candidate's support %,
-// and the state's stance on the week's issue.
-function stateTooltip(state, name) {
+// and the state's stance on the week's issue (and on the overlay's issue, if
+// that's a different one).
+function stateTooltip(state, name, issueIdx) {
   const st = state.states[name]
   if (!st) return name
   const delegates = st.districts.reduce((a, d) => a + d.population, 0)
@@ -40,12 +42,13 @@ function stateTooltip(state, name) {
   } else {
     lines.push('No polling data yet')
   }
-  const iss = state.config.issues?.[state.event_of_week]
-  if (iss) {
-    const pos = Math.round(st.positions?.[state.event_of_week] ?? 0)
-    const label = pos > 0 ? iss.pro : pos < 0 ? iss.con : iss.mid
+  const shown = [state.event_of_week]
+  if (issueIdx != null && issueIdx !== state.event_of_week) shown.push(issueIdx)
+  for (const i of shown) {
+    const iss = state.config.issues?.[i]
+    if (!iss) continue
     const suffix = state.config.issues_mode ? '' : '  (informational; Issues mode off)'
-    lines.push(`${name} on ${iss.name}: ${label}${suffix}`)
+    lines.push(`${name} on ${iss.name}: ${sideLabel(iss, st.positions?.[i] ?? 0)}${suffix}`)
   }
   return lines.join('\n')
 }
@@ -54,7 +57,8 @@ function stateTooltip(state, name) {
 // Albers-USA (handles the Alaska/Hawaii insets; drops territories off-canvas).
 const FC = feature(statesTopo, statesTopo.objects.states)
 
-export default function USMap({ state, selected, onSelect, seatColors, zoomTo }) {
+// issueIdx: color states by their stance on that issue instead of by leader.
+export default function USMap({ state, selected, onSelect, seatColors, zoomTo, issueIdx = null }) {
   const path = useMemo(() => geoPath(geoAlbersUsa().fitSize([W, H], FC)), [])
 
   // Zoom the viewBox to a single state's bounds (with padding) when requested.
@@ -92,7 +96,12 @@ export default function USMap({ state, selected, onSelect, seatColors, zoomTo })
         // undecided one by the current poll leader.
         const winner = state.past_elections?.[name]
         let fill, fillOpacity
-        if (winner != null) {
+        if (issueIdx != null) {
+          // Issue overlay: the state's stance, dimmed once it has voted.
+          const side = SIDE_COLORS[Math.round(state.states[name]?.positions?.[issueIdx] ?? 0)]
+          fill = !inGame ? '#222a3a' : winner != null ? darken(side, 0.5) : side
+          fillOpacity = !inGame ? 0.3 : winner != null ? 1 : 0.9
+        } else if (winner != null) {
           fill = darken(seatColors[winner - 1] || '#39445c', 0.5)
           fillOpacity = 1
         } else {
@@ -111,7 +120,7 @@ export default function USMap({ state, selected, onSelect, seatColors, zoomTo })
             style={{ cursor: inGame ? 'pointer' : 'default', transition: 'fill .2s' }}
             onClick={() => inGame && onSelect(name)}
           >
-            <title>{inGame ? stateTooltip(state, name) : name}</title>
+            <title>{inGame ? stateTooltip(state, name, issueIdx) : name}</title>
           </path>
         )
       })}
