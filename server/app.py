@@ -140,13 +140,14 @@ def _maybe_resolve(match_id):
 
         human_moves = db.get_submissions(match_id, week)
         gs, _ = state_schema.match_from_dict(match['doc'])
+        support = {}
         week_results, all_moves = game_service.resolve_turn(
-            gs, human_moves, _resolve_rng(match_id, week))
+            gs, human_moves, _resolve_rng(match_id, week), support=support)
         status = 'finished' if game_service.is_game_over(gs) else 'active'
         new_doc = state_schema.match_to_dict(
             gs, match_id=match_id, week_results=week_results, whose_turn=None)
         db.save_match_state(match_id, new_doc, status)
-        db.log_week(match_id, week, week_results, all_moves)
+        db.log_week(match_id, week, week_results, all_moves, support)
         db.clear_submissions(match_id, week)
         return True
 
@@ -232,12 +233,15 @@ def _redact_state_for_seat(doc, viewer_seat):
 
 
 def _redact_log_for_seat(doc, log, viewer_seat):
-    """During play, a viewer sees only their own moves (plus the public results);
-    opponents' past moves are revealed once the game ends."""
+    """During play, a viewer sees only their own moves and support gains (plus
+    the public results); opponents' are revealed once the game ends."""
     if _game_over(doc):
         return log
     key = str(viewer_seat)
-    return [{**e, 'moves': ({key: e['moves'][key]} if key in e['moves'] else {})} for e in log]
+
+    def own(by_seat):
+        return {key: by_seat[key]} if key in by_seat else {}
+    return [{**e, 'moves': own(e['moves']), 'support': own(e['support'])} for e in log]
 
 
 @app.route('/api/matches/<match_id>/state', methods=['GET'])

@@ -1444,6 +1444,10 @@ class _EngineHooks:
     def pre_support_snapshot(self, gs):
         return _debug_pre_support_snapshot() if DEBUG_MODE else None
 
+    def support_gained(self, gs, player_id, state_name, org_support,
+                       campaign_support, ad_support):
+        pass
+
     def week_summary(self, gs, snap):
         if DEBUG_MODE:
             _debug_week_summary(snap)

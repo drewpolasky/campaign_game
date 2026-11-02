@@ -201,10 +201,31 @@ def apply_move(gs, seat, move):
 
 # --- resolution -----------------------------------------------------------
 
-def resolve_turn(gs, human_moves, rng):
+class _SupportLog(engine._NullHooks):
+    """Adds up each seat's support gains this week per state and source."""
+
+    def __init__(self, out):
+        self.out = out
+
+    def support_gained(self, gs, player_id, state_name, org_support,
+                       campaign_support, ad_support):
+        if not (org_support or campaign_support or ad_support):
+            return
+        row = self.out.setdefault(player_id, {}).setdefault(
+            state_name, {'campaign': 0.0, 'ads': 0.0, 'orgs': 0.0})
+        row['campaign'] += campaign_support
+        row['ads'] += ad_support
+        row['orgs'] += org_support
+
+
+def resolve_turn(gs, human_moves, rng, support=None):
     """Resolve one week. ``human_moves`` maps seat -> move for the human seats
     that submitted; AI seats are filled here. Mutates ``gs`` (advances a week)
     and returns (week_results, all_moves).
+
+    If ``support`` is a dict, it's filled with the support each seat gained
+    this week: {seat: {state: {'campaign', 'ads', 'orgs'}}} (orgs is the
+    passive support from every org the seat holds there, not just new ones).
 
     Sequence mirrors the desktop rollover: per-seat calc_end_turn (money for
     next week), then calc_state_opinions, advance the date, decide_contests,
@@ -238,7 +259,12 @@ def resolve_turn(gs, human_moves, rng):
 
     # 4. World physics for the week (real-game order: apply support, advance,
     #    then resolve contests), then clear weekly allocations.
-    engine.calc_state_opinions(gs)
+    engine.calc_state_opinions(gs, hooks=_SupportLog(support) if support is not None else None)
+    if support is not None:
+        for rows in support.values():
+            for row in rows.values():
+                for source in row:
+                    row[source] = round(row[source], 2)
     gs.current_date += 1
     week_results = engine.decide_contests(gs)
     engine.reset_weekly(gs)

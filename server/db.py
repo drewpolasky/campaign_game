@@ -73,9 +73,15 @@ def init_db():
                 results_json TEXT NOT NULL,   -- week_results for the week that resolved
                 moves_json   TEXT NOT NULL,   -- {seat: move} every seat played that week
                 resolved_at  REAL NOT NULL,
+                support_json TEXT,            -- {seat: {state: {source: support gained}}}
                 PRIMARY KEY (match_id, week)
             );
             """)
+        # Databases made before support_json existed: add it. Their earlier
+        # weeks keep NULL (no breakdown recorded).
+        cols = {r['name'] for r in conn.execute('PRAGMA table_info(game_log)')}
+        if 'support_json' not in cols:
+            conn.execute('ALTER TABLE game_log ADD COLUMN support_json TEXT')
 
 
 def create_match(doc, seat_tokens, spectator_token=None):
@@ -207,22 +213,26 @@ def delete_submission(match_id, seat_no, week):
     return json.loads(row['move_json']) if row else None
 
 
-def log_week(match_id, week, results, moves):
-    """Record a resolved week's results and every seat's moves for the history."""
+def log_week(match_id, week, results, moves, support=None):
+    """Record a resolved week's results, every seat's moves, and the support
+    each seat gained, for the history."""
     with _connect() as conn:
         conn.execute(
-            'INSERT OR REPLACE INTO game_log (match_id, week, results_json, moves_json, resolved_at)'
-            ' VALUES (?, ?, ?, ?, ?)',
-            (match_id, week, json.dumps(results), json.dumps(moves), time.time()))
+            'INSERT OR REPLACE INTO game_log'
+            ' (match_id, week, results_json, moves_json, resolved_at, support_json)'
+            ' VALUES (?, ?, ?, ?, ?, ?)',
+            (match_id, week, json.dumps(results), json.dumps(moves), time.time(),
+             json.dumps(support or {})))
 
 
 def get_log(match_id):
     with _connect() as conn:
         rows = conn.execute(
-            'SELECT week, results_json, moves_json, resolved_at FROM game_log'
+            'SELECT week, results_json, moves_json, resolved_at, support_json FROM game_log'
             ' WHERE match_id = ? ORDER BY week', (match_id,)).fetchall()
     return [{'week': r['week'], 'results': json.loads(r['results_json']),
-             'moves': json.loads(r['moves_json']), 'resolved_at': r['resolved_at']}
+             'moves': json.loads(r['moves_json']), 'resolved_at': r['resolved_at'],
+             'support': json.loads(r['support_json'] or '{}')}
             for r in rows]
 
 

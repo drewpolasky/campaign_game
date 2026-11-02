@@ -143,6 +143,35 @@ def test_seat_in_debt_can_end_turn():
     assert gs.current_date == 2
 
 
+def test_support_breakdown_matches_engine():
+    # The support recorded for the log adds up, source by source, to what the
+    # engine credited each seat this week, and lands in the state where the
+    # human campaigned, advertised and built an org.
+    gs, _, _ = _fresh_gs()
+    state = _first_upcoming_state(gs)
+    dnames = [d.name for d in gs.states[state].districts]
+    move = {'campaigning': {state: {dnames[0]: 10}}, 'ads': {state: {dnames[0]: 5000}},
+            'orgs': {state: 1}}
+    ok, err = game_service.validate_move(gs, 1, move)
+    assert ok, err
+    stats = {'campaign': 'support_from_campaign', 'ads': 'support_from_ads',
+             'orgs': 'support_from_org'}
+    before = {seat: {src: p.stats.get(stat, 0) for src, stat in stats.items()}
+              for seat, p in gs.players.items()}
+
+    support = {}
+    game_service.resolve_turn(gs, {1: move}, random.Random(5), support=support)
+
+    for seat, p in gs.players.items():
+        rows = support.get(seat, {})
+        for src, stat in stats.items():
+            logged = sum(row[src] for row in rows.values())
+            gained = p.stats.get(stat, 0) - before[seat][src]
+            assert abs(logged - gained) <= 0.005 * max(1, len(rows)), (seat, src)
+    mine = support[1][state]
+    assert mine['campaign'] > 0 and mine['ads'] > 0 and mine['orgs'] > 0
+
+
 def test_full_game_completes():
     gs, _, _ = _fresh_gs()
     rng = random.Random(777)
@@ -173,5 +202,6 @@ if __name__ == '__main__':
     test_human_move_applies()
     test_validation_rejects()
     test_seat_in_debt_can_end_turn()
+    test_support_breakdown_matches_engine()
     test_full_game_completes()
     print('OK: match creation, move validation/apply, and a full 4-seat game all pass.')

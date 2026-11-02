@@ -4,6 +4,7 @@ killing a match.
 Run:  python -m pytest server/tests/test_admin.py
 """
 import os
+import sqlite3
 import sys
 import tempfile
 
@@ -13,6 +14,7 @@ os.environ['CAMPAIGN_DB'] = _TMP_DB
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
+from server import db  # noqa: E402
 from server.app import app  # noqa: E402
 
 ADMIN_KEY = 'test-admin-secret'
@@ -117,3 +119,48 @@ def test_admin_list_log_and_kill(monkeypatch):
     assert match_id not in {m['id'] for m in r.get_json()['matches']}
     assert client.get('/api/matches/{}/state?token={}'.format(match_id, token)).status_code == 403
     assert client.delete('/api/admin/matches/{}'.format(match_id), headers=hdrs).status_code == 404
+
+
+def test_log_records_support_gained(monkeypatch):
+    """The admin log has every seat's support gains by state and source; a
+    player's own log has only theirs while the game is on."""
+    monkeypatch.setenv('CAMPAIGN_ADMIN_KEY', ADMIN_KEY)
+    client, match_id, token = _client_and_match()
+    state = client.get('/api/matches/{}/state?token={}'.format(match_id, token)).get_json()['state']
+    target = [s for s, w in state['config']['calendar'] if w >= state['current_date']][0]
+    dname = state['states'][target]['districts'][0]['name']
+    move = {'campaigning': {target: {dname: 10}}, 'ads': {target: {dname: 5000}},
+            'orgs': {target: 1}}
+    r = client.post('/api/matches/{}/moves?token={}'.format(match_id, token), json={'move': move})
+    assert r.status_code == 200 and r.get_json()['result'] == 'resolved', r.get_data(as_text=True)
+
+    week1 = client.get('/api/admin/matches/{}/log'.format(match_id),
+                       headers={'X-Admin-Key': ADMIN_KEY}).get_json()['log'][0]
+    assert set(week1['support']) == {'1', '2'}       # the human AND the AI seat
+    mine = week1['support']['1'][target]
+    assert mine['campaign'] > 0 and mine['ads'] > 0 and mine['orgs'] > 0
+
+    own = client.get('/api/matches/{}/log?token={}'.format(match_id, token)).get_json()['log'][0]
+    assert set(own['support']) == {'1'}
+    assert own['support']['1'] == week1['support']['1']
+
+
+def test_old_database_gains_support_column(tmp_path, monkeypatch):
+    """A game_log table from before support was recorded gets the column on
+    startup; its earlier weeks read back with no breakdown."""
+    path = str(tmp_path / 'old.db')
+    conn = sqlite3.connect(path)
+    conn.execute('CREATE TABLE game_log (match_id TEXT NOT NULL, week INTEGER NOT NULL,'
+                 ' results_json TEXT NOT NULL, moves_json TEXT NOT NULL,'
+                 ' resolved_at REAL NOT NULL, PRIMARY KEY (match_id, week))')
+    conn.execute("INSERT INTO game_log VALUES ('OLD', 1, '{}', '{}', 0)")
+    conn.commit()
+    conn.close()
+    monkeypatch.setattr(db, '_DB_PATH', path)
+
+    db.init_db()
+    db.init_db()      # a second start finds the column already there
+    db.log_week('OLD', 2, {}, {}, {1: {'Iowa': {'campaign': 1.5, 'ads': 0.0, 'orgs': 0.25}}})
+    log = db.get_log('OLD')
+    assert log[0]['support'] == {}
+    assert log[1]['support'] == {'1': {'Iowa': {'campaign': 1.5, 'ads': 0.0, 'orgs': 0.25}}}

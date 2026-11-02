@@ -73,6 +73,12 @@ class _NullHooks:
     def pre_support_snapshot(self, gs):
         return None
 
+    def support_gained(self, gs, player_id, state_name, org_support,
+                       campaign_support, ad_support):
+        """One district's support gains for one player this week, by source
+        (before the district total is rounded)."""
+        pass
+
     def week_summary(self, gs, snap):
         pass
 
@@ -170,6 +176,7 @@ def calc_state_opinions(gs, hooks=None):
                     players[i + 1].addStat('support_from_ads', ad_support)
                 except AttributeError:
                     pass
+                hooks.support_gained(gs, i + 1, state, org_support, campaign_support, ad_support)
                 support = round(support)
                 district.setSupport(i, support)
             states[state].updateSupport(gs.num_players, gs.calendar, gs.current_date)

@@ -1,32 +1,49 @@
 import { useState } from 'react'
 import { api } from '../api.js'
 
-// Compact one-line-per-state summary of a seat's move for the log view.
-function summarizeMove(move) {
+const signed = (v) => `${v >= 0 ? '+' : ''}${v.toFixed(1)}`
+
+// Compact one-line-per-state summary of a seat's move for the log view, with
+// the support each action gained (weeks logged before support was recorded
+// have none). Org support is passive, from every org the seat holds in the
+// state, so it can show up in states the seat didn't touch that week.
+function summarizeMove(move, support) {
   if (!move) return ['(no move recorded)']
   const lines = []
   const states = new Set([
     ...Object.keys(move.campaigning || {}),
     ...Object.keys(move.ads || {}),
     ...Object.keys(move.orgs || {}),
+    ...Object.keys(support || {}),
   ])
   for (const s of [...states].sort()) {
     const parts = []
+    const gained = support?.[s]
     const camp = move.campaigning?.[s]
     if (camp) {
       const hours = Object.values(camp).reduce((a, b) => a + b, 0)
-      if (hours > 0) parts.push(`${hours}h campaigning`)
+      if (hours > 0) parts.push(`${hours}h campaigning${gained ? ` → ${signed(gained.campaign)}` : ''}`)
     }
     const ads = move.ads?.[s]
     if (ads) {
       const dollars = Object.values(ads).reduce((a, b) => a + b, 0)
-      if (dollars > 0) parts.push(`$${dollars.toLocaleString()} ads`)
+      if (dollars > 0) parts.push(`$${dollars.toLocaleString()} ads${gained ? ` → ${signed(gained.ads)}` : ''}`)
     }
     const orgs = move.orgs?.[s]
     if (orgs) parts.push(`+${orgs} org`)
+    if (gained?.orgs) parts.push(`org support ${signed(gained.orgs)}`)
     if (parts.length) lines.push(`${s}: ${parts.join(', ')}`)
   }
   return lines.length ? lines : ['(passed — no allocations)']
+}
+
+// A seat's support gained this week, per source, across all states.
+function supportTotals(support) {
+  const t = { campaign: 0, ads: 0, orgs: 0 }
+  for (const row of Object.values(support || {})) {
+    for (const k of Object.keys(t)) t[k] += row[k] || 0
+  }
+  return t
 }
 
 function WeekLog({ entry, standings }) {
@@ -43,17 +60,26 @@ function WeekLog({ entry, standings }) {
             `${st} → ${seatName(r.winner)}`).join('; ')}
         </p>
       )}
-      {seatKeys.map((seat) => (
-        <div key={seat} style={{ marginBottom: 6 }}>
-          <b>{seatName(seat)}</b>
-          {results[seat]?.delegates > 0 && (
-            <span className="muted small"> (+{results[seat].delegates} delegates)</span>
-          )}
-          <div className="muted small" style={{ whiteSpace: 'pre-line', marginLeft: 12 }}>
-            {summarizeMove(entry.moves[seat]).join('\n')}
+      {seatKeys.map((seat) => {
+        const support = entry.support?.[seat]
+        const t = supportTotals(support)
+        return (
+          <div key={seat} style={{ marginBottom: 6 }}>
+            <b>{seatName(seat)}</b>
+            {results[seat]?.delegates > 0 && (
+              <span className="muted small"> (+{results[seat].delegates} delegates)</span>
+            )}
+            {support && (
+              <span className="muted small">
+                {' '}· support gained: campaigning {signed(t.campaign)}, ads {signed(t.ads)}, orgs {signed(t.orgs)}
+              </span>
+            )}
+            <div className="muted small" style={{ whiteSpace: 'pre-line', marginLeft: 12 }}>
+              {summarizeMove(entry.moves[seat], support).join('\n')}
+            </div>
           </div>
-        </div>
-      ))}
+        )
+      })}
     </div>
   )
 }
@@ -142,6 +168,9 @@ function MatchRow({ m, adminKey, onKilled }) {
                     .join('  ·  ')}
                   {log.pending_submissions?.length > 0 &&
                     ` — submitted this week: ${log.pending_submissions.join(', ')}`}
+                </p>
+                <p className="muted small" style={{ margin: '4px 0' }}>
+                  Support gained (→) includes the momentum, issue-of-the-week and election-week multipliers.
                 </p>
                 {(log.log || []).length === 0
                   ? <p className="muted small">No weeks resolved yet.</p>
